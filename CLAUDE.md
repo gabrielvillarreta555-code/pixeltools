@@ -32,13 +32,18 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 
 ## Arquitectura relevante
 
-- `src/pages/CompressorPage.tsx`: estado y experiencia del compresor.
+- `src/pages/CompressorPage.tsx`: lote, ajustes (formato, calidad, tamaño máximo) y descargas.
 - `src/lib/imageProcessing.ts`: decodificación, límites, Canvas y codificación.
 - `src/pages/BackgroundRemoverPage.tsx`: experiencia y estados del eliminador.
-- `src/lib/backgroundRemoval.ts`: carga del modelo, inferencia y máscara alfa.
+- `src/lib/backgroundRemoval.ts`: carga del modelo, inferencia, máscara alfa y caja del sujeto.
+- `src/lib/composition.ts`: fondo transparente/color/desenfocado y recorte al sujeto.
+- `src/lib/geometry.ts`, `src/lib/zip.ts`: cálculos puros del recorte y ZIP sin dependencias.
+- `src/lib/serviceWorker.ts`, `src/components/AppStatus.tsx`: registro PWA y avisos.
 - `src/components/`: navegación, SEO en cliente y componentes reutilizables.
 - `scripts/generate-static-pages.mjs`: HTML y metadatos estáticos por ruta.
 - `scripts/copy-runtime-assets.mjs`: prepara WASM desde `onnxruntime-web`.
+- `scripts/generate-service-worker.mjs`: genera `dist/sw.js`. Nunca debe cachear
+  fotografías del usuario; solo archivos de la aplicación.
 - `tests/`: validación de archivos, cálculos y límites de dimensiones.
 
 `dist/` y `public/ort/` son generados y no se versionan. El modelo
@@ -50,10 +55,13 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 1. Ejecutar `npm test`.
 2. Ejecutar `npm run build`.
 3. Para cambios de procesamiento, comprobar en navegador una compresión real,
-   descarga, transparencia PNG, archivo incompatible y cancelación/reinicio.
-4. Para cambios visuales, comprobar 390 px y escritorio, navegación por teclado,
+   un lote con ZIP, descarga, transparencia PNG, archivo incompatible y
+   cancelación/reinicio.
+4. Para cambios del service worker, probar con `npm run build && npm run preview`
+   en modo sin conexión.
+5. Para cambios visuales, comprobar 390 px y escritorio, navegación por teclado,
    foco visible y ausencia de desbordamiento horizontal.
-5. No declarar Firefox o Safari como probados si no se ejecutaron realmente.
+6. No declarar Firefox o Safari como probados si no se ejecutaron realmente.
 
 ## Configuración y publicación
 

@@ -1,4 +1,5 @@
 import * as ort from 'onnxruntime-web/wasm';
+import { findAlphaBounds, scaleBox, type Box } from './geometry';
 import { canvasToBlob, decodeImage, ImageProcessingError, validateDimensions } from './imageProcessing';
 
 const MODEL_SIZE = 320;
@@ -19,6 +20,8 @@ export interface BackgroundRemovalOutput {
   originalWidth: number;
   originalHeight: number;
   resized: boolean;
+  /** Zona ocupada por el sujeto en el resultado, útil para recortar. */
+  subject: Box | null;
 }
 
 interface BackgroundOptions {
@@ -136,7 +139,7 @@ function imageToTensor(source: CanvasImageSource) {
   return new ort.Tensor('float32', data, [1, 3, MODEL_SIZE, MODEL_SIZE]);
 }
 
-function outputToMask(output: ort.Tensor): HTMLCanvasElement {
+function outputToMask(output: ort.Tensor): { canvas: HTMLCanvasElement; bounds: Box | null } {
   const dimensions = output.dims;
   const width = Number(dimensions.at(-1)) || MODEL_SIZE;
   const height = Number(dimensions.at(-2)) || MODEL_SIZE;
@@ -172,7 +175,7 @@ function outputToMask(output: ort.Tensor): HTMLCanvasElement {
     mask.data[offset + 3] = Math.round(Math.pow(normalized, 0.9) * 255);
   }
   context.putImageData(mask, 0, 0);
-  return canvas;
+  return { canvas, bounds: findAlphaBounds(mask.data, width, height) };
 }
 
 export async function removeImageBackground(
@@ -189,6 +192,7 @@ export async function removeImageBackground(
   const decoded = await decodeImage(file, options.signal);
   const resultCanvas = document.createElement('canvas');
   let maskCanvas: HTMLCanvasElement | null = null;
+  let maskBounds: Box | null = null;
 
   try {
     validateDimensions(decoded.width, decoded.height, MAX_SOURCE_PIXELS);
@@ -204,7 +208,7 @@ export async function removeImageBackground(
 
     const output = results[session.outputNames[0]];
     if (!output) throw new ImageProcessingError('El modelo devolvió un resultado inesperado.');
-    maskCanvas = outputToMask(output);
+    ({ canvas: maskCanvas, bounds: maskBounds } = outputToMask(output));
 
     resultCanvas.width = outputSize.width;
     resultCanvas.height = outputSize.height;
@@ -228,6 +232,9 @@ export async function removeImageBackground(
       originalWidth: decoded.width,
       originalHeight: decoded.height,
       resized: outputSize.resized,
+      subject: maskBounds
+        ? scaleBox(maskBounds, maskCanvas.width, maskCanvas.height, outputSize.width, outputSize.height)
+        : null,
     };
   } catch (error) {
     if (error instanceof RangeError || (error instanceof Error && /memory|allocation/i.test(error.message))) {

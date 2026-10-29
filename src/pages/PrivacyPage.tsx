@@ -21,6 +21,7 @@ export function PrivacyPage() {
 
         <h2>3. Almacenamiento</h2>
         <p>La aplicación no crea cuentas ni almacena las imágenes. Las vistas previas usan direcciones temporales del navegador que se revocan al reemplazar el archivo, reiniciar la herramienta o cerrar la página.</p>
+        <p>Para funcionar sin conexión, el navegador guarda en su caché los archivos de la propia aplicación (páginas, código, iconos y, tras su primer uso, el modelo del eliminador de fondos). Esa caché nunca contiene tus fotografías y puedes borrarla desde la configuración de datos del sitio de tu navegador.</p>
 
         <h2>4. Analítica, cookies y publicidad</h2>
         <p>Esta versión no incorpora analítica, publicidad ni seguimiento de terceros. Antes de añadirlos deberán evaluarse las bases legales, el consentimiento y la configuración de privacidad aplicables.</p>

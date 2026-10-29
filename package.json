@@ -7,7 +7,7 @@
     "predev": "node scripts/copy-runtime-assets.mjs",
     "dev": "vite",
     "prebuild": "node scripts/copy-runtime-assets.mjs",
-    "build": "tsc --noEmit && vite build && node scripts/generate-static-pages.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/generate-static-pages.mjs && node scripts/generate-service-worker.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

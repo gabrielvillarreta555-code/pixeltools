@@ -82,6 +82,19 @@ export function validateDimensions(width: number, height: number, maxPixels = MA
   }
 }
 
+/** Escala proporcionalmente para que ningún lado supere `maxSide`. Nunca amplía. */
+export function fitWithin(width: number, height: number, maxSide?: number) {
+  if (!maxSide || maxSide <= 0 || Math.max(width, height) <= maxSide) {
+    return { width, height, resized: false };
+  }
+  const scale = maxSide / Math.max(width, height);
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+    resized: true,
+  };
+}
+
 export function canvasToBlob(
   canvas: HTMLCanvasElement,
   mimeType: SupportedImageType,
@@ -115,6 +128,8 @@ export function canvasToBlob(
 export interface CompressOptions {
   mimeType: SupportedImageType;
   quality: number;
+  /** Lado máximo en píxeles; si se omite se conservan las dimensiones originales. */
+  maxDimension?: number;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
 }
@@ -123,6 +138,9 @@ export interface CompressionOutput {
   blob: Blob;
   width: number;
   height: number;
+  originalWidth: number;
+  originalHeight: number;
+  resized: boolean;
 }
 
 export async function compressImage(file: File, options: CompressOptions): Promise<CompressionOutput> {
@@ -133,10 +151,13 @@ export async function compressImage(file: File, options: CompressOptions): Promi
   try {
     validateDimensions(decoded.width, decoded.height);
     throwIfAborted(options.signal);
-    canvas.width = decoded.width;
-    canvas.height = decoded.height;
+    const target = fitWithin(decoded.width, decoded.height, options.maxDimension);
+    canvas.width = target.width;
+    canvas.height = target.height;
     const context = canvas.getContext('2d', { alpha: options.mimeType !== 'image/jpeg' });
     if (!context) throw new ImageProcessingError('Canvas no está disponible en este navegador.');
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
 
     options.onProgress?.('Preparando los píxeles…');
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -151,7 +172,14 @@ export async function compressImage(file: File, options: CompressOptions): Promi
     options.onProgress?.('Optimizando el archivo…');
     const quality = options.mimeType === 'image/png' ? undefined : options.quality;
     const blob = await canvasToBlob(canvas, options.mimeType, quality, options.signal);
-    return { blob, width: decoded.width, height: decoded.height };
+    return {
+      blob,
+      width: target.width,
+      height: target.height,
+      originalWidth: decoded.width,
+      originalHeight: decoded.height,
+      resized: target.resized,
+    };
   } finally {
     decoded.release();
     canvas.width = 0;

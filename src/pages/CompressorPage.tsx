@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
@@ -6,6 +6,7 @@ import { Seo } from '../components/Seo';
 import { ToolIntro } from '../components/ToolIntro';
 import { UploadZone } from '../components/UploadZone';
 import {
+  downloadBlob,
   formatBytes,
   isSupportedImageType,
   makeOutputName,
@@ -13,116 +14,167 @@ import {
   type SupportedImageType,
   validateImageFile,
 } from '../lib/files';
-import { compressImage, supportsCanvasFormat } from '../lib/imageProcessing';
+import { compressImage, supportsCanvasFormat, type CompressionOutput } from '../lib/imageProcessing';
+import { useObjectUrl } from '../lib/useObjectUrl';
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_FILES = 30;
+const RESIZE_PRESETS = [3840, 2560, 1920, 1280, 1024, 800];
+const FORMAT_LABELS: Record<SupportedImageType, string> = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP' };
 
-interface CompressionResult {
-  blob: Blob;
-  width: number;
-  height: number;
-  mimeType: SupportedImageType;
-  quality: number;
+type OutputChoice = SupportedImageType | 'keep';
+type ItemStatus = 'pending' | 'processing' | 'done' | 'error';
+
+interface BatchItem {
+  id: number;
+  file: File;
+  status: ItemStatus;
+  result?: CompressionOutput & { mimeType: SupportedImageType };
+  error?: string;
 }
 
-function useObjectUrl(blob: Blob | null) {
-  const [url, setUrl] = useState('');
-  useEffect(() => {
-    if (!blob) {
-      setUrl('');
-      return;
-    }
-    const objectUrl = URL.createObjectURL(blob);
-    setUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [blob]);
-  return url;
+let nextItemId = 1;
+
+function isRealReduction(item: BatchItem) {
+  return Boolean(item.result && item.result.blob.size < item.file.size);
+}
+
+function outputName(item: BatchItem) {
+  if (!item.result) return item.file.name;
+  return makeOutputName(item.file.name, item.result.mimeType, isRealReduction(item) ? 'comprimida' : 'convertida');
+}
+
+function formatPercent(value: number) {
+  return `${Math.abs(value).toFixed(1).replace('.', ',')}%`;
 }
 
 export function CompressorPage() {
-  const [file, setFile] = useState<File | null>(null);
+  const [items, setItems] = useState<BatchItem[]>([]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [quality, setQuality] = useState(80);
-  const [outputType, setOutputType] = useState<SupportedImageType>('image/webp');
-  const [result, setResult] = useState<CompressionResult | null>(null);
+  const [outputChoice, setOutputChoice] = useState<OutputChoice>('keep');
+  const [resizeChoice, setResizeChoice] = useState<string>('0');
+  const [customSide, setCustomSide] = useState(1600);
+  const [rejected, setRejected] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState('');
+  const [zipping, setZipping] = useState(false);
   const [webpSupported, setWebpSupported] = useState(true);
   const abortRef = useRef<AbortController | null>(null);
-  const inputUrl = useObjectUrl(file);
-  const outputUrl = useObjectUrl(result?.blob ?? null);
+  const addInputRef = useRef<HTMLInputElement>(null);
+
+  const selected = items.find((item) => item.id === selectedId) ?? items[0] ?? null;
+  const inputUrl = useObjectUrl(selected?.file);
+  const outputUrl = useObjectUrl(selected?.result?.blob);
 
   useEffect(() => {
     setWebpSupported(supportsCanvasFormat('image/webp'));
     return () => abortRef.current?.abort();
   }, []);
 
-  const reduction = result ? reductionPercent(file?.size ?? 0, result.blob.size) : 0;
-  const isRealReduction = Boolean(result && file && result.blob.size < file.size);
-  const currentSettingsMatch = result?.mimeType === outputType && result?.quality === quality;
+  const maxDimension = resizeChoice === 'custom' ? customSide : Number(resizeChoice);
+  const customInvalid = resizeChoice === 'custom' && (!Number.isInteger(customSide) || customSide < 16 || customSide > 12_000);
 
-  const formatLabel = useMemo(
-    () => ({ 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP' })[outputType],
-    [outputType],
-  );
+  const targetType = (file: File): SupportedImageType => {
+    if (outputChoice !== 'keep') return outputChoice;
+    if (isSupportedImageType(file.type) && (file.type !== 'image/webp' || webpSupported)) return file.type;
+    return 'image/jpeg';
+  };
 
-  const clearResult = () => setResult(null);
+  const targets = items.map((item) => targetType(item.file));
+  const allPng = targets.length > 0 && targets.every((type) => type === 'image/png');
+  const jpegLosesAlpha = items.some((item, index) => targets[index] === 'image/jpeg' && item.file.type !== 'image/jpeg');
 
-  const handleFile = (nextFile: File) => {
-    abortRef.current?.abort();
-    const validationError = validateImageFile(nextFile, { maxBytes: MAX_FILE_BYTES });
-    if (validationError) {
-      setError(validationError);
-      return;
+  const done = items.filter((item) => item.result);
+  const pending = items.filter((item) => item.status !== 'done');
+  const totalOriginal = done.reduce((sum, item) => sum + item.file.size, 0);
+  const totalOutput = done.reduce((sum, item) => sum + (item.result?.blob.size ?? 0), 0);
+  const totals = { original: totalOriginal, output: totalOutput, reduction: reductionPercent(totalOriginal, totalOutput) };
+
+  const clearResults = () => {
+    setItems((current) => current.map(({ id, file }) => ({ id, file, status: 'pending' })));
+    setProgress('');
+  };
+
+  const addFiles = (files: File[]) => {
+    const accepted: BatchItem[] = [];
+    const problems: string[] = [];
+    const room = MAX_FILES - items.length;
+    for (const file of files) {
+      const validationError = validateImageFile(file, { maxBytes: MAX_FILE_BYTES });
+      if (validationError) problems.push(`${file.name}: ${validationError}`);
+      else if (accepted.length >= room) problems.push(`${file.name}: se admite un máximo de ${MAX_FILES} imágenes por lote.`);
+      else accepted.push({ id: nextItemId++, file, status: 'pending' });
     }
+    setRejected(problems);
     setError('');
-    setResult(null);
-    setFile(nextFile);
-    setQuality(80);
-    if (isSupportedImageType(nextFile.type) && (nextFile.type !== 'image/webp' || webpSupported)) {
-      setOutputType(nextFile.type);
-    } else {
-      setOutputType('image/jpeg');
-    }
+    if (accepted.length === 0) return;
+    setItems((current) => [...current, ...accepted]);
+    if (!selected) setSelectedId(accepted[0].id);
+  };
+
+  const handleAddInput = (event: ChangeEvent<HTMLInputElement>) => {
+    addFiles(Array.from(event.target.files ?? []));
+    event.target.value = '';
+  };
+
+  const removeItem = (id: number) => {
+    if (processing) return;
+    setItems((current) => current.filter((item) => item.id !== id));
+    if (selectedId === id) setSelectedId(null);
   };
 
   const reset = () => {
     abortRef.current?.abort();
     abortRef.current = null;
-    setFile(null);
-    setResult(null);
+    setItems([]);
+    setSelectedId(null);
+    setRejected([]);
     setError('');
     setProgress('');
     setProcessing(false);
     setQuality(80);
-    setOutputType(webpSupported ? 'image/webp' : 'image/jpeg');
+    setOutputChoice('keep');
+    setResizeChoice('0');
   };
 
-  const processImage = async () => {
-    if (!file) return;
+  const processAll = async () => {
+    if (items.length === 0 || customInvalid) return;
     const controller = new AbortController();
     abortRef.current?.abort();
     abortRef.current = controller;
     setProcessing(true);
     setError('');
-    setResult(null);
+    const queue = items.filter((item) => item.status !== 'done');
 
     try {
-      const output = await compressImage(file, {
-        mimeType: outputType,
-        quality: quality / 100,
-        signal: controller.signal,
-        onProgress: setProgress,
-      });
-      if (controller.signal.aborted) return;
-      setResult({ ...output, mimeType: outputType, quality });
-      setProgress('Imagen lista');
-    } catch (caught) {
-      if (caught instanceof DOMException && caught.name === 'AbortError') {
+      for (const [index, item] of queue.entries()) {
+        if (controller.signal.aborted) break;
+        const mimeType = targetType(item.file);
+        const prefix = queue.length > 1 ? `Imagen ${index + 1} de ${queue.length} · ` : '';
+        setItems((current) => current.map((entry) => (entry.id === item.id ? { ...entry, status: 'processing', error: undefined } : entry)));
+        try {
+          const output = await compressImage(item.file, {
+            mimeType,
+            quality: quality / 100,
+            maxDimension: maxDimension || undefined,
+            signal: controller.signal,
+            onProgress: (message) => setProgress(prefix + message),
+          });
+          if (controller.signal.aborted) break;
+          setItems((current) => current.map((entry) => (entry.id === item.id ? { ...entry, status: 'done', result: { ...output, mimeType } } : entry)));
+        } catch (caught) {
+          if (caught instanceof DOMException && caught.name === 'AbortError') break;
+          const message = caught instanceof Error ? caught.message : 'No se pudo procesar la imagen.';
+          setItems((current) => current.map((entry) => (entry.id === item.id ? { ...entry, status: 'error', error: message } : entry)));
+        }
+      }
+      if (controller.signal.aborted) {
+        setItems((current) => current.map((entry) => (entry.status === 'processing' ? { ...entry, status: 'pending' } : entry)));
         setProgress('Operación cancelada');
       } else {
-        setError(caught instanceof Error ? caught.message : 'No se pudo procesar la imagen.');
-        setProgress('');
+        setProgress(queue.length > 1 ? 'Lote terminado' : 'Imagen lista');
       }
     } finally {
       if (abortRef.current === controller) {
@@ -131,6 +183,31 @@ export function CompressorPage() {
       }
     }
   };
+
+  const downloadAll = async () => {
+    if (done.length === 1) {
+      downloadBlob(done[0].result!.blob, outputName(done[0]));
+      return;
+    }
+    setZipping(true);
+    setError('');
+    try {
+      const { createZip } = await import('../lib/zip');
+      const zip = await createZip(done.map((item) => ({ name: outputName(item), data: item.result!.blob })));
+      downloadBlob(zip, 'pixeltools-imagenes.zip');
+    } catch (caught) {
+      setError(caught instanceof Error ? `No se pudo crear el ZIP: ${caught.message}` : 'No se pudo crear el ZIP.');
+    } finally {
+      setZipping(false);
+    }
+  };
+
+  const changeSetting = (apply: () => void) => {
+    apply();
+    clearResults();
+  };
+
+  const selectedResult = selected?.result;
 
   return (
     <>
@@ -144,38 +221,96 @@ export function CompressorPage() {
           icon="compress"
           eyebrow="Compresor de imágenes"
           title="Menos peso. La calidad que tú eliges."
-          description="Optimiza JPG, PNG y WebP sin subir archivos a ningún servidor. Ajusta la calidad, compara el resultado y descarga al instante."
+          description="Optimiza y redimensiona JPG, PNG y WebP, de una en una o por lotes, sin subir archivos a ningún servidor. Compara el resultado y descarga al instante."
         />
 
         <div className="tool-shell mx-auto mt-10 max-w-5xl">
-          {!file ? (
+          {items.length === 0 ? (
             <div className="p-4 sm:p-7">
-              {error && <div className="mb-4"><Notice tone="error">{error}</Notice></div>}
+              {rejected.length > 0 && <div className="mb-4"><RejectedNotice files={rejected} /></div>}
               <UploadZone
-                description="JPG, PNG o WebP · Máximo 25 MB · Hasta 32 megapíxeles"
-                onFile={handleFile}
+                description={`JPG, PNG o WebP · Hasta ${MAX_FILES} imágenes · Máximo 25 MB y 32 megapíxeles cada una`}
+                multiple
+                onFiles={addFiles}
               />
             </div>
           ) : (
             <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="border-b border-slate-200 p-5 sm:p-7 lg:border-r lg:border-b-0">
-                <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0 border-b border-slate-200 p-5 sm:p-7 lg:border-r lg:border-b-0">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-slate-900">{file.name}</p>
-                    <p className="mt-1 text-xs text-slate-500">Original · {formatBytes(file.size)}</p>
+                    <p className="truncate text-sm font-bold text-slate-900">
+                      {items.length === 1 ? items[0].file.name : `${items.length} imágenes en el lote`}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Original · {formatBytes(items.reduce((sum, item) => sum + item.file.size, 0))}
+                    </p>
                   </div>
-                  <button className="btn btn-ghost shrink-0" type="button" onClick={reset}>
-                    <Icon className="size-4" name="reset" /> Otra imagen
-                  </button>
+                  <div className="flex shrink-0 gap-1">
+                    <input
+                      ref={addInputRef}
+                      className="sr-only"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      onChange={handleAddInput}
+                    />
+                    <button
+                      className="btn btn-ghost"
+                      type="button"
+                      disabled={processing || items.length >= MAX_FILES}
+                      onClick={() => addInputRef.current?.click()}
+                    >
+                      <Icon className="size-4" name="plus" /> Añadir
+                    </button>
+                    <button className="btn btn-ghost" type="button" onClick={reset}>
+                      <Icon className="size-4" name="reset" /> Empezar de nuevo
+                    </button>
+                  </div>
                 </div>
 
-                <div className="mt-5 grid min-h-80 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                  <img className="max-h-[30rem] w-auto rounded-lg object-contain" src={outputUrl || inputUrl} alt={outputUrl ? 'Vista previa optimizada' : 'Vista previa original'} />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                  <span>{outputUrl ? 'Vista previa del resultado' : 'Vista previa original'}</span>
-                  {result && <span>{result.width} × {result.height} px</span>}
-                </div>
+                {rejected.length > 0 && <div className="mt-4"><RejectedNotice files={rejected} /></div>}
+
+                {selected && (
+                  <>
+                    <div className="mt-5 grid min-h-80 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                      <img
+                        className="max-h-[30rem] w-auto max-w-full rounded-lg object-contain"
+                        src={outputUrl || inputUrl}
+                        alt={outputUrl ? `Vista previa optimizada de ${selected.file.name}` : `Vista previa original de ${selected.file.name}`}
+                      />
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                      <span className="min-w-0 truncate">
+                        {outputUrl ? 'Resultado' : 'Original'}{items.length > 1 ? ` · ${selected.file.name}` : ''}
+                      </span>
+                      {selectedResult && (
+                        <span>
+                          {selectedResult.resized
+                            ? `${selectedResult.originalWidth} × ${selectedResult.originalHeight} → ${selectedResult.width} × ${selectedResult.height} px`
+                            : `${selectedResult.width} × ${selectedResult.height} px`}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {items.length > 1 && (
+                  <ul className="mt-5 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200" aria-label="Imágenes del lote">
+                    {items.map((item) => (
+                      <BatchRow
+                        key={item.id}
+                        item={item}
+                        selected={item.id === selected?.id}
+                        disabled={processing}
+                        onSelect={() => setSelectedId(item.id)}
+                        onRemove={() => removeItem(item.id)}
+                      />
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="flex flex-col p-5 sm:p-7">
@@ -186,13 +321,11 @@ export function CompressorPage() {
                   <select
                     id="output-format"
                     className="select-field"
-                    value={outputType}
+                    value={outputChoice}
                     disabled={processing}
-                    onChange={(event) => {
-                      setOutputType(event.target.value as SupportedImageType);
-                      clearResult();
-                    }}
+                    onChange={(event) => changeSetting(() => setOutputChoice(event.target.value as OutputChoice))}
                   >
+                    <option value="keep">Mantener el formato original</option>
                     <option value="image/jpeg">JPG — menor tamaño para fotografías</option>
                     <option value="image/png">PNG — transparencia y gráficos</option>
                     {webpSupported && <option value="image/webp">WebP — gran compresión</option>}
@@ -203,7 +336,7 @@ export function CompressorPage() {
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label className="field-label mb-0" htmlFor="quality">Calidad</label>
                     <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
-                      {outputType === 'image/png' ? 'Sin ajuste' : `${quality}%`}
+                      {allPng ? 'Sin ajuste' : `${quality}%`}
                     </span>
                   </div>
                   <input
@@ -214,81 +347,142 @@ export function CompressorPage() {
                     max="95"
                     step="1"
                     value={quality}
-                    disabled={processing || outputType === 'image/png'}
+                    disabled={processing || allPng}
                     aria-describedby="quality-help"
-                    onChange={(event) => {
-                      setQuality(Number(event.target.value));
-                      clearResult();
-                    }}
+                    onChange={(event) => changeSetting(() => setQuality(Number(event.target.value)))}
                   />
                   <div className="mt-2 flex justify-between text-[0.68rem] font-semibold text-slate-400">
                     <span>Menor peso</span><span>Mayor detalle</span>
                   </div>
                   <p id="quality-help" className="mt-3 text-xs leading-5 text-slate-500">
-                    {outputType === 'image/png'
-                      ? 'Canvas exporta PNG sin un control de calidad con pérdida.'
-                      : 'Entre 70% y 85% suele ofrecer un buen equilibrio.'}
+                    {allPng
+                      ? 'Canvas exporta PNG sin un control de calidad con pérdida. Reducir dimensiones sí aligera el archivo.'
+                      : 'Entre 70% y 85% suele ofrecer un buen equilibrio. No se aplica a las salidas PNG.'}
                   </p>
                 </div>
 
-                {outputType === 'image/jpeg' && (
+                <div className="mt-6">
+                  <label className="field-label" htmlFor="resize">Tamaño máximo</label>
+                  <select
+                    id="resize"
+                    className="select-field"
+                    value={resizeChoice}
+                    disabled={processing}
+                    aria-describedby="resize-help"
+                    onChange={(event) => changeSetting(() => setResizeChoice(event.target.value))}
+                  >
+                    <option value="0">Dimensiones originales</option>
+                    {RESIZE_PRESETS.map((side) => (
+                      <option key={side} value={side}>{side} px en el lado mayor</option>
+                    ))}
+                    <option value="custom">Personalizado…</option>
+                  </select>
+                  {resizeChoice === 'custom' && (
+                    <div className="mt-3">
+                      <label className="field-label" htmlFor="custom-side">Lado mayor en píxeles</label>
+                      <input
+                        id="custom-side"
+                        className="text-field"
+                        type="number"
+                        inputMode="numeric"
+                        min={16}
+                        max={12000}
+                        step={1}
+                        value={Number.isFinite(customSide) ? customSide : ''}
+                        disabled={processing}
+                        aria-invalid={customInvalid}
+                        onChange={(event) => changeSetting(() => setCustomSide(event.target.valueAsNumber))}
+                      />
+                      {customInvalid && <p className="mt-2 text-xs font-semibold text-red-700">Introduce un valor entero entre 16 y 12.000.</p>}
+                    </div>
+                  )}
+                  <p id="resize-help" className="mt-3 text-xs leading-5 text-slate-500">
+                    Mantiene la proporción y nunca amplía imágenes más pequeñas.
+                  </p>
+                </div>
+
+                {jpegLosesAlpha && (
                   <div className="mt-5"><Notice tone="warning">JPG no admite transparencia. Las áreas transparentes se rellenarán en blanco.</Notice></div>
                 )}
 
                 {error && <div className="mt-5"><Notice tone="error">{error}</Notice></div>}
+                {items.length === 1 && items[0].error && <div className="mt-5"><Notice tone="error">{items[0].error}</Notice></div>}
 
                 {processing && (
                   <div className="mt-6" role="status" aria-live="polite">
-                    <div className="mb-2 flex justify-between text-xs font-semibold text-slate-600">
-                      <span>{progress}</span><span>Procesando localmente</span>
+                    <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-slate-600">
+                      <span>{progress}</span><span className="shrink-0">Procesando localmente</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full w-2/3 animate-pulse rounded-full bg-linear-to-r from-blue-500 to-violet-500" />
+                      {items.length > 1 ? (
+                        <div
+                          className="h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-[width] duration-300"
+                          style={{ width: `${Math.max(6, (done.length / items.length) * 100)}%` }}
+                        />
+                      ) : (
+                        <div className="h-full w-2/3 animate-pulse rounded-full bg-linear-to-r from-blue-500 to-violet-500" />
+                      )}
                     </div>
                   </div>
                 )}
+                {!processing && progress && <p className="sr-only" role="status">{progress}</p>}
 
-                {result && currentSettingsMatch && (
+                {done.length > 0 && (
                   <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4" aria-live="polite">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-[0.68rem] font-bold uppercase tracking-wider text-slate-400">Original</p>
-                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(file.size)}</p>
+                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(totals.original)}</p>
                       </div>
                       <div>
                         <p className="text-[0.68rem] font-bold uppercase tracking-wider text-slate-400">Resultado</p>
-                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(result.blob.size)}</p>
+                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(totals.output)}</p>
                       </div>
                     </div>
-                    <div className={`mt-4 rounded-xl px-3 py-2 text-sm font-bold ${isRealReduction ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
-                      {isRealReduction
-                        ? `${reduction.toFixed(1).replace('.', ',')}% menos peso`
-                        : `${Math.abs(reduction).toFixed(1).replace('.', ',')}% más peso · no se considera comprimida`}
+                    <div className={`mt-4 rounded-xl px-3 py-2 text-sm font-bold ${totals.output < totals.original ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+                      {totals.output < totals.original
+                        ? `${formatPercent(totals.reduction)} menos peso${done.length > 1 ? ' en total' : ''}`
+                        : `${formatPercent(totals.reduction)} más peso · no se considera comprimida`}
                     </div>
-                    {!isRealReduction && (
-                      <p className="mt-3 text-xs leading-5 text-slate-600">Prueba una calidad menor o el formato WebP. Puedes descargar esta conversión, pero no reduce el archivo.</p>
+                    {done.length > 1 && (
+                      <p className="mt-3 text-xs leading-5 text-slate-600">
+                        {done.filter(isRealReduction).length} de {done.length} imágenes pesan menos que el original.
+                      </p>
+                    )}
+                    {done.length === 1 && !isRealReduction(done[0]) && (
+                      <p className="mt-3 text-xs leading-5 text-slate-600">Prueba una calidad menor, el formato WebP o un tamaño máximo menor. Puedes descargar esta conversión, pero no reduce el archivo.</p>
                     )}
                   </div>
                 )}
 
-                <div className="mt-auto pt-7">
-                  {result && outputUrl && currentSettingsMatch ? (
-                    <a
-                      className="btn btn-primary w-full"
-                      href={outputUrl}
-                      download={makeOutputName(file.name, outputType, isRealReduction ? 'comprimida' : 'convertida')}
+                <div className="mt-auto flex flex-col gap-2 pt-7">
+                  {pending.length > 0 && (
+                    <button className="btn btn-primary w-full" type="button" disabled={processing || customInvalid} onClick={processAll}>
+                      <Icon className="size-5" name="compress" />
+                      {items.length === 1
+                        ? 'Comprimir ahora'
+                        : done.length > 0
+                          ? pending.length === 1 ? 'Procesar la imagen restante' : `Procesar ${pending.length} restantes`
+                          : `Comprimir ${items.length} imágenes`}
+                    </button>
+                  )}
+                  {done.length > 0 && !processing && (
+                    <button
+                      className={`btn w-full ${pending.length > 0 ? 'btn-secondary' : 'btn-primary'}`}
+                      type="button"
+                      disabled={zipping}
+                      onClick={downloadAll}
                     >
                       <Icon className="size-5" name="download" />
-                      Descargar {isRealReduction ? 'imagen comprimida' : `resultado ${formatLabel}`}
-                    </a>
-                  ) : (
-                    <button className="btn btn-primary w-full" type="button" disabled={processing} onClick={processImage}>
-                      <Icon className="size-5" name="compress" />
-                      Comprimir ahora
+                      {done.length === 1
+                        ? `Descargar ${isRealReduction(done[0]) ? 'imagen comprimida' : `resultado ${FORMAT_LABELS[done[0].result!.mimeType]}`}`
+                        : zipping
+                          ? 'Preparando el ZIP…'
+                          : `Descargar ${done.length} imágenes (ZIP)`}
                     </button>
                   )}
                   {processing && (
-                    <button className="btn btn-ghost mt-2 w-full" type="button" onClick={() => abortRef.current?.abort()}>
+                    <button className="btn btn-ghost w-full" type="button" onClick={() => abortRef.current?.abort()}>
                       Cancelar operación
                     </button>
                   )}
@@ -302,9 +496,9 @@ export function CompressorPage() {
       <section className="page-container pb-16">
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            ['shield', 'Privado de verdad', 'El archivo no se envía a PixelTools ni se almacena en un servidor.'],
-            ['sparkles', 'Resultado bajo control', 'Tú eliges formato y calidad; mostramos el peso real antes de descargar.'],
-            ['image', 'Compatible y práctico', 'Funciona con JPG, PNG y WebP en navegadores modernos.'],
+            ['shield', 'Privado de verdad', 'Los archivos no se envían a PixelTools ni se almacenan en un servidor.'],
+            ['sparkles', 'Resultado bajo control', 'Tú eliges formato, calidad y tamaño; mostramos el peso real antes de descargar.'],
+            ['image', 'Por lotes', `Procesa hasta ${MAX_FILES} imágenes seguidas y descárgalas juntas en un ZIP.`],
           ].map(([icon, title, text]) => (
             <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <Icon className="size-5 text-blue-600" name={icon as 'shield'} />
@@ -316,5 +510,78 @@ export function CompressorPage() {
       </section>
       <AdPlaceholder />
     </>
+  );
+}
+
+function RejectedNotice({ files }: { files: string[] }) {
+  return (
+    <Notice tone="error">
+      {files.length === 1 ? (
+        files[0]
+      ) : (
+        <>
+          <p className="font-bold">{files.length} archivos no se añadieron:</p>
+          <ul className="mt-1 list-disc pl-5">
+            {files.slice(0, 5).map((message) => <li key={message} className="break-words">{message}</li>)}
+            {files.length > 5 && <li>Y {files.length - 5} más.</li>}
+          </ul>
+        </>
+      )}
+    </Notice>
+  );
+}
+
+interface BatchRowProps {
+  item: BatchItem;
+  selected: boolean;
+  disabled: boolean;
+  onSelect: () => void;
+  onRemove: () => void;
+}
+
+function BatchRow({ item, selected, disabled, onSelect, onRemove }: BatchRowProps) {
+  const { result } = item;
+  const reduced = isRealReduction(item);
+  return (
+    <li className={`flex items-center gap-2 px-3 py-2.5 ${selected ? 'bg-blue-50/70' : 'bg-white'}`}>
+      <button
+        className="min-w-0 flex-1 rounded-lg px-1 py-0.5 text-left"
+        type="button"
+        aria-current={selected ? 'true' : undefined}
+        onClick={onSelect}
+      >
+        <span className="block truncate text-sm font-semibold text-slate-900">{item.file.name}</span>
+        <span className="mt-0.5 block text-xs text-slate-500">
+          {formatBytes(item.file.size)}
+          {result && ` → ${formatBytes(result.blob.size)}`}
+          {item.status === 'processing' && ' · procesando…'}
+          {item.status === 'error' && <span className="text-red-700"> · {item.error}</span>}
+        </span>
+      </button>
+      {result && (
+        <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[0.7rem] font-bold ${reduced ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+          {reduced ? '−' : '+'}{formatPercent(reductionPercent(item.file.size, result.blob.size))}
+        </span>
+      )}
+      {result && (
+        <button
+          className="btn btn-ghost size-9 min-h-0 shrink-0 p-0"
+          type="button"
+          aria-label={`Descargar ${outputName(item)}`}
+          onClick={() => downloadBlob(result.blob, outputName(item))}
+        >
+          <Icon className="size-4" name="download" />
+        </button>
+      )}
+      <button
+        className="btn btn-ghost size-9 min-h-0 shrink-0 p-0"
+        type="button"
+        disabled={disabled}
+        aria-label={`Quitar ${item.file.name} del lote`}
+        onClick={onRemove}
+      >
+        <Icon className="size-4" name="x" />
+      </button>
+    </li>
   );
 }

@@ -57,3 +57,16 @@ export function makeOutputName(
 export function isSupportedImageType(value: string): value is SupportedImageType {
   return SUPPORTED_IMAGE_TYPES.includes(value as SupportedImageType);
 }
+
+/** Descarga un Blob sin mantener Object URL vivos más de lo necesario. */
+export function downloadBlob(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  link.rel = 'noopener';
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+}

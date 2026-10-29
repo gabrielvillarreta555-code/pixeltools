@@ -1,9 +1,23 @@
 # PixelTools
 
 Primera versión funcional de una plataforma pública de herramientas para
-imágenes, desarrollada para Blue Lab Studios. Comprime JPG, PNG y WebP y elimina
-fondos con un modelo ONNX ligero. Las dos operaciones se realizan localmente en
-el navegador.
+imágenes, desarrollada para Blue Lab Studios. Comprime y redimensiona JPG, PNG y
+WebP (también por lotes, con descarga en ZIP) y elimina fondos con un modelo ONNX
+ligero, con fondo transparente, de color o desenfocado y recorte automático al
+sujeto. Las operaciones se realizan localmente en el navegador y la web se puede
+instalar como aplicación (PWA) que funciona sin conexión.
+
+## Funciones
+
+- **Compresor:** hasta 30 imágenes por lote; formato original, JPG, PNG o WebP;
+  calidad ajustable; tamaño máximo por lado (preajustes o personalizado, nunca
+  amplía); resumen de peso total; descarga individual o en un ZIP generado en el
+  navegador (`src/lib/zip.ts`, sin dependencias).
+- **Eliminador de fondos:** U²-Net pequeño; fondo transparente, de color o
+  desenfocado a partir del original; recorte al sujeto con margen; descarga en
+  PNG o, con fondo opaco, JPG.
+- **PWA:** manifest con iconos PNG y *maskable*, service worker generado en el
+  build y avisos de «sin conexión» y «versión nueva disponible».
 
 ## Tecnologías
 
@@ -77,7 +91,9 @@ npm test
 ```
 
 Las pruebas automatizadas cubren validación de tipos y tamaños, cálculo de
-reducción, formato de bytes y nombres de descarga. La compilación TypeScript y el
+reducción, formato de bytes, nombres de descarga, redimensión proporcional,
+cálculo del recorte al sujeto y el generador ZIP (CRC-32, cabeceras y nombres
+duplicados). La compilación TypeScript y el
 build de producción son comprobaciones adicionales. La inferencia ONNX y Canvas
 requieren una prueba manual en navegador porque dependen de WebAssembly, memoria,
 codificadores y GPU/CPU del dispositivo.
@@ -108,6 +124,25 @@ Lista manual recomendada antes de un lanzamiento:
 Los archivos `_headers`, las rutas prerenderizadas y `404.html` ya se copian a
 la salida. No se requiere un Worker ni funciones de servidor.
 
+## Modo sin conexión (PWA)
+
+`scripts/generate-service-worker.mjs` se ejecuta al final de `npm run build` y
+escribe `dist/sw.js`:
+
+- Precarga el HTML de cada ruta, JS, CSS, iconos y manifest, así que el
+  compresor funciona sin conexión desde la primera visita.
+- El modelo ONNX y el runtime WASM (~16 MB) se guardan solo la primera vez que se
+  usa el eliminador, para no imponer esa descarga a quien no lo necesita.
+- Navegación con red primero y caché como respaldo; los nombres de caché llevan
+  un hash del contenido y las versiones antiguas se borran al activar.
+- Cuando hay una versión nueva instalada, la interfaz ofrece «Actualizar ahora».
+- Solo se registra en producción (`import.meta.env.PROD`). Para probarlo en
+  local: `npm run build && npm run preview`.
+- El service worker nunca guarda fotografías: solo archivos de la aplicación.
+
+`_headers` sirve `sw.js` y el manifest con `Cache-Control: no-cache` para que las
+actualizaciones se detecten.
+
 ## Privacidad y seguridad
 
 - Los bytes de la fotografía no se envían a una API.
@@ -120,7 +155,13 @@ la salida. No se requiere un Worker ni funciones de servidor.
 
 ## Límites conocidos
 
-- Compresor: 25 MB, 32 megapíxeles y 12.000 px por lado.
+- Compresor: 25 MB, 32 megapíxeles y 12.000 px por lado por imagen; 30 imágenes
+  por lote, procesadas una tras otra. Los resultados del lote se mantienen en
+  memoria hasta reiniciar.
+- El ZIP usa el método STORE (sin compresión adicional, las imágenes ya están
+  comprimidas) y no admite más de 4 GB.
+- El fondo desenfocado se obtiene reduciendo y ampliando el original (compatible
+  con Safari, donde `CanvasRenderingContext2D.filter` no está disponible).
 - Eliminador: 15 MB y 24 megapíxeles de entrada; la salida se limita a 16 MP y
   4.096 px por lado para controlar memoria.
 - Canvas vuelve a codificar la imagen y elimina metadatos EXIF. La orientación se
@@ -139,7 +180,7 @@ la salida. No se requiere un Worker ni funciones de servidor.
 - Pruebas E2E automatizadas en navegadores y dispositivos reales.
 - Procesamiento en Web Worker/OffscreenCanvas donde mejore compatibilidad.
 - Refinado manual de máscara y comparación con deslizador.
-- Redimensión opcional en el compresor y procesamiento por lotes.
+- Recorte manual y eliminación de fondos por lotes.
 - Analítica respetuosa con la privacidad y anuncios solo tras implementar el
   consentimiento legal necesario.
 - Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,
