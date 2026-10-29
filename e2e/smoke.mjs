@@ -5,7 +5,9 @@
 // Arranca `vite preview` sobre dist/, genera las imágenes de prueba en el propio
 // navegador y recorre compresor, eliminador de fondos, PWA sin conexión y móvil.
 // E2E_REPEAT=n repite la batería completa n veces para detectar inestabilidad y
-// E2E_ONLY=escenario1,escenario2 limita la ejecución a esos escenarios.
+// E2E_ONLY=escenario1,escenario2 limita la ejecución a esos escenarios y
+// E2E_BASE_URL=https://… prueba un sitio ya desplegado (o `wrangler pages dev`)
+// en lugar de arrancar `vite preview`.
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
@@ -23,7 +25,9 @@ function check(condition, message) {
   }
 }
 
-if (!existsSync('dist/sw.js')) {
+const BASE_URL = process.env.E2E_BASE_URL?.replace(/\/$/, '');
+
+if (!BASE_URL && !existsSync('dist/sw.js')) {
   console.error('Falta dist/. Ejecuta primero `npm run build`.');
   process.exit(1);
 }
@@ -364,8 +368,9 @@ async function mobile(browser, base, fx) {
 
 // ---------- ejecución ----------
 
-const server = await preview({ logLevel: 'silent', preview: { port: 4317, strictPort: false } });
-const base = server.resolvedUrls.local[0].replace(/\/$/, '');
+const server = BASE_URL ? null : await preview({ logLevel: 'silent', preview: { port: 4317, strictPort: false } });
+const base = BASE_URL || server.resolvedUrls.local[0].replace(/\/$/, '');
+console.log(`Probando ${base}`);
 const browser = await chromium.launch();
 try {
   const fx = await createFixtures(browser);
@@ -385,7 +390,7 @@ try {
   }
 } finally {
   await browser.close();
-  await server.close();
+  await server?.close();
 }
 
 if (failures.length) {
