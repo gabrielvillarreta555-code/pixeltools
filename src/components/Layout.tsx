@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { AppStatus } from './AppStatus';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 
@@ -20,6 +21,7 @@ export function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <a className="skip-link" href="#contenido">Saltar al contenido</a>
+      <AppStatus />
       <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-[#fbfcff]/90 backdrop-blur-xl">
         <div className="page-container flex h-18 items-center justify-between">
           <Logo />

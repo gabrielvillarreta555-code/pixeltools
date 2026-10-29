@@ -82,6 +82,19 @@ export function validateDimensions(width: number, height: number, maxPixels = MA
   }
 }
 
+/** Escala proporcionalmente para que ningún lado supere `maxSide`. Nunca amplía. */
+export function fitWithin(width: number, height: number, maxSide?: number) {
+  if (!maxSide || maxSide <= 0 || Math.max(width, height) <= maxSide) {
+    return { width, height, resized: false };
+  }
+  const scale = maxSide / Math.max(width, height);
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+    resized: true,
+  };
+}
+
 export function canvasToBlob(
   canvas: HTMLCanvasElement,
   mimeType: SupportedImageType,
@@ -97,7 +110,11 @@ export function canvasToBlob(
           return;
         }
         if (!blob) {
-          reject(new ImageProcessingError('El navegador no pudo generar la imagen. Prueba con otro formato.'));
+          reject(
+            new ImageProcessingError(
+              `El navegador no pudo generar la imagen (${canvas.width} × ${canvas.height} px). Prueba con otro formato o un tamaño máximo menor; algunos teléfonos limitan la memoria disponible para imágenes grandes.`,
+            ),
+          );
           return;
         }
         if (blob.type && blob.type !== mimeType) {
@@ -115,6 +132,8 @@ export function canvasToBlob(
 export interface CompressOptions {
   mimeType: SupportedImageType;
   quality: number;
+  /** Lado máximo en píxeles; si se omite se conservan las dimensiones originales. */
+  maxDimension?: number;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
 }
@@ -123,6 +142,9 @@ export interface CompressionOutput {
   blob: Blob;
   width: number;
   height: number;
+  originalWidth: number;
+  originalHeight: number;
+  resized: boolean;
 }
 
 export async function compressImage(file: File, options: CompressOptions): Promise<CompressionOutput> {
@@ -133,13 +155,23 @@ export async function compressImage(file: File, options: CompressOptions): Promi
   try {
     validateDimensions(decoded.width, decoded.height);
     throwIfAborted(options.signal);
-    canvas.width = decoded.width;
-    canvas.height = decoded.height;
+    const target = fitWithin(decoded.width, decoded.height, options.maxDimension);
+    canvas.width = target.width;
+    canvas.height = target.height;
     const context = canvas.getContext('2d', { alpha: options.mimeType !== 'image/jpeg' });
-    if (!context) throw new ImageProcessingError('Canvas no está disponible en este navegador.');
+    if (!context) {
+      // Safari en iOS devuelve null si el lienzo supera su límite de memoria (~16,7 MP).
+      throw new ImageProcessingError(
+        `Este navegador no tiene memoria suficiente para un lienzo de ${target.width} × ${target.height} px. Elige un tamaño máximo menor.`,
+      );
+    }
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
 
     options.onProgress?.('Preparando los píxeles…');
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    // Cede el hilo para que la interfaz pinte el progreso. setTimeout también
+    // avanza con la pestaña en segundo plano, a diferencia de requestAnimationFrame.
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
     throwIfAborted(options.signal);
 
     if (options.mimeType === 'image/jpeg') {
@@ -147,11 +179,21 @@ export async function compressImage(file: File, options: CompressOptions): Promi
       context.fillRect(0, 0, canvas.width, canvas.height);
     }
     context.drawImage(decoded.source, 0, 0, canvas.width, canvas.height);
+    // El original decodificado ya no hace falta: liberarlo antes de codificar
+    // reduce el pico de memoria (hasta 128 MB con una imagen de 32 MP).
+    decoded.release();
 
     options.onProgress?.('Optimizando el archivo…');
     const quality = options.mimeType === 'image/png' ? undefined : options.quality;
     const blob = await canvasToBlob(canvas, options.mimeType, quality, options.signal);
-    return { blob, width: decoded.width, height: decoded.height };
+    return {
+      blob,
+      width: target.width,
+      height: target.height,
+      originalWidth: decoded.width,
+      originalHeight: decoded.height,
+      resized: target.resized,
+    };
   } finally {
     decoded.release();
     canvas.width = 0;
