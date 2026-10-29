@@ -69,9 +69,13 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 
 Variables documentadas en `.env.example`:
 
-- `VITE_SITE_URL`: dominio público usado por el SEO en cliente.
+- `SITE_URL` (o su equivalente `VITE_SITE_URL`): dominio público definitivo.
+  Solo con él se permite indexar; sin él el build es de prueba (`noindex`,
+  `robots.txt` bloqueante, canonical a `CF_PAGES_URL`). No reintroducir un dominio
+  por defecto: `pixeltools.pages.dev` no es de este proyecto.
 - `VITE_CONTACT_EMAIL`: activa el contacto por `mailto:`.
-- `SITE_URL`: dominio usado por el generador SEO durante el build.
+- `public/_headers` debe tener una sola regla `/*`; Cloudflare Pages no combina
+  reglas `/*` repetidas y el modo prueba añade `X-Robots-Tag` dentro de ella.
 
 En Cloudflare Pages: comando `npm run build`, salida `dist`. Antes de publicar,
 configurar el dominio/correo reales y revisar los textos legales.

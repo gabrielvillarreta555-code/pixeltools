@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 
-const DEFAULT_SITE_URL = 'https://pixeltools.pages.dev';
+// Vacío mientras no haya dominio definitivo: entonces se usa la dirección actual
+// (por ejemplo, un despliegue de prueba en *.pages.dev) y no se permite indexar.
+const CONFIGURED_SITE_URL = import.meta.env.VITE_SITE_URL;
 
 function setMeta(selector: string, attributes: Record<string, string>) {
   let element = document.head.querySelector<HTMLMetaElement>(selector);
@@ -20,11 +22,12 @@ interface SeoProps {
 
 export function Seo({ title, description, path, noIndex = false }: SeoProps) {
   useEffect(() => {
-    const siteUrl = (import.meta.env.VITE_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '');
+    const siteUrl = CONFIGURED_SITE_URL || window.location.origin;
     const url = `${siteUrl}${path === '/' ? '/' : path}`;
+    const robots = !CONFIGURED_SITE_URL ? 'noindex,nofollow' : noIndex ? 'noindex,follow' : 'index,follow,max-image-preview:large';
     document.title = title;
     setMeta('meta[name="description"]', { name: 'description', content: description });
-    setMeta('meta[name="robots"]', { name: 'robots', content: noIndex ? 'noindex,follow' : 'index,follow,max-image-preview:large' });
+    setMeta('meta[name="robots"]', { name: 'robots', content: robots });
     setMeta('meta[property="og:title"]', { property: 'og:title', content: title });
     setMeta('meta[property="og:description"]', { property: 'og:description', content: description });
     setMeta('meta[property="og:url"]', { property: 'og:url', content: url });

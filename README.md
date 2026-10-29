@@ -66,7 +66,7 @@ desde `onnxruntime-web` antes de iniciar el servidor.
 Variables opcionales (consulta `.env.example`):
 
 ```bash
-VITE_SITE_URL=https://dominio-final.example
+SITE_URL=https://dominio-final.example
 VITE_CONTACT_EMAIL=contacto@dominio-final.example
 ```
 
@@ -79,10 +79,15 @@ SITE_URL=https://dominio-final.example npm run build
 ```
 
 El resultado se escribe en `dist/`. Después de Vite, el script SEO crea HTML
-estático con título, descripción, canonical y Open Graph para cada ruta. También
-genera `sitemap.xml`, `robots.txt` y `404.html`. `SITE_URL` debe coincidir con el
-dominio público; si se omite se usa provisionalmente
-`https://pixeltools.pages.dev`.
+estático con título, descripción, canonical y Open Graph para cada ruta, además
+de `robots.txt` y `404.html`.
+
+**Indexación:** solo se permite cuando `SITE_URL` (o su equivalente
+`VITE_SITE_URL`) está configurado. Sin dominio, el build entra en modo prueba:
+usa la URL del despliegue (`CF_PAGES_URL` en Cloudflare Pages), marca todas las
+páginas `noindex,nofollow`, añade `X-Robots-Tag` en `_headers`, escribe un
+`robots.txt` que lo bloquea todo y no genera `sitemap.xml`. Así un despliegue de
+prueba en `*.pages.dev` no aparece en buscadores ni apunta a un dominio ajeno.
 
 ## Pruebas
 
@@ -130,14 +135,28 @@ Lista manual recomendada antes de un lanzamiento:
 
 ## Cloudflare Pages
 
-1. Sube el repositorio a tu proveedor Git autorizado.
-2. Crea un proyecto de Pages conectado al repositorio.
-3. Usa `npm run build` como comando de compilación.
-4. Usa `dist` como directorio de salida.
-5. Configura `SITE_URL`, `VITE_SITE_URL` y `VITE_CONTACT_EMAIL` en las variables
-   de producción.
-6. Mantén Node 20.19 o posterior (`NODE_VERSION=20.19.0`, por ejemplo).
-7. Revisa la política de privacidad, los términos y el correo antes de desplegar.
+Configuración del proyecto:
+
+- Comando de compilación: `npm run build`. Directorio de salida: `dist`.
+- Node: `.node-version` fija la versión usada en local (22.22.0).
+- Despliegue de prueba: no definas `SITE_URL`; el sitio queda en modo `noindex`.
+- Publicación definitiva: define `SITE_URL` y `VITE_CONTACT_EMAIL` en las
+  variables de **Production** y revisa antes privacidad, términos y correo.
+
+Atención: al pulsar **Save and Deploy**, Cloudflare despliega en el acto la rama
+de producción elegida en `<proyecto>.pages.dev`. Elige como producción la rama
+que de verdad quieras mostrar en esa dirección.
+
+Comportamiento comprobado con `wrangler pages dev` (emulador de Pages):
+`/ruta` redirige con 308 a `/ruta/`, las rutas inexistentes devuelven `404.html`
+con estado 404, `_headers` aplica COOP/COEP y caché inmutable a `/assets`,
+`/models` y `/ort`, y el service worker funciona con esas redirecciones.
+
+Prueba E2E contra un despliegue real o contra el emulador:
+
+```bash
+E2E_BASE_URL=https://<despliegue>.pages.dev npm run test:e2e
+```
 
 Los archivos `_headers`, las rutas prerenderizadas y `404.html` ya se copian a
 la salida. No se requiere un Worker ni funciones de servidor.
