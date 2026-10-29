@@ -12,28 +12,28 @@ export function ContactPage() {
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (!configuredEmail) return;
-    const subject = encodeURIComponent(`Consulta de PixelTools${name ? ` — ${name}` : ''}`);
+    const subject = encodeURIComponent(`Consulta de Vélix Blue${name ? ` — ${name}` : ''}`);
     const body = encodeURIComponent(message);
     window.location.href = `mailto:${configuredEmail}?subject=${subject}&body=${body}`;
   };
 
   return (
     <>
-      <Seo title="Contacto | PixelTools" description="Ponte en contacto con el equipo de PixelTools y Blue Lab Studios." path="/contacto" />
+      <Seo title="Contacto | Vélix Blue" description="Ponte en contacto con el equipo de Vélix Blue y Blue Lab Studios." path="/contacto" />
       <section className="page-container grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <span className="eyebrow">Hablemos</span>
-          <h1 className="mt-5 text-balance text-4xl font-extrabold tracking-[-0.045em] text-slate-950 sm:text-5xl">¿Podemos ayudarte?</h1>
-          <p className="mt-5 max-w-md text-base leading-7 text-slate-600">Comparte una incidencia, sugerencia o consulta sobre PixelTools. El formulario abre tu aplicación de correo y no almacena el mensaje.</p>
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <Icon className="size-5 text-blue-600" name="shield" />
-            <p className="mt-3 text-sm font-bold text-slate-900">Canal sin seguimiento</p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">No hay un formulario externo ni un proveedor que recopile los campos en esta versión.</p>
+          <h1 className="mt-5 text-balance text-4xl font-extrabold tracking-[-0.045em] text-white sm:text-5xl">¿Podemos ayudarte?</h1>
+          <p className="mt-5 max-w-md text-base leading-7 text-mist">Comparte una incidencia, sugerencia o consulta sobre Vélix Blue. El formulario abre tu aplicación de correo y no almacena el mensaje.</p>
+          <div className="mt-8 rounded-2xl border border-line bg-panel p-5 shadow-sm">
+            <Icon className="size-5 text-electric-light" name="shield" />
+            <p className="mt-3 text-sm font-bold text-white">Canal sin seguimiento</p>
+            <p className="mt-2 text-sm leading-6 text-mist">No hay un formulario externo ni un proveedor que recopile los campos en esta versión.</p>
           </div>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-8">
+        <div className="rounded-3xl border border-line bg-panel p-6 shadow-[0_20px_60px_rgba(0,0,0,0.3)] sm:p-8">
           {!configuredEmail && (
-            <div className="mb-6"><Notice tone="warning">El canal está pendiente de configurar. Define <code className="rounded bg-amber-100 px-1">VITE_CONTACT_EMAIL</code> durante la compilación para activar el envío por correo.</Notice></div>
+            <div className="mb-6"><Notice tone="warning">El canal está pendiente de configurar. Define <code className="rounded bg-white/10 px-1">VITE_CONTACT_EMAIL</code> durante la compilación para activar el envío por correo.</Notice></div>
           )}
           <form onSubmit={submit}>
             <div>

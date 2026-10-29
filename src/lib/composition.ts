@@ -6,6 +6,8 @@ const BACKDROP_SIDE = 48;
 export type BackgroundFill =
   | { kind: 'transparent' }
   | { kind: 'color'; color: string }
+  | { kind: 'gradient'; from: string; to: string }
+  | { kind: 'image'; image: Blob }
   | { kind: 'blur' };
 
 export interface ComposeOptions {
@@ -70,6 +72,7 @@ export async function composeCutout(
 
   const canvas = document.createElement('canvas');
   let backdropImage: DecodedImage | null = null;
+  let customImage: DecodedImage | null = null;
   try {
     canvas.width = region.width;
     canvas.height = region.height;
@@ -85,6 +88,21 @@ export async function composeCutout(
     if (background.kind === 'color' || (background.kind === 'transparent' && mimeType === 'image/jpeg')) {
       context.fillStyle = background.kind === 'color' ? background.color : '#ffffff';
       context.fillRect(0, 0, region.width, region.height);
+    } else if (background.kind === 'gradient') {
+      // Degradado diagonal suave de arriba a la izquierda hacia abajo a la derecha.
+      const gradient = context.createLinearGradient(0, 0, region.width * 0.35, region.height);
+      gradient.addColorStop(0, background.from);
+      gradient.addColorStop(1, background.to);
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, region.width, region.height);
+    } else if (background.kind === 'image') {
+      customImage = await decodeImage(background.image, signal);
+      // Cubre todo el lienzo recortando lo que sobra, centrado.
+      const scale = Math.max(region.width / customImage.width, region.height / customImage.height);
+      const width = customImage.width * scale;
+      const height = customImage.height * scale;
+      context.drawImage(customImage.source, (region.width - width) / 2, (region.height - height) / 2, width, height);
+      customImage.release();
     } else if (background.kind === 'blur') {
       backdropImage = await decodeImage(backdrop, signal);
       context.drawImage(backdropImage.source, -region.x, -region.y, fullWidth, fullHeight);
@@ -99,6 +117,7 @@ export async function composeCutout(
   } finally {
     decoded.release();
     backdropImage?.release();
+    customImage?.release();
     canvas.width = 0;
     canvas.height = 0;
   }

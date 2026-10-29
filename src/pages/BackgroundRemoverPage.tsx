@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
@@ -19,13 +19,28 @@ const SWATCHES = [
   ['#f97316', 'Naranja'],
   ['#fde68a', 'Amarillo'],
 ] as const;
+const GRADIENTS = [
+  ['noche', 'Noche', '#0b1430', '#2f7bff'],
+  ['cielo', 'Cielo', '#60a5fa', '#e0f2fe'],
+  ['atardecer', 'Atardecer', '#f97316', '#db2777'],
+  ['menta', 'Menta', '#0d9488', '#a7f3d0'],
+  ['lavanda', 'Lavanda', '#7c3aed', '#f0abfc'],
+  ['grafito', 'Grafito', '#111827', '#6b7280'],
+] as const;
+const BACKGROUND_OPTIONS = [
+  ['transparent', 'Transparente'],
+  ['color', 'Color'],
+  ['gradient', 'Degradado'],
+  ['image', 'Imagen'],
+  ['blur', 'Desenfoque'],
+] as const;
 // Espera breve antes de recomponer: el selector de color emite muchos cambios
 // seguidos y cada composición reserva un lienzo del tamaño del resultado.
 const COMPOSE_DELAY_MS = 120;
 
-type BackgroundChoice = 'transparent' | 'color' | 'blur';
+type BackgroundChoice = (typeof BACKGROUND_OPTIONS)[number][0];
 type ExportType = 'image/png' | 'image/jpeg';
-type ComposedResult = ComposeOutput & { background: BackgroundChoice; mimeType: ExportType };
+type ComposedResult = ComposeOutput & { transparent: boolean; mimeType: ExportType; cropped: boolean; fillKey: string };
 
 export default function BackgroundRemoverPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -39,10 +54,28 @@ export default function BackgroundRemoverPage() {
   const [exportType, setExportType] = useState<ExportType>('image/png');
   const [composed, setComposed] = useState<ComposedResult | null>(null);
   const [composing, setComposing] = useState(false);
+  const [gradientId, setGradientId] = useState<string>(GRADIENTS[0][0]);
+  const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
+  const [comparePosition, setComparePosition] = useState(50);
   const abortRef = useRef<AbortController | null>(null);
   const inputUrl = useObjectUrl(file);
   const outputUrl = useObjectUrl(composed?.blob);
-  const effectiveType: ExportType = backgroundChoice === 'transparent' ? 'image/png' : exportType;
+  // Con «Imagen» pero sin imagen elegida todavía, el fondo sigue transparente.
+  const fill: BackgroundFill = useMemo(() => {
+    if (backgroundChoice === 'color') return { kind: 'color', color };
+    if (backgroundChoice === 'gradient') {
+      const [, , from, to] = GRADIENTS.find(([id]) => id === gradientId) ?? GRADIENTS[0];
+      return { kind: 'gradient', from, to };
+    }
+    if (backgroundChoice === 'image') return backgroundImage ? { kind: 'image', image: backgroundImage } : { kind: 'transparent' };
+    if (backgroundChoice === 'blur') return { kind: 'blur' };
+    return { kind: 'transparent' };
+  }, [backgroundChoice, color, gradientId, backgroundImage]);
+  const transparent = fill.kind === 'transparent';
+  // Identifica el fondo aplicado (útil para pruebas y lectores de estado).
+  const fillKey =
+    fill.kind === 'color' ? `color:${fill.color}` : fill.kind === 'gradient' ? `gradient:${gradientId}` : fill.kind === 'image' ? `image:${backgroundImage?.name}` : fill.kind;
+  const effectiveType: ExportType = transparent ? 'image/png' : exportType;
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
   const lowMemory = typeof memory === 'number' && memory < 4;
   const wasmAvailable = typeof WebAssembly !== 'undefined';
@@ -56,21 +89,19 @@ export default function BackgroundRemoverPage() {
       return;
     }
     const controller = new AbortController();
-    const background: BackgroundFill =
-      backgroundChoice === 'color' ? { kind: 'color', color } : { kind: backgroundChoice };
     // Se marca de inmediato para que no se pueda descargar el resultado anterior
     // con el nombre o formato de los ajustes nuevos.
     setComposing(true);
     setError('');
     const timer = setTimeout(() => {
       composeCutout(result.blob, result.backdrop, result.subject, {
-        background,
+        background: fill,
         crop,
         mimeType: effectiveType,
         signal: controller.signal,
       })
         .then((output) => {
-          if (!controller.signal.aborted) setComposed({ ...output, background: backgroundChoice, mimeType: effectiveType });
+          if (!controller.signal.aborted) setComposed({ ...output, transparent, mimeType: effectiveType, cropped: crop, fillKey });
         })
         .catch((caught) => {
           if (controller.signal.aborted) return;
@@ -85,7 +116,7 @@ export default function BackgroundRemoverPage() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [result, backgroundChoice, color, crop, effectiveType]);
+  }, [result, fill, fillKey, transparent, crop, effectiveType]);
 
   const handleFiles = ([nextFile]: File[]) => {
     abortRef.current?.abort();
@@ -109,8 +140,22 @@ export default function BackgroundRemoverPage() {
     setProgress({ message: '', percent: 0 });
     setProcessing(false);
     setBackgroundChoice('transparent');
+    setBackgroundImage(null);
     setCrop(false);
     setExportType('image/png');
+  };
+
+  const chooseBackgroundImage = (event: ChangeEvent<HTMLInputElement>) => {
+    const next = event.target.files?.[0];
+    event.target.value = '';
+    if (!next) return;
+    const validationError = validateImageFile(next, { maxBytes: MAX_FILE_BYTES });
+    if (validationError) {
+      setError(`Imagen de fondo: ${validationError}`);
+      return;
+    }
+    setBackgroundImage(next);
+    setBackgroundChoice('image');
   };
 
   const removeBackground = async () => {
@@ -147,8 +192,8 @@ export default function BackgroundRemoverPage() {
   return (
     <>
       <Seo
-        title="Eliminar el fondo de una imagen en privado | PixelTools"
-        description="Quita fondos con inteligencia artificial directamente en tu navegador y descarga un PNG transparente."
+        title="Eliminar el fondo de una imagen en privado | Vélix Blue"
+        description="Quita fondos con inteligencia artificial en tu navegador y cámbialos por transparencia, un color, un degradado, una imagen o un desenfoque."
         path="/eliminar-fondo"
       />
       <section className="page-container pb-12 pt-14 sm:pt-20">
@@ -156,7 +201,7 @@ export default function BackgroundRemoverPage() {
           icon="scissors"
           eyebrow="Eliminador de fondos"
           title="Tu sujeto, sin distracciones."
-          description="La inteligencia artificial separa el elemento principal del fondo en tu propio dispositivo. Déjalo transparente, ponle un color o desenfoca el original. El primer uso descarga un modelo ligero de 4,6 MB."
+          description="La inteligencia artificial separa el elemento principal del fondo en tu propio dispositivo. Déjalo transparente o ponle un color, un degradado, tu propia imagen o un desenfoque. El primer uso descarga un modelo ligero de 4,6 MB."
         />
 
         <div className="tool-shell mx-auto mt-10 max-w-5xl">
@@ -175,72 +220,140 @@ export default function BackgroundRemoverPage() {
             <div className="p-5 sm:p-7">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-900">{file.name}</p>
-                  <p className="mt-1 text-xs text-slate-500">{formatBytes(file.size)} · procesamiento local</p>
+                  <p className="truncate text-sm font-bold text-white">{file.name}</p>
+                  <p className="mt-1 text-xs text-mist">{formatBytes(file.size)} · procesamiento local</p>
                 </div>
                 <button className="btn btn-ghost shrink-0" type="button" onClick={reset}>
                   <Icon className="size-4" name="reset" /> Otra imagen
                 </button>
               </div>
 
-              <div className={`mt-6 grid gap-4 ${result ? 'md:grid-cols-2' : ''}`}>
-                <figure className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-                  <div className="grid min-h-80 place-items-center p-3">
-                    <img className="max-h-[30rem] rounded-lg object-contain" src={inputUrl} alt="Imagen original antes de eliminar el fondo" />
-                  </div>
-                  <figcaption className="border-t border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-600">Antes</figcaption>
-                </figure>
-                {result && outputUrl && composed && (
-                  <figure className={`overflow-hidden rounded-2xl border border-slate-200 ${composed.background === 'transparent' ? 'checkerboard' : 'bg-slate-100'}`} aria-busy={composing}>
-                    <div className="grid min-h-80 place-items-center p-3">
+              {result && outputUrl && composed && !composed.cropped ? (
+                <figure className="mt-6 overflow-hidden rounded-2xl border border-line bg-white/[0.03]" aria-busy={composing} data-fondo={composed.fillKey}>
+                  <div className="grid place-items-center p-3">
+                    <div
+                      className="compare w-full"
+                      style={{ aspectRatio: `${composed.width} / ${composed.height}`, maxWidth: `calc(30rem * ${composed.width / composed.height})` }}
+                    >
+                      <div className={`absolute inset-0 rounded-lg ${composed.transparent ? 'checkerboard' : ''}`} />
                       <img
-                        className={`h-auto max-h-[30rem] w-auto rounded-lg object-contain transition-opacity ${composing ? 'opacity-60' : ''}`}
-                        src={outputUrl}
-                        width={composed.width}
-                        height={composed.height}
-                        alt={composed.background === 'transparent' ? 'Resultado con el fondo transparente' : 'Resultado con el fondo sustituido'}
+                        className="absolute inset-0 size-full rounded-lg object-contain"
+                        src={inputUrl}
+                        alt="Imagen original"
+                        style={{ clipPath: `inset(0 ${100 - comparePosition}% 0 0)` }}
                       />
+                      <img
+                        className={`absolute inset-0 size-full rounded-lg object-contain transition-opacity ${composing ? 'opacity-60' : ''}`}
+                        src={outputUrl}
+                        alt={composed.transparent ? 'Resultado con el fondo transparente' : 'Resultado con el fondo sustituido'}
+                        style={{ clipPath: `inset(0 0 0 ${comparePosition}%)` }}
+                      />
+                      <span className="absolute left-2 top-2 rounded-full bg-night/75 px-2.5 py-1 text-[0.68rem] font-bold text-white">Original</span>
+                      <span className="absolute right-2 top-2 rounded-full bg-night/75 px-2.5 py-1 text-[0.68rem] font-bold text-white">Resultado</span>
+                      <input
+                        className="compare-range"
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={comparePosition}
+                        aria-label="Comparar original y resultado"
+                        aria-valuetext={`${comparePosition}% del original visible`}
+                        onChange={(event) => setComparePosition(Number(event.target.value))}
+                      />
+                      <span className="compare-handle" style={{ left: `${comparePosition}%` }} aria-hidden="true" />
                     </div>
-                    <figcaption className="flex items-center justify-between gap-3 border-t border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-600">
-                      <span>Después · {composed.background === 'transparent' ? 'PNG transparente' : `${composed.mimeType === 'image/png' ? 'PNG' : 'JPG'} con fondo`}</span>
-                      <span>{composed.width} × {composed.height} px · {formatBytes(composed.blob.size)}</span>
-                    </figcaption>
+                  </div>
+                  <figcaption className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-panel px-4 py-3 text-xs font-bold text-mist">
+                    <span>Desliza para comparar · {composed.transparent ? 'PNG transparente' : `${composed.mimeType === 'image/png' ? 'PNG' : 'JPG'} con fondo`}</span>
+                    <span>{composed.width} × {composed.height} px · {formatBytes(composed.blob.size)}</span>
+                  </figcaption>
+                </figure>
+              ) : (
+                <div className={`mt-6 grid gap-4 ${result ? 'md:grid-cols-2' : ''}`}>
+                  <figure className="overflow-hidden rounded-2xl border border-line bg-white/5">
+                    <div className="grid min-h-80 place-items-center p-3">
+                      <img className="max-h-[30rem] rounded-lg object-contain" src={inputUrl} alt="Imagen original antes de eliminar el fondo" />
+                    </div>
+                    <figcaption className="border-t border-line bg-panel px-4 py-3 text-xs font-bold text-mist">Antes</figcaption>
                   </figure>
-                )}
-              </div>
+                  {result && outputUrl && composed && (
+                    <figure className={`overflow-hidden rounded-2xl border border-line ${composed.transparent ? 'checkerboard' : 'bg-white/5'}`} aria-busy={composing} data-fondo={composed.fillKey}>
+                      <div className="grid min-h-80 place-items-center p-3">
+                        <img
+                          className={`h-auto max-h-[30rem] w-auto rounded-lg object-contain transition-opacity ${composing ? 'opacity-60' : ''}`}
+                          src={outputUrl}
+                          width={composed.width}
+                          height={composed.height}
+                          alt={composed.transparent ? 'Resultado recortado con el fondo transparente' : 'Resultado recortado con el fondo sustituido'}
+                        />
+                      </div>
+                      <figcaption className="flex items-center justify-between gap-3 border-t border-line bg-panel px-4 py-3 text-xs font-bold text-mist">
+                        <span>Después · recortado al sujeto</span>
+                        <span>{composed.width} × {composed.height} px · {formatBytes(composed.blob.size)}</span>
+                      </figcaption>
+                    </figure>
+                  )}
+                </div>
+              )}
 
               {result && (
-                <fieldset className="mx-auto mt-7 max-w-xl rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5" disabled={processing}>
-                  <legend className="px-1 text-sm font-extrabold text-slate-900">Personalizar el resultado</legend>
-                  <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Fondo">
-                    {([
-                      ['transparent', 'Transparente'],
-                      ['color', 'Color'],
-                      ['blur', 'Desenfocado'],
-                    ] as const).map(([value, label]) => (
+                <fieldset className="mx-auto mt-7 max-w-xl rounded-2xl border border-line bg-panel-2 p-4 sm:p-5" disabled={processing}>
+                  <legend className="px-1 text-sm font-extrabold text-white">Personalizar el resultado</legend>
+                  <div className="mx-auto grid max-w-sm grid-cols-3 gap-x-3 gap-y-4 sm:max-w-none sm:grid-cols-5 sm:gap-2" role="radiogroup" aria-label="Fondo">
+                    {BACKGROUND_OPTIONS.map(([value, label]) => (
                       <label
                         key={value}
-                        className={`flex cursor-pointer items-center justify-center rounded-xl border px-2 py-2.5 text-center text-sm font-bold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-blue-600 ${backgroundChoice === value ? 'border-blue-500 bg-white text-blue-700 shadow-sm' : 'border-slate-200 bg-white/60 text-slate-600'}`}
+                        className="group cursor-pointer text-center text-[0.7rem] font-semibold text-mist has-[:focus-visible]:[&>span]:outline-2 has-[:focus-visible]:[&>span]:outline-offset-2 has-[:focus-visible]:[&>span]:outline-electric-light sm:text-xs"
                       >
-                        <input
-                          className="sr-only"
-                          type="radio"
-                          name="background"
-                          value={value}
-                          checked={backgroundChoice === value}
-                          onChange={() => setBackgroundChoice(value)}
-                        />
-                        {label}
+                        <input className="sr-only" type="radio" name="background" value={value} checked={backgroundChoice === value} onChange={() => setBackgroundChoice(value)} />
+                        <span
+                          className={`relative mb-1.5 grid aspect-square w-full place-items-center overflow-hidden rounded-xl border-2 ${backgroundChoice === value ? 'border-electric-light shadow-[0_0_16px_rgba(47,123,255,0.45)]' : 'border-line group-hover:border-line-strong'} ${value === 'transparent' ? 'checkerboard' : ''}`}
+                          style={{
+                            color: { background: color },
+                            gradient: { background: `linear-gradient(160deg, ${GRADIENTS[0][2]}, ${GRADIENTS[0][3]})` },
+                            image: { background: 'linear-gradient(180deg,#0d2463,#2f7bff 70%,#bcd3ff)' },
+                            blur: { background: 'radial-gradient(circle at 30% 30%,#7db4ff,#173a93 70%)' },
+                            transparent: undefined,
+                          }[value]}
+                        >
+                          {backgroundChoice === value && <Icon className="size-5 rounded-full bg-electric p-0.5 text-white" name="check" />}
+                        </span>
+                        <span className={backgroundChoice === value ? 'font-bold text-white' : ''}>{label}</span>
                       </label>
                     ))}
                   </div>
+
+                  {backgroundChoice === 'gradient' && (
+                    <div className="mt-4 flex flex-wrap gap-2" role="radiogroup" aria-label="Degradado">
+                      {GRADIENTS.map(([id, name, from, to]) => (
+                        <label key={id} className="cursor-pointer has-[:focus-visible]:[&>span]:outline-2 has-[:focus-visible]:[&>span]:outline-offset-2 has-[:focus-visible]:[&>span]:outline-electric-light">
+                          <input className="sr-only" type="radio" name="gradient" value={id} checked={gradientId === id} onChange={() => setGradientId(id)} aria-label={`Degradado ${name.toLowerCase()}`} />
+                          <span
+                            className={`block size-9 rounded-full border-2 ${gradientId === id ? 'border-white' : 'border-transparent'}`}
+                            style={{ background: `linear-gradient(160deg, ${from}, ${to})` }}
+                            title={name}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  {backgroundChoice === 'image' && (
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <label className="btn btn-secondary cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-electric-light">
+                        <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={chooseBackgroundImage} />
+                        <Icon className="size-4" name="upload" /> {backgroundImage ? 'Cambiar imagen' : 'Elegir imagen de fondo'}
+                      </label>
+                      <span className="min-w-0 truncate text-xs text-mist">{backgroundImage ? backgroundImage.name : 'También se procesa solo en tu dispositivo.'}</span>
+                    </div>
+                  )}
 
                   {backgroundChoice === 'color' && (
                     <div className="mt-4 flex flex-wrap items-center gap-2">
                       {SWATCHES.map(([swatch, name]) => (
                         <button
                           key={swatch}
-                          className={`size-8 rounded-full border shadow-sm ${color === swatch ? 'ring-2 ring-blue-600 ring-offset-2' : 'border-slate-300'}`}
+                          className={`size-8 rounded-full border shadow-sm ${color === swatch ? 'ring-2 ring-electric-light ring-offset-2 ring-offset-panel' : 'border-line-strong'}`}
                           style={{ backgroundColor: swatch }}
                           type="button"
                           aria-label={`Fondo ${name.toLowerCase()}`}
@@ -248,9 +361,9 @@ export default function BackgroundRemoverPage() {
                           onClick={() => setColor(swatch)}
                         />
                       ))}
-                      <label className="ml-1 flex items-center gap-2 text-xs font-bold text-slate-600">
+                      <label className="ml-1 flex items-center gap-2 text-xs font-bold text-mist">
                         <input
-                          className="size-8 cursor-pointer rounded-full border border-slate-300 bg-white p-0.5"
+                          className="size-8 cursor-pointer rounded-full border border-line-strong bg-panel p-0.5"
                           type="color"
                           value={color}
                           onChange={(event) => setColor(event.target.value)}
@@ -261,9 +374,9 @@ export default function BackgroundRemoverPage() {
                   )}
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <label className="flex items-start gap-2.5 text-sm text-slate-700">
+                    <label className="flex items-start gap-2.5 text-sm text-slate-200">
                       <input
-                        className="mt-1 size-4 accent-blue-600"
+                        className="mt-1 size-4 accent-electric"
                         type="checkbox"
                         checked={crop}
                         disabled={!result.subject}
@@ -271,7 +384,7 @@ export default function BackgroundRemoverPage() {
                       />
                       <span>
                         <span className="font-bold">Recortar al sujeto</span>
-                        <span className="block text-xs text-slate-500">Elimina el espacio vacío alrededor.</span>
+                        <span className="block text-xs text-mist">Elimina el espacio vacío alrededor.</span>
                       </span>
                     </label>
                     <div>
@@ -280,15 +393,15 @@ export default function BackgroundRemoverPage() {
                         id="export-type"
                         className="select-field"
                         value={effectiveType}
-                        disabled={backgroundChoice === 'transparent'}
+                        disabled={transparent}
                         aria-describedby="export-help"
                         onChange={(event) => setExportType(event.target.value as ExportType)}
                       >
                         <option value="image/png">PNG</option>
                         <option value="image/jpeg">JPG — más ligero</option>
                       </select>
-                      <p id="export-help" className="mt-2 text-xs leading-5 text-slate-500">
-                        {backgroundChoice === 'transparent' ? 'La transparencia solo se conserva en PNG.' : 'Con fondo opaco puedes elegir JPG.'}
+                      <p id="export-help" className="mt-2 text-xs leading-5 text-mist">
+                        {transparent ? 'La transparencia solo se conserva en PNG.' : 'Con fondo opaco puedes elegir JPG.'}
                       </p>
                     </div>
                   </div>
@@ -297,13 +410,13 @@ export default function BackgroundRemoverPage() {
 
               {processing && (
                 <div className="mx-auto mt-7 max-w-xl" role="status" aria-live="polite">
-                  <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-slate-600">
+                  <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-mist">
                     <span>{progress.message}</span><span>{Math.round(progress.percent)}%</span>
                   </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-[width] duration-300" style={{ width: `${progress.percent}%` }} />
+                  <div className="h-2.5 overflow-hidden rounded-full bg-white/5">
+                    <div className="h-full rounded-full bg-linear-to-r from-blue-600 to-electric-light transition-[width] duration-300" style={{ width: `${progress.percent}%` }} />
                   </div>
-                  <p className="mt-3 text-center text-xs text-slate-500">Durante la inferencia la cancelación puede tardar unos segundos.</p>
+                  <p className="mt-3 text-center text-xs text-mist">Durante la inferencia la cancelación puede tardar unos segundos.</p>
                 </div>
               )}
 
@@ -341,20 +454,20 @@ export default function BackgroundRemoverPage() {
 
       <section className="page-container pb-16">
         <div className="grid gap-4 lg:grid-cols-3">
-          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <Icon className="size-5 text-blue-600" name="shield" />
-            <h2 className="mt-4 font-extrabold text-slate-900">Sin subir la fotografía</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">Se descarga el modelo de IA; tu imagen no se envía al servidor durante el procesamiento.</p>
+          <article className="rounded-2xl border border-line bg-panel p-5 shadow-sm">
+            <Icon className="size-5 text-electric-light" name="shield" />
+            <h2 className="mt-4 font-extrabold text-white">Sin subir la fotografía</h2>
+            <p className="mt-2 text-sm leading-6 text-mist">Se descarga el modelo de IA; tu imagen no se envía al servidor durante el procesamiento.</p>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <Icon className="size-5 text-blue-600" name="sparkles" />
-            <h2 className="mt-4 font-extrabold text-slate-900">Modelo ligero</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">U²-Net pequeño está optimizado para navegadores. El primer uso puede tardar más por la descarga.</p>
+          <article className="rounded-2xl border border-line bg-panel p-5 shadow-sm">
+            <Icon className="size-5 text-electric-light" name="sparkles" />
+            <h2 className="mt-4 font-extrabold text-white">Modelo ligero</h2>
+            <p className="mt-2 text-sm leading-6 text-mist">U²-Net pequeño está optimizado para navegadores. El primer uso puede tardar más por la descarga.</p>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <Icon className="size-5 text-blue-600" name="image" />
-            <h2 className="mt-4 font-extrabold text-slate-900">Límites transparentes</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">Cabello, cristal, sombras o fondos muy similares al sujeto pueden necesitar una herramienta profesional.</p>
+          <article className="rounded-2xl border border-line bg-panel p-5 shadow-sm">
+            <Icon className="size-5 text-electric-light" name="image" />
+            <h2 className="mt-4 font-extrabold text-white">Límites transparentes</h2>
+            <p className="mt-2 text-sm leading-6 text-mist">Cabello, cristal, sombras o fondos muy similares al sujeto pueden necesitar una herramienta profesional.</p>
           </article>
         </div>
       </section>

@@ -1,22 +1,77 @@
 {
   "id": "/",
-  "name": "PixelTools",
-  "short_name": "PixelTools",
-  "description": "Herramientas privadas para comprimir imágenes y eliminar fondos.",
+  "name": "Vélix Blue",
+  "short_name": "Vélix Blue",
+  "description": "Herramientas de imagen privadas: elimina fondos, comprime, redimensiona, convierte, recorta y quita metadatos en tu dispositivo.",
   "lang": "es",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#fbfcff",
-  "theme_color": "#f7f8ff",
+  "background_color": "#050a1a",
+  "theme_color": "#050a1a",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Comprimir imágenes", "url": "/comprimir-imagen", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Eliminar fondo", "url": "/eliminar-fondo", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Eliminar fondo",
+      "url": "/eliminar-fondo",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Comprimir imagen",
+      "url": "/comprimir-imagen",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Redimensionar",
+      "url": "/redimensionar-imagen",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Quitar metadatos",
+      "url": "/quitar-metadatos",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
