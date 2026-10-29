@@ -1,4 +1,5 @@
 import * as ort from 'onnxruntime-web/wasm';
+import { createBackdrop } from './composition';
 import { findAlphaBounds, scaleBox, type Box } from './geometry';
 import { canvasToBlob, decodeImage, ImageProcessingError, validateDimensions } from './imageProcessing';
 
@@ -22,6 +23,8 @@ export interface BackgroundRemovalOutput {
   resized: boolean;
   /** Zona ocupada por el sujeto en el resultado, útil para recortar. */
   subject: Box | null;
+  /** Miniatura del original para el fondo desenfocado (unos pocos KB). */
+  backdrop: Blob;
 }
 
 interface BackgroundOptions {
@@ -220,6 +223,10 @@ export async function removeImageBackground(
     context.globalCompositeOperation = 'destination-in';
     context.drawImage(maskCanvas, 0, 0, outputSize.width, outputSize.height);
     context.globalCompositeOperation = 'source-over';
+    const backdrop = await createBackdrop(decoded.source, decoded.width, decoded.height);
+    // A partir de aquí el original decodificado no hace falta; liberarlo antes
+    // de codificar el PNG reduce el pico de memoria en teléfonos.
+    decoded.release();
 
     throwIfAborted(options.signal);
     report(options, 'Generando el PNG…', 94);
@@ -235,6 +242,7 @@ export async function removeImageBackground(
       subject: maskBounds
         ? scaleBox(maskBounds, maskCanvas.width, maskCanvas.height, outputSize.width, outputSize.height)
         : null,
+      backdrop,
     };
   } catch (error) {
     if (error instanceof RangeError || (error instanceof Error && /memory|allocation/i.test(error.message))) {

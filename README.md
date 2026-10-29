@@ -93,10 +93,28 @@ npm test
 Las pruebas automatizadas cubren validación de tipos y tamaños, cálculo de
 reducción, formato de bytes, nombres de descarga, redimensión proporcional,
 cálculo del recorte al sujeto y el generador ZIP (CRC-32, cabeceras y nombres
-duplicados). La compilación TypeScript y el
-build de producción son comprobaciones adicionales. La inferencia ONNX y Canvas
-requieren una prueba manual en navegador porque dependen de WebAssembly, memoria,
-codificadores y GPU/CPU del dispositivo.
+duplicados). La compilación TypeScript y el build de producción son
+comprobaciones adicionales.
+
+### Prueba E2E en Chromium
+
+```bash
+npm run build
+npm run test:e2e                # una ronda
+E2E_REPEAT=5 npm run test:e2e   # varias rondas para detectar inestabilidad
+E2E_ONLY=compressorCancel,mobile npm run test:e2e
+```
+
+`e2e/smoke.mjs` arranca `vite preview` sobre `dist/`, genera las imágenes de
+prueba con Canvas y recorre lote con ZIP, rechazo de archivos, redimensión,
+cancelación y reinicio, aviso JPG, transparencia PNG (alfa 0–255), recorte, fondo
+de color y desenfocado, navegación por teclado, service worker y modo sin
+conexión, y un perfil móvil de 390 px con la CPU ralentizada ×4. Usa el paquete
+`playwright` (versión fijada); si tu equipo no tiene Chromium para esa versión,
+ejecuta `npx playwright install chromium`.
+
+La prueba E2E solo cubre Chromium. Firefox, Safari y los dispositivos reales
+siguen necesitando la lista manual.
 
 Lista manual recomendada antes de un lanzamiento:
 
@@ -155,6 +173,9 @@ actualizaciones se detecten.
 
 ## Límites conocidos
 
+- Safari en iOS limita cada lienzo a unos 16,7 MP. Una imagen mayor sin «Tamaño
+  máximo» puede fallar allí; la interfaz lo explica y sugiere reducirla. No se ha
+  probado en un iPhone real.
 - Compresor: 25 MB, 32 megapíxeles y 12.000 px por lado por imagen; 30 imágenes
   por lote, procesadas una tras otra. Los resultados del lote se mantienen en
   memoria hasta reiniciar.
@@ -185,6 +206,25 @@ actualizaciones se detecten.
   consentimiento legal necesario.
 - Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,
   licencia clara y tamaño razonable para móviles.
+
+## Memoria en teléfonos
+
+Medido en Chromium de escritorio (RSS total del navegador, una medición por caso)
+con una fotografía de 24 MP:
+
+| Operación | Pico adicional |
+| --- | --- |
+| Compresor 24 MP → WebP, sin redimensionar | ~200 MB |
+| Eliminar el fondo | ~180 MB |
+| Cambiar a fondo desenfocado | ~75 MB |
+| Arrastrar el selector de color | ~125 MB |
+
+Medidas aplicadas: el original decodificado se libera antes de codificar; el
+fondo desenfocado sale de una miniatura creada una sola vez; las composiciones se
+agrupan con una espera de 120 ms; el ZIP reutiliza los `Blob` sin copiarlos; los
+lotes se procesan de uno en uno. En teléfonos con 3–4 GB de RAM conviene usar
+«Tamaño máximo» con fotografías de más de 12 MP. Estas cifras no sustituyen una
+prueba en dispositivos reales.
 
 ## Licencias
 

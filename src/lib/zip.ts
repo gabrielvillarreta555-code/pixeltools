@@ -57,10 +57,12 @@ export async function createZip(entries: ZipEntry[]): Promise<Blob> {
 
   for (const [index, entry] of entries.entries()) {
     const nameBytes = encoder.encode(names[index]);
-    const data = new Uint8Array(await entry.data.arrayBuffer());
-    const crc = crc32(data);
+    // Los bytes solo se leen para el CRC; el archivo final reutiliza el Blob
+    // original en lugar de una copia, así no se duplica el lote en memoria.
+    const crc = crc32(new Uint8Array(await entry.data.arrayBuffer()));
+    const size = entry.data.size;
     const { time, date } = dosDateTime(entry.modified ?? new Date());
-    if (offset + data.length > 0xfffffffe) {
+    if (offset + size > 0xfffffffe) {
       throw new RangeError('El archivo ZIP superaría 4 GB.');
     }
 
@@ -72,11 +74,11 @@ export async function createZip(entries: ZipEntry[]): Promise<Blob> {
     local.setUint16(10, time, true);
     local.setUint16(12, date, true);
     local.setUint32(14, crc, true);
-    local.setUint32(18, data.length, true);
-    local.setUint32(22, data.length, true);
+    local.setUint32(18, size, true);
+    local.setUint32(22, size, true);
     local.setUint16(26, nameBytes.length, true);
     local.setUint16(28, 0, true);
-    parts.push(local.buffer, nameBytes, data);
+    parts.push(local.buffer, nameBytes, entry.data);
 
     const header = new DataView(new ArrayBuffer(46));
     header.setUint32(0, 0x02014b50, true);
@@ -87,8 +89,8 @@ export async function createZip(entries: ZipEntry[]): Promise<Blob> {
     header.setUint16(12, time, true);
     header.setUint16(14, date, true);
     header.setUint32(16, crc, true);
-    header.setUint32(20, data.length, true);
-    header.setUint32(24, data.length, true);
+    header.setUint32(20, size, true);
+    header.setUint32(24, size, true);
     header.setUint16(28, nameBytes.length, true);
     header.setUint32(42, offset, true);
     const record = new Uint8Array(46 + nameBytes.length);
@@ -96,7 +98,7 @@ export async function createZip(entries: ZipEntry[]): Promise<Blob> {
     record.set(nameBytes, 46);
     central.push(record);
 
-    offset += 30 + nameBytes.length + data.length;
+    offset += 30 + nameBytes.length + size;
   }
 
   const centralSize = central.reduce((total, record) => total + record.length, 0);

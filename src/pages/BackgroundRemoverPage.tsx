@@ -11,10 +11,21 @@ import { composeCutout, type BackgroundFill, type ComposeOutput } from '../lib/c
 import { useObjectUrl } from '../lib/useObjectUrl';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
-const SWATCHES = ['#ffffff', '#0f172a', '#e2e8f0', '#2563eb', '#f97316', '#fde68a'];
+const SWATCHES = [
+  ['#ffffff', 'Blanco'],
+  ['#0f172a', 'Negro'],
+  ['#e2e8f0', 'Gris claro'],
+  ['#2563eb', 'Azul'],
+  ['#f97316', 'Naranja'],
+  ['#fde68a', 'Amarillo'],
+] as const;
+// Espera breve antes de recomponer: el selector de color emite muchos cambios
+// seguidos y cada composición reserva un lienzo del tamaño del resultado.
+const COMPOSE_DELAY_MS = 120;
 
 type BackgroundChoice = 'transparent' | 'color' | 'blur';
 type ExportType = 'image/png' | 'image/jpeg';
+type ComposedResult = ComposeOutput & { background: BackgroundChoice; mimeType: ExportType };
 
 export default function BackgroundRemoverPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -26,7 +37,7 @@ export default function BackgroundRemoverPage() {
   const [color, setColor] = useState('#ffffff');
   const [crop, setCrop] = useState(false);
   const [exportType, setExportType] = useState<ExportType>('image/png');
-  const [composed, setComposed] = useState<ComposeOutput | null>(null);
+  const [composed, setComposed] = useState<ComposedResult | null>(null);
   const [composing, setComposing] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const inputUrl = useObjectUrl(file);
@@ -39,7 +50,7 @@ export default function BackgroundRemoverPage() {
   useEffect(() => () => abortRef.current?.abort(), []);
 
   useEffect(() => {
-    if (!result || !file) {
+    if (!result) {
       setComposed(null);
       setComposing(false);
       return;
@@ -47,25 +58,34 @@ export default function BackgroundRemoverPage() {
     const controller = new AbortController();
     const background: BackgroundFill =
       backgroundChoice === 'color' ? { kind: 'color', color } : { kind: backgroundChoice };
+    // Se marca de inmediato para que no se pueda descargar el resultado anterior
+    // con el nombre o formato de los ajustes nuevos.
     setComposing(true);
-    composeCutout(result.blob, file, result.subject, {
-      background,
-      crop,
-      mimeType: effectiveType,
-      signal: controller.signal,
-    })
-      .then((output) => {
-        if (!controller.signal.aborted) setComposed(output);
+    setError('');
+    const timer = setTimeout(() => {
+      composeCutout(result.blob, result.backdrop, result.subject, {
+        background,
+        crop,
+        mimeType: effectiveType,
+        signal: controller.signal,
       })
-      .catch((caught) => {
-        if (controller.signal.aborted) return;
-        setError(caught instanceof Error ? caught.message : 'No se pudo aplicar el fondo.');
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setComposing(false);
-      });
-    return () => controller.abort();
-  }, [result, file, backgroundChoice, color, crop, effectiveType]);
+        .then((output) => {
+          if (!controller.signal.aborted) setComposed({ ...output, background: backgroundChoice, mimeType: effectiveType });
+        })
+        .catch((caught) => {
+          if (controller.signal.aborted) return;
+          setComposed(null);
+          setError(caught instanceof Error ? caught.message : 'No se pudo aplicar el fondo.');
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setComposing(false);
+        });
+    }, COMPOSE_DELAY_MS);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [result, backgroundChoice, color, crop, effectiveType]);
 
   const handleFiles = ([nextFile]: File[]) => {
     abortRef.current?.abort();
@@ -171,16 +191,18 @@ export default function BackgroundRemoverPage() {
                   <figcaption className="border-t border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-600">Antes</figcaption>
                 </figure>
                 {result && outputUrl && composed && (
-                  <figure className={`overflow-hidden rounded-2xl border border-slate-200 ${effectiveType === 'image/png' && backgroundChoice === 'transparent' ? 'checkerboard' : 'bg-slate-100'}`}>
+                  <figure className={`overflow-hidden rounded-2xl border border-slate-200 ${composed.background === 'transparent' ? 'checkerboard' : 'bg-slate-100'}`} aria-busy={composing}>
                     <div className="grid min-h-80 place-items-center p-3">
                       <img
-                        className={`max-h-[30rem] rounded-lg object-contain transition-opacity ${composing ? 'opacity-60' : ''}`}
+                        className={`h-auto max-h-[30rem] w-auto rounded-lg object-contain transition-opacity ${composing ? 'opacity-60' : ''}`}
                         src={outputUrl}
-                        alt={backgroundChoice === 'transparent' ? 'Resultado con el fondo transparente' : 'Resultado con el fondo sustituido'}
+                        width={composed.width}
+                        height={composed.height}
+                        alt={composed.background === 'transparent' ? 'Resultado con el fondo transparente' : 'Resultado con el fondo sustituido'}
                       />
                     </div>
                     <figcaption className="flex items-center justify-between gap-3 border-t border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-600">
-                      <span>Después · {backgroundChoice === 'transparent' ? 'PNG transparente' : `${effectiveType === 'image/png' ? 'PNG' : 'JPG'} con fondo`}</span>
+                      <span>Después · {composed.background === 'transparent' ? 'PNG transparente' : `${composed.mimeType === 'image/png' ? 'PNG' : 'JPG'} con fondo`}</span>
                       <span>{composed.width} × {composed.height} px · {formatBytes(composed.blob.size)}</span>
                     </figcaption>
                   </figure>
@@ -215,13 +237,13 @@ export default function BackgroundRemoverPage() {
 
                   {backgroundChoice === 'color' && (
                     <div className="mt-4 flex flex-wrap items-center gap-2">
-                      {SWATCHES.map((swatch) => (
+                      {SWATCHES.map(([swatch, name]) => (
                         <button
                           key={swatch}
                           className={`size-8 rounded-full border shadow-sm ${color === swatch ? 'ring-2 ring-blue-600 ring-offset-2' : 'border-slate-300'}`}
                           style={{ backgroundColor: swatch }}
                           type="button"
-                          aria-label={`Fondo ${swatch}`}
+                          aria-label={`Fondo ${name.toLowerCase()}`}
                           aria-pressed={color === swatch}
                           onClick={() => setColor(swatch)}
                         />
@@ -291,17 +313,17 @@ export default function BackgroundRemoverPage() {
               )}
 
               <div className="mx-auto mt-7 flex max-w-xl flex-col gap-2 sm:flex-row">
-                {result && composed ? (
+                {result ? (
                   <button
                     className="btn btn-primary flex-1"
                     type="button"
-                    disabled={composing}
-                    onClick={() => downloadBlob(composed.blob, makeOutputName(file.name, effectiveType, 'sin-fondo'))}
+                    disabled={composing || !composed}
+                    onClick={() => composed && downloadBlob(composed.blob, makeOutputName(file.name, composed.mimeType, 'sin-fondo'))}
                   >
                     <Icon className="size-5" name="download" /> Descargar {effectiveType === 'image/png' ? 'PNG' : 'JPG'}
                   </button>
                 ) : (
-                  <button className="btn btn-primary flex-1" type="button" disabled={processing || Boolean(result)} onClick={removeBackground}>
+                  <button className="btn btn-primary flex-1" type="button" disabled={processing} onClick={removeBackground}>
                     <Icon className="size-5" name="sparkles" /> Eliminar fondo
                   </button>
                 )}

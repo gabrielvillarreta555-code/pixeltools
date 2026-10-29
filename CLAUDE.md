@@ -45,6 +45,7 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 - `scripts/generate-service-worker.mjs`: genera `dist/sw.js`. Nunca debe cachear
   fotografías del usuario; solo archivos de la aplicación.
 - `tests/`: validación de archivos, cálculos y límites de dimensiones.
+- `e2e/smoke.mjs`: prueba de humo en Chromium sobre `dist/` (lotes, fondos, PWA, 390 px).
 
 `dist/` y `public/ort/` son generados y no se versionan. El modelo
 `public/models/u2netp.onnx` sí se versiona; su checksum y procedencia están en
@@ -57,8 +58,9 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 3. Para cambios de procesamiento, comprobar en navegador una compresión real,
    un lote con ZIP, descarga, transparencia PNG, archivo incompatible y
    cancelación/reinicio.
-4. Para cambios del service worker, probar con `npm run build && npm run preview`
-   en modo sin conexión.
+4. Ejecutar `npm run test:e2e` tras el build (Chromium). Para comprobar
+   estabilidad, `E2E_REPEAT=5 npm run test:e2e`. Cubre también el service
+   worker sin conexión; no sustituye las pruebas en Firefox, Safari ni móviles reales.
 5. Para cambios visuales, comprobar 390 px y escritorio, navegación por teclado,
    foco visible y ausencia de desbordamiento horizontal.
 6. No declarar Firefox o Safari como probados si no se ejecutaron realmente.

@@ -110,7 +110,9 @@ self.addEventListener('fetch', (event) => {
       const cached = await cache.match(path);
       if (cached) return cached;
       const response = await fetch(request);
-      if (response.status === 200) await cache.put(path, response.clone());
+      // Se entrega la respuesta en streaming (la barra de progreso del modelo
+      // avanza) y se guarda en paralelo, sin bloquear la descarga.
+      if (response.status === 200) event.waitUntil(cache.put(path, response.clone()));
       return response;
     })());
     return;

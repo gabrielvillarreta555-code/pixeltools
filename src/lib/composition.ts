@@ -1,6 +1,8 @@
 import { padBox, type Box } from './geometry';
 import { canvasToBlob, decodeImage, ImageProcessingError, type DecodedImage } from './imageProcessing';
 
+const BACKDROP_SIDE = 48;
+
 export type BackgroundFill =
   | { kind: 'transparent' }
   | { kind: 'color'; color: string }
@@ -20,12 +22,38 @@ export interface ComposeOutput {
 }
 
 /**
+ * Miniatura del original usada como fondo desenfocado. Se genera una sola vez
+ * mientras el original ya está decodificado, para no tener que volver a
+ * decodificar la fotografía completa cada vez que cambia una opción.
+ *
+ * Reducir y después ampliar con interpolación produce un difuminado suave y
+ * funciona también en Safari, donde `context.filter` no está disponible.
+ */
+export async function createBackdrop(source: CanvasImageSource, width: number, height: number): Promise<Blob> {
+  const canvas = document.createElement('canvas');
+  const factor = Math.max(width, height) / BACKDROP_SIDE;
+  canvas.width = Math.max(4, Math.round(width / factor));
+  canvas.height = Math.max(4, Math.round(height / factor));
+  try {
+    const context = canvas.getContext('2d');
+    if (!context) throw new ImageProcessingError('No se pudo preparar el fondo desenfocado.');
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(source, 0, 0, canvas.width, canvas.height);
+    return await canvasToBlob(canvas, 'image/png');
+  } finally {
+    canvas.width = 0;
+    canvas.height = 0;
+  }
+}
+
+/**
  * Coloca el recorte transparente sobre el fondo elegido y, si se pide, recorta
  * alrededor del sujeto. Todo ocurre en Canvas dentro del navegador.
  */
 export async function composeCutout(
   cutout: Blob,
-  original: Blob,
+  backdrop: Blob,
   subject: Box | null,
   options: ComposeOptions,
 ): Promise<ComposeOutput> {
@@ -41,12 +69,16 @@ export async function composeCutout(
   }
 
   const canvas = document.createElement('canvas');
-  let originalImage: DecodedImage | null = null;
+  let backdropImage: DecodedImage | null = null;
   try {
     canvas.width = region.width;
     canvas.height = region.height;
     const context = canvas.getContext('2d', { alpha: mimeType === 'image/png' });
-    if (!context) throw new ImageProcessingError('Canvas no está disponible en este navegador.');
+    if (!context) {
+      throw new ImageProcessingError(
+        `Este navegador no tiene memoria suficiente para un lienzo de ${region.width} × ${region.height} px.`,
+      );
+    }
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
 
@@ -54,47 +86,20 @@ export async function composeCutout(
       context.fillStyle = background.kind === 'color' ? background.color : '#ffffff';
       context.fillRect(0, 0, region.width, region.height);
     } else if (background.kind === 'blur') {
-      originalImage = await decodeImage(original, signal);
-      drawBlurred(context, originalImage.source, fullWidth, fullHeight, region);
+      backdropImage = await decodeImage(backdrop, signal);
+      context.drawImage(backdropImage.source, -region.x, -region.y, fullWidth, fullHeight);
     }
 
     context.drawImage(decoded.source, -region.x, -region.y, fullWidth, fullHeight);
+    decoded.release();
+    backdropImage?.release();
     const quality = mimeType === 'image/jpeg' ? 0.9 : undefined;
     const blob = await canvasToBlob(canvas, mimeType, quality, signal);
     return { blob, width: region.width, height: region.height };
   } finally {
     decoded.release();
-    originalImage?.release();
+    backdropImage?.release();
     canvas.width = 0;
     canvas.height = 0;
-  }
-}
-
-/**
- * Desenfoque compatible con Safari: `context.filter` no está disponible en todos
- * los navegadores, así que se reduce la imagen a una miniatura y se vuelve a
- * ampliar con interpolación, lo que produce un difuminado suave.
- */
-function drawBlurred(
-  context: CanvasRenderingContext2D,
-  source: CanvasImageSource,
-  fullWidth: number,
-  fullHeight: number,
-  region: Box,
-) {
-  const small = document.createElement('canvas');
-  const factor = Math.max(fullWidth, fullHeight) / 48;
-  small.width = Math.max(4, Math.round(fullWidth / factor));
-  small.height = Math.max(4, Math.round(fullHeight / factor));
-  try {
-    const smallContext = small.getContext('2d');
-    if (!smallContext) throw new ImageProcessingError('No se pudo preparar el fondo desenfocado.');
-    smallContext.imageSmoothingEnabled = true;
-    smallContext.imageSmoothingQuality = 'high';
-    smallContext.drawImage(source, 0, 0, small.width, small.height);
-    context.drawImage(small, -region.x, -region.y, fullWidth, fullHeight);
-  } finally {
-    small.width = 0;
-    small.height = 0;
   }
 }

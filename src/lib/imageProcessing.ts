@@ -110,7 +110,11 @@ export function canvasToBlob(
           return;
         }
         if (!blob) {
-          reject(new ImageProcessingError('El navegador no pudo generar la imagen. Prueba con otro formato.'));
+          reject(
+            new ImageProcessingError(
+              `El navegador no pudo generar la imagen (${canvas.width} × ${canvas.height} px). Prueba con otro formato o un tamaño máximo menor; algunos teléfonos limitan la memoria disponible para imágenes grandes.`,
+            ),
+          );
           return;
         }
         if (blob.type && blob.type !== mimeType) {
@@ -155,12 +159,19 @@ export async function compressImage(file: File, options: CompressOptions): Promi
     canvas.width = target.width;
     canvas.height = target.height;
     const context = canvas.getContext('2d', { alpha: options.mimeType !== 'image/jpeg' });
-    if (!context) throw new ImageProcessingError('Canvas no está disponible en este navegador.');
+    if (!context) {
+      // Safari en iOS devuelve null si el lienzo supera su límite de memoria (~16,7 MP).
+      throw new ImageProcessingError(
+        `Este navegador no tiene memoria suficiente para un lienzo de ${target.width} × ${target.height} px. Elige un tamaño máximo menor.`,
+      );
+    }
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
 
     options.onProgress?.('Preparando los píxeles…');
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    // Cede el hilo para que la interfaz pinte el progreso. setTimeout también
+    // avanza con la pestaña en segundo plano, a diferencia de requestAnimationFrame.
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
     throwIfAborted(options.signal);
 
     if (options.mimeType === 'image/jpeg') {
@@ -168,6 +179,9 @@ export async function compressImage(file: File, options: CompressOptions): Promi
       context.fillRect(0, 0, canvas.width, canvas.height);
     }
     context.drawImage(decoded.source, 0, 0, canvas.width, canvas.height);
+    // El original decodificado ya no hace falta: liberarlo antes de codificar
+    // reduce el pico de memoria (hasta 128 MB con una imagen de 32 MP).
+    decoded.release();
 
     options.onProgress?.('Optimizando el archivo…');
     const quality = options.mimeType === 'image/png' ? undefined : options.quality;

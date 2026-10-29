@@ -277,8 +277,10 @@ export function CompressorPage() {
                   <>
                     <div className="mt-5 grid min-h-80 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
                       <img
-                        className="max-h-[30rem] w-auto max-w-full rounded-lg object-contain"
+                        className="h-auto max-h-[30rem] w-auto max-w-full rounded-lg object-contain"
                         src={outputUrl || inputUrl}
+                        width={outputUrl ? selectedResult?.width : undefined}
+                        height={outputUrl ? selectedResult?.height : undefined}
                         alt={outputUrl ? `Vista previa optimizada de ${selected.file.name}` : `Vista previa original de ${selected.file.name}`}
                       />
                     </div>
@@ -411,7 +413,7 @@ export function CompressorPage() {
                 {processing && (
                   <div className="mt-6" role="status" aria-live="polite">
                     <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-slate-600">
-                      <span>{progress}</span><span className="shrink-0">Procesando localmente</span>
+                      <span className="min-w-0 truncate">{progress}</span><span className="shrink-0">Procesando localmente</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                       {items.length > 1 ? (
@@ -427,7 +429,8 @@ export function CompressorPage() {
                 )}
                 {!processing && progress && <p className="sr-only" role="status">{progress}</p>}
 
-                {done.length > 0 && (
+                {/* El resumen aparece al terminar para que los controles no se desplacen durante el lote. */}
+                {done.length > 0 && !processing && (
                   <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4" aria-live="polite">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
