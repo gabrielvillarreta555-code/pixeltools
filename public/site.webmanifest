@@ -1,0 +1,16 @@
+{
+  "name": "PixelTools",
+  "short_name": "PixelTools",
+  "description": "Herramientas privadas para comprimir imágenes y eliminar fondos.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfcff",
+  "theme_color": "#f7f8ff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

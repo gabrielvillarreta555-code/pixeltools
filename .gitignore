@@ -1,0 +1,49 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Salidas generadas
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+/public/ort/
+
+# Variables, secretos y configuración local
+.env
+.env.*
+!.env.example
+.dev.vars
+.wrangler/
+.cloudflare/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+secrets*.json
+
+# Configuración privada de agentes y editores
+.claude/settings.local.json
+.codex/
+.agents/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Registros, cachés y temporales
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+tmp/
+temp/
+*.tmp
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

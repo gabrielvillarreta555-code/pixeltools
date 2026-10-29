@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse"><stop stop-color="#eff6ff"/><stop offset="1" stop-color="#f5f3ff"/></linearGradient>
+    <linearGradient id="brand" x1="300" y1="130" x2="900" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1030" cy="85" r="180" fill="#ddd6fe" opacity=".55"/>
+  <circle cx="120" cy="600" r="240" fill="#bfdbfe" opacity=".55"/>
+  <rect x="96" y="94" width="70" height="70" rx="20" fill="url(#brand)"/>
+  <g fill="#fff"><rect x="116" y="114" width="13" height="13" rx="3"/><rect x="133" y="114" width="13" height="13" rx="3" opacity=".55"/><rect x="116" y="131" width="13" height="13" rx="3" opacity=".55"/><rect x="133" y="131" width="13" height="13" rx="3"/></g>
+  <text x="184" y="145" font-family="Arial, sans-serif" font-size="42" font-weight="800" fill="#0f172a">Pixel<tspan fill="#2563eb">Tools</tspan></text>
+  <text x="96" y="290" font-family="Arial, sans-serif" font-size="70" font-weight="800" letter-spacing="-3" fill="#0f172a">Imágenes más ligeras.</text>
+  <text x="96" y="375" font-family="Arial, sans-serif" font-size="70" font-weight="800" letter-spacing="-3" fill="url(#brand)">Privacidad intacta.</text>
+  <text x="98" y="456" font-family="Arial, sans-serif" font-size="28" fill="#475569">Comprime y elimina fondos directamente en tu navegador.</text>
+  <rect x="96" y="505" width="280" height="58" rx="17" fill="url(#brand)"/>
+  <text x="145" y="543" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#fff">Gratis · Rápido · Local</text>
+</svg>
