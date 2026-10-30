@@ -115,7 +115,22 @@ async function createFixtures(browser) {
     context.fillStyle = '#2563eb';
     context.fillRect(0, 0, 16, 16);
 
+    const large = document.createElement('canvas');
+    large.width = 6750;
+    large.height = 9000;
+    context = large.getContext('2d');
+    context.fillStyle = '#78b478';
+    context.fillRect(0, 0, large.width, large.height);
+    context.fillStyle = '#c83c3c';
+    context.beginPath();
+    context.ellipse(3375, 4500, 1800, 2800, 0, 0, Math.PI * 2);
+    context.fill();
+    const largePhoto = await toBase64(large, 'image/jpeg', 0.85);
+    large.width = 0;
+    large.height = 0;
+
     return {
+      largePhoto,
       tiny: await toBase64(tiny, 'image/png'),
       photo: await toBase64(photo, 'image/jpeg', 0.95),
       transparent: await toBase64(transparent, 'image/png'),
@@ -125,6 +140,7 @@ async function createFixtures(browser) {
   await page.close();
   const file = (name, mimeType, base64) => ({ name, mimeType, buffer: Buffer.from(base64, 'base64') });
   return {
+    largePhoto: file('grande-6750x9000.jpg', 'image/jpeg', data.largePhoto),
     photo: (name = 'foto.jpg') => file(name, 'image/jpeg', data.photo),
     transparent: file('transparente.png', 'image/png', data.transparent),
     tiny: file('icono.png', 'image/png', data.tiny),
@@ -214,7 +230,7 @@ async function compressorBatch(browser, base, fx) {
     .map((row) => `${row.split('\n')[0].replace(/\.[^.]+$/, '')}-${row.includes('−') ? 'comprimida' : 'convertida'}.webp`);
   const zip = await download(page, () => enabledButton(page, 'Descargar 3 imágenes (ZIP)').click());
   const names = zipEntries(zip.buffer);
-  check(zip.name === 'pixeltools-imagenes.zip' && names?.length === 3, `ZIP válido con 3 archivos (${names?.join(', ')})`);
+  check(zip.name === 'velix-blue-imagenes.zip' && names?.length === 3, `ZIP válido con 3 archivos (${names?.join(', ')})`);
   check(JSON.stringify(names) === JSON.stringify(expected), 'los nombres del ZIP coinciden con la reducción real de cada imagen');
 
   const single = await download(page, () => page.getByRole('button', { name: 'Descargar foto-comprimida.webp' }).click());
@@ -284,15 +300,24 @@ async function backgroundRemover(browser, base, fx) {
   const downloadPng = enabledButton(page, 'Descargar PNG');
   await downloadPng.waitFor({ timeout: 120_000 });
 
+  // Espera a que el resultado muestre exactamente el fondo pedido.
+  const applied = (key) => page.locator(`figure[data-fondo="${key}"][aria-busy="false"]`).waitFor({ timeout: 30_000 });
+
   let file = await download(page, () => downloadPng.click());
   let info = await inspectImage(page, file.buffer);
   check(file.name === 'sujeto-sin-fondo.png' && info.alphaMin === 0 && info.alphaMax === 255, `PNG transparente con alfa 0–255 (${info.width} × ${info.height})`);
 
+  const slider = page.getByRole('slider', { name: 'Comparar original y resultado' });
+  await slider.focus();
+  await page.keyboard.press('End');
+  check(await slider.inputValue() === '100', 'el comparador antes/después se maneja con el teclado');
+
   await page.getByText('Recortar al sujeto').click();
-  await page.locator('figcaption', { hasText: /PNG transparente\s*(?!1600 × 1200)\d+ × \d+/ }).waitFor();
+  await page.locator('figcaption', { hasText: /recortado al sujeto\s*(?!1600 × 1200)\d+ × \d+/ }).waitFor();
   file = await download(page, () => downloadPng.click());
   info = await inspectImage(page, file.buffer);
   check(info.width < 1600 && info.height < 1200 && info.alphaMax === 255, `recorte al sujeto (${info.width} × ${info.height})`);
+  await page.getByText('Recortar al sujeto').click();
 
   // Teclado: las flechas mueven la selección del grupo de fondos.
   await page.getByRole('radio', { name: 'Transparente' }).focus();
@@ -300,15 +325,29 @@ async function backgroundRemover(browser, base, fx) {
   check(await page.getByRole('radio', { name: 'Color' }).isChecked(), 'el grupo de fondos se maneja con el teclado');
   await page.getByRole('button', { name: 'Fondo azul' }).click();
   await page.selectOption('#export-type', 'image/jpeg');
-  await page.locator('figcaption', { hasText: 'JPG con fondo' }).waitFor();
+  await applied('color:#2563eb');
   file = await download(page, () => enabledButton(page, 'Descargar JPG').click());
   info = await inspectImage(page, file.buffer);
-  const [r, g, b] = info.corner;
+  let [r, g, b] = info.corner;
   check(file.name.endsWith('.jpg') && b > 200 && r < 60 && g < 120, `JPG con fondo de color (esquina rgb ${info.corner.join(',')})`);
 
-  await page.getByText('Desenfocado', { exact: true }).click();
-  await page.getByText('Recortar al sujeto').click();
-  await page.locator('figcaption', { hasText: /JPG con fondo\s*1600 × 1200/ }).waitFor();
+  await page.locator('label', { hasText: /^Degradado$/ }).click();
+  await page.locator('label:has(input[value="atardecer"])').click();
+  await applied('gradient:atardecer');
+  file = await download(page, () => enabledButton(page, 'Descargar JPG').click());
+  info = await inspectImage(page, file.buffer);
+  [r, g, b] = info.corner;
+  check(r > 220 && g > 90 && g < 140 && b < 60, `fondo degradado «Atardecer» (esquina rgb ${info.corner.join(',')})`);
+
+  await page.locator('label', { hasText: /^Imagen$/ }).click();
+  await page.locator('input[type=file][accept]').last().setInputFiles(fx.photo('fondo.jpg'));
+  await applied('image:fondo.jpg');
+  file = await download(page, () => enabledButton(page, 'Descargar JPG').click());
+  info = await inspectImage(page, file.buffer);
+  check(info.width === 1600 && info.corner[0] < 90 && Math.abs(info.corner[0] - info.corner[2]) < 25, `fondo con imagen propia (esquina rgb ${info.corner.join(',')})`);
+
+  await page.locator('label', { hasText: /^Desenfoque$/ }).click();
+  await applied('blur');
   file = await download(page, () => enabledButton(page, 'Descargar JPG').click());
   info = await inspectImage(page, file.buffer);
   check(info.width === 1600 && Math.abs(info.corner[1] - 180) < 30, `fondo desenfocado a partir del original (esquina rgb ${info.corner.join(',')})`);
@@ -316,7 +355,7 @@ async function backgroundRemover(browser, base, fx) {
   const state = await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
     const names = await caches.keys();
-    const ai = names.find((name) => name.startsWith('pixeltools-ai'));
+    const ai = names.find((name) => name.startsWith('velix-ai'));
     const cached = ai ? (await (await caches.open(ai)).keys()).map((request) => new URL(request.url).pathname) : [];
     return { controlled: Boolean(navigator.serviceWorker.controller), cached, isolated: crossOriginIsolated };
   });
@@ -335,6 +374,98 @@ async function backgroundRemover(browser, base, fx) {
   await page.getByRole('button', { name: 'Eliminar fondo' }).click();
   await enabledButton(page, 'Descargar PNG').waitFor({ timeout: 120_000 });
   log('✓ el eliminador funciona sin conexión tras el primer uso');
+  await context.close();
+}
+
+/** Inserta un bloque EXIF con dispositivo y GPS (Ciudad de Panamá) tras el SOI de un JPEG. */
+function withExif(jpeg) {
+  const tiff = Buffer.alloc(200);
+  tiff.write('II*\0', 0, 'latin1');
+  tiff.writeUInt32LE(8, 4);
+  // IFD0: Make (ASCII en 100) y puntero GPS (a 40)
+  tiff.writeUInt16LE(2, 8);
+  tiff.writeUInt16LE(0x010f, 10); tiff.writeUInt16LE(2, 12); tiff.writeUInt32LE(6, 14); tiff.writeUInt32LE(100, 18);
+  tiff.writeUInt16LE(0x8825, 22); tiff.writeUInt16LE(4, 24); tiff.writeUInt32LE(1, 26); tiff.writeUInt32LE(40, 30);
+  tiff.writeUInt32LE(0, 34);
+  // IFD GPS: LatRef, Lat (racionales en 120), LonRef, Lon (en 150)
+  tiff.writeUInt16LE(4, 40);
+  const entry = (offset, tag, type, count, value) => { tiff.writeUInt16LE(tag, offset); tiff.writeUInt16LE(type, offset + 2); tiff.writeUInt32LE(count, offset + 4); tiff.writeUInt32LE(value, offset + 8); };
+  entry(42, 1, 2, 2, 0x4e); // «N»
+  entry(54, 2, 5, 3, 120);
+  entry(66, 3, 2, 2, 0x57); // «W»
+  entry(78, 4, 5, 3, 150);
+  tiff.writeUInt32LE(0, 90);
+  tiff.write('Apple\0', 100, 'latin1');
+  [[8, 1], [58, 1], [5952, 100]].forEach(([n, d], i) => { tiff.writeUInt32LE(n, 120 + i * 8); tiff.writeUInt32LE(d, 124 + i * 8); });
+  [[79, 1], [31, 1], [984, 100]].forEach(([n, d], i) => { tiff.writeUInt32LE(n, 150 + i * 8); tiff.writeUInt32LE(d, 154 + i * 8); });
+  const payload = Buffer.concat([Buffer.from('Exif\0\0', 'latin1'), tiff]);
+  const header = Buffer.from([0xff, 0xe1, (payload.length + 2) >> 8, (payload.length + 2) & 0xff]);
+  return Buffer.concat([jpeg.subarray(0, 2), header, payload, jpeg.subarray(2)]);
+}
+
+async function newTools(browser, base, fx) {
+  console.log('Herramientas nuevas: convertir, redimensionar, recortar, metadatos y buscador');
+  const context = await browser.newContext({ acceptDownloads: true });
+  const page = await context.newPage();
+
+  await page.goto(`${base}/`);
+  await page.getByPlaceholder('Buscar herramienta…').fill('instagram');
+  const visibleTools = await page.locator('#herramientas li').allInnerTexts();
+  check(visibleTools.length === 1 && visibleTools[0].includes('Redimensionar'), 'el buscador de herramientas filtra por palabras clave');
+
+  await page.goto(`${base}/convertir-imagen`);
+  await page.locator('input[type=file]').first().setInputFiles([fx.photo(), fx.transparent]);
+  check(await page.getByText('JPG no admite transparencia').isVisible(), 'el convertidor avisa de la transparencia al pasar a JPG');
+  await page.getByRole('button', { name: 'Convertir 2 imágenes' }).click();
+  const zip = await download(page, async () => {
+    await enabledButton(page, 'Descargar 2 imágenes (ZIP)').waitFor({ timeout: 60_000 });
+    await enabledButton(page, 'Descargar 2 imágenes (ZIP)').click();
+  });
+  const names = zipEntries(zip.buffer);
+  check(JSON.stringify(names) === JSON.stringify(['foto-convertida.jpg', 'transparente-convertida.jpg']), `convertidor: ZIP con nombres «convertida» (${names?.join(', ')})`);
+
+  await page.goto(`${base}/redimensionar-imagen`);
+  await page.locator('input[type=file]').setInputFiles(fx.photo());
+  await page.getByText('Tamaño final').waitFor();
+  await page.getByRole('button', { name: 'Redimensionar' }).click();
+  let file = await download(page, () => page.getByRole('button', { name: 'Descargar imagen' }).click());
+  let info = await inspectImage(page, file.buffer);
+  check(info.width === 1080 && info.height === 1080, `redimensionar a publicación cuadrada de Instagram (${info.width} × ${info.height})`);
+  await page.locator('label', { hasText: /^Medidas exactas$/ }).click();
+  await page.fill('#ancho', '600');
+  check(await page.inputValue('#alto') === '400', 'mantiene la proporción al escribir el ancho');
+  await page.getByRole('button', { name: 'Redimensionar' }).click();
+  file = await download(page, () => page.getByRole('button', { name: 'Descargar imagen' }).click());
+  info = await inspectImage(page, file.buffer);
+  check(info.width === 600 && info.height === 400, `redimensionar a medidas exactas (${info.width} × ${info.height})`);
+
+  await page.goto(`${base}/recortar-imagen`);
+  await page.locator('input[type=file]').setInputFiles(fx.photo());
+  const area = page.getByRole('group', { name: /Área de recorte/ });
+  await area.waitFor();
+  await page.locator('label', { hasText: /^1:1$/ }).click();
+  await page.getByRole('button', { name: 'Recortar', exact: true }).click();
+  file = await download(page, () => page.getByRole('button', { name: 'Descargar recorte' }).click());
+  info = await inspectImage(page, file.buffer);
+  check(info.width === 2000 && info.height === 2000, `recorte cuadrado 1:1 (${info.width} × ${info.height})`);
+  await page.getByRole('button', { name: 'Seguir editando' }).click();
+  await page.getByRole('button', { name: /Derecha/ }).click();
+  await page.locator('label', { hasText: /^Libre$/ }).click();
+  await area.focus();
+  await page.keyboard.press('Shift+ArrowLeft');
+  check(/1970 × 3000/.test(await area.getAttribute('aria-label')), `girar y ajustar el recorte con el teclado (${await area.getAttribute('aria-label')})`);
+
+  await page.goto(`${base}/quitar-metadatos`);
+  await page.locator('input[type=file]').setInputFiles({ name: 'con-gps.jpg', mimeType: 'image/jpeg', buffer: withExif(fx.photo().buffer) });
+  await page.getByText('Esta foto revela dónde se tomó').waitFor();
+  check(await page.getByText('8.98320, -79.51940').first().isVisible(), 'detecta la ubicación GPS');
+  file = await download(page, () => page.getByRole('button', { name: 'Descargar sin metadatos' }).click());
+  info = await inspectImage(page, file.buffer);
+  check(info.width === 3000 && !file.buffer.toString('latin1').includes('Apple'), `la copia limpia conserva la imagen y no contiene los datos (${file.name})`);
+  await page.getByRole('button', { name: 'Otra imagen' }).click();
+  await page.locator('input[type=file]').setInputFiles({ name: 'limpia.jpg', mimeType: 'image/jpeg', buffer: file.buffer });
+  check(await page.getByText('No encontramos metadatos').waitFor({ timeout: 10_000 }).then(() => true, () => false), 'la copia limpia ya no tiene metadatos');
+  check(await horizontalOverflow(page) === 0, 'sin desbordamiento horizontal');
   await context.close();
 }
 
@@ -366,19 +497,47 @@ async function mobile(browser, base, fx) {
   await context.close();
 }
 
+async function largeBackground(browser, base, fx) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const requests = [];
+  page.on('request', (request) => requests.push({ method: request.method(), url: request.url() }));
+  try {
+    await page.goto(`${base}/eliminar-fondo`);
+    await page.locator('input[type=file]').setInputFiles(fx.largePhoto);
+    const notice = page.getByText(/Imagen redimensionada automáticamente/);
+    await notice.waitFor({ timeout: 60_000 });
+    check((await notice.innerText()).includes('6750 × 9000 a 1536 × 2048'), 'aviso de reducción proporcional antes de ejecutar IA');
+    check(await page.locator('img[alt="Imagen original antes de eliminar el fondo"]').evaluate((img) => img.naturalWidth === 1536 && img.naturalHeight === 2048), 'la vista previa también usa la copia reducida');
+    await page.getByRole('button', { name: 'Eliminar fondo', exact: true }).click();
+    const button = enabledButton(page, 'Descargar PNG');
+    await button.waitFor({ timeout: 180_000 });
+    const downloadPromise = page.waitForEvent('download');
+    await button.click();
+    const download = await downloadPromise;
+    const info = await inspectImage(page, await readFile(await download.path()));
+    check(info.width === 1536 && info.height === 2048, '6750 × 9000 produce PNG 1536 × 2048');
+    check(info.alphaMin < 20 && info.alphaMax > 230, 'el resultado grande conserva transparencia y sujeto');
+    // Las URL blob son buffers locales; no constituyen tráfico de red.
+    const network = requests.filter((r) => /^https?:/.test(r.url));
+    check(network.every((r) => r.method === 'GET' && new URL(r.url).origin === new URL(base).origin), 'el flujo no envía fotografías ni llama servicios externos');
+    check(await horizontalOverflow(page) === 0, 'aviso y resultado grande caben en 390 px');
+  } finally { await context.close(); }
+}
+
 // ---------- ejecución ----------
 
 const server = BASE_URL ? null : await preview({ logLevel: 'silent', preview: { port: 4317, strictPort: false } });
 const base = BASE_URL || server.resolvedUrls.local[0].replace(/\/$/, '');
 console.log(`Probando ${base}`);
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 try {
   const fx = await createFixtures(browser);
   for (let round = 1; round <= REPEAT; round += 1) {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, mobile].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);

@@ -35,24 +35,60 @@ interface BatchItem {
 
 let nextItemId = 1;
 
+type Mode = 'compress' | 'convert';
+
+// El compresor y el convertidor comparten motor (lotes, cancelación, ZIP);
+// solo cambian los textos y el formato de salida por defecto.
+const MODES = {
+  compress: {
+    seo: {
+      title: 'Comprimir imágenes online gratis y en privado | Vélix Blue',
+      description: 'Reduce el peso de imágenes JPG, PNG y WebP en tu navegador, sin subir tus fotografías a un servidor.',
+      path: '/comprimir-imagen',
+    },
+    icon: 'compress' as const,
+    eyebrow: 'Compresor de imágenes',
+    title: 'Menos peso. La calidad que tú eliges.',
+    description: 'Optimiza y redimensiona JPG, PNG y WebP, de una en una o por lotes, sin subir archivos a ningún servidor. Compara el resultado y descarga al instante.',
+    verb: 'Comprimir',
+    defaultOutput: 'keep' as OutputChoice,
+  },
+  convert: {
+    seo: {
+      title: 'Convertir imágenes a JPG, PNG o WebP gratis | Vélix Blue',
+      description: 'Convierte imágenes entre JPG, PNG y WebP en tu navegador, también por lotes, sin subirlas a un servidor.',
+      path: '/convertir-imagen',
+    },
+    icon: 'convert' as const,
+    eyebrow: 'Convertidor de formato',
+    title: 'Cambia el formato en un instante.',
+    description: 'Convierte JPG, PNG y WebP, de una en una o por lotes, sin subir tus archivos. Ajusta la calidad y descárgalas juntas en un ZIP.',
+    verb: 'Convertir',
+    defaultOutput: 'image/jpeg' as OutputChoice,
+  },
+};
+
 function isRealReduction(item: BatchItem) {
   return Boolean(item.result && item.result.blob.size < item.file.size);
 }
 
-function outputName(item: BatchItem) {
+/** En el convertidor siempre «convertida»; en el compresor, «comprimida» solo si pesa menos. */
+function outputName(item: BatchItem, mode: 'compress' | 'convert' = 'compress') {
   if (!item.result) return item.file.name;
-  return makeOutputName(item.file.name, item.result.mimeType, isRealReduction(item) ? 'comprimida' : 'convertida');
+  const suffix = mode === 'compress' && isRealReduction(item) ? 'comprimida' : 'convertida';
+  return makeOutputName(item.file.name, item.result.mimeType, suffix);
 }
 
 function formatPercent(value: number) {
   return `${Math.abs(value).toFixed(1).replace('.', ',')}%`;
 }
 
-export function CompressorPage() {
+export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
+  const config = MODES[mode];
   const [items, setItems] = useState<BatchItem[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [quality, setQuality] = useState(80);
-  const [outputChoice, setOutputChoice] = useState<OutputChoice>('keep');
+  const [outputChoice, setOutputChoice] = useState<OutputChoice>(config.defaultOutput);
   const [resizeChoice, setResizeChoice] = useState<string>('0');
   const [customSide, setCustomSide] = useState(1600);
   const [rejected, setRejected] = useState<string[]>([]);
@@ -135,7 +171,7 @@ export function CompressorPage() {
     setProgress('');
     setProcessing(false);
     setQuality(80);
-    setOutputChoice('keep');
+    setOutputChoice(config.defaultOutput);
     setResizeChoice('0');
   };
 
@@ -186,15 +222,15 @@ export function CompressorPage() {
 
   const downloadAll = async () => {
     if (done.length === 1) {
-      downloadBlob(done[0].result!.blob, outputName(done[0]));
+      downloadBlob(done[0].result!.blob, outputName(done[0], mode));
       return;
     }
     setZipping(true);
     setError('');
     try {
       const { createZip } = await import('../lib/zip');
-      const zip = await createZip(done.map((item) => ({ name: outputName(item), data: item.result!.blob })));
-      downloadBlob(zip, 'pixeltools-imagenes.zip');
+      const zip = await createZip(done.map((item) => ({ name: outputName(item, mode), data: item.result!.blob })));
+      downloadBlob(zip, 'velix-blue-imagenes.zip');
     } catch (caught) {
       setError(caught instanceof Error ? `No se pudo crear el ZIP: ${caught.message}` : 'No se pudo crear el ZIP.');
     } finally {
@@ -211,17 +247,13 @@ export function CompressorPage() {
 
   return (
     <>
-      <Seo
-        title="Comprimir imágenes online gratis y en privado | PixelTools"
-        description="Reduce el peso de imágenes JPG, PNG y WebP en tu navegador, sin subir tus fotografías a un servidor."
-        path="/comprimir-imagen"
-      />
+      <Seo {...config.seo} />
       <section className="page-container pb-12 pt-14 sm:pt-20">
         <ToolIntro
-          icon="compress"
-          eyebrow="Compresor de imágenes"
-          title="Menos peso. La calidad que tú eliges."
-          description="Optimiza y redimensiona JPG, PNG y WebP, de una en una o por lotes, sin subir archivos a ningún servidor. Compara el resultado y descarga al instante."
+          icon={config.icon}
+          eyebrow={config.eyebrow}
+          title={config.title}
+          description={config.description}
         />
 
         <div className="tool-shell mx-auto mt-10 max-w-5xl">
@@ -236,13 +268,13 @@ export function CompressorPage() {
             </div>
           ) : (
             <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="min-w-0 border-b border-slate-200 p-5 sm:p-7 lg:border-r lg:border-b-0">
+              <div className="min-w-0 border-b border-line p-5 sm:p-7 lg:border-r lg:border-b-0">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-slate-900">
+                    <p className="truncate text-sm font-bold text-white">
                       {items.length === 1 ? items[0].file.name : `${items.length} imágenes en el lote`}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-mist">
                       Original · {formatBytes(items.reduce((sum, item) => sum + item.file.size, 0))}
                     </p>
                   </div>
@@ -275,7 +307,7 @@ export function CompressorPage() {
 
                 {selected && (
                   <>
-                    <div className="mt-5 grid min-h-80 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="mt-5 grid min-h-80 place-items-center overflow-hidden rounded-2xl border border-line bg-panel-2 p-3">
                       <img
                         className="h-auto max-h-[30rem] w-auto max-w-full rounded-lg object-contain"
                         src={outputUrl || inputUrl}
@@ -284,7 +316,7 @@ export function CompressorPage() {
                         alt={outputUrl ? `Vista previa optimizada de ${selected.file.name}` : `Vista previa original de ${selected.file.name}`}
                       />
                     </div>
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-mist">
                       <span className="min-w-0 truncate">
                         {outputUrl ? 'Resultado' : 'Original'}{items.length > 1 ? ` · ${selected.file.name}` : ''}
                       </span>
@@ -300,9 +332,10 @@ export function CompressorPage() {
                 )}
 
                 {items.length > 1 && (
-                  <ul className="mt-5 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200" aria-label="Imágenes del lote">
+                  <ul className="mt-5 divide-y divide-line overflow-hidden rounded-2xl border border-line" aria-label="Imágenes del lote">
                     {items.map((item) => (
                       <BatchRow
+                        mode={mode}
                         key={item.id}
                         item={item}
                         selected={item.id === selected?.id}
@@ -316,7 +349,7 @@ export function CompressorPage() {
               </div>
 
               <div className="flex flex-col p-5 sm:p-7">
-                <h2 className="text-lg font-extrabold tracking-tight text-slate-950">Ajustes de salida</h2>
+                <h2 className="text-lg font-extrabold tracking-tight text-white">Ajustes de salida</h2>
 
                 <div className="mt-6">
                   <label className="field-label" htmlFor="output-format">Formato</label>
@@ -327,7 +360,7 @@ export function CompressorPage() {
                     disabled={processing}
                     onChange={(event) => changeSetting(() => setOutputChoice(event.target.value as OutputChoice))}
                   >
-                    <option value="keep">Mantener el formato original</option>
+                    {mode === 'compress' && <option value="keep">Mantener el formato original</option>}
                     <option value="image/jpeg">JPG — menor tamaño para fotografías</option>
                     <option value="image/png">PNG — transparencia y gráficos</option>
                     {webpSupported && <option value="image/webp">WebP — gran compresión</option>}
@@ -337,7 +370,7 @@ export function CompressorPage() {
                 <div className="mt-6">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label className="field-label mb-0" htmlFor="quality">Calidad</label>
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
+                    <span className="rounded-lg bg-white/5 px-2.5 py-1 text-xs font-bold text-slate-200">
                       {allPng ? 'Sin ajuste' : `${quality}%`}
                     </span>
                   </div>
@@ -353,10 +386,10 @@ export function CompressorPage() {
                     aria-describedby="quality-help"
                     onChange={(event) => changeSetting(() => setQuality(Number(event.target.value)))}
                   />
-                  <div className="mt-2 flex justify-between text-[0.68rem] font-semibold text-slate-400">
+                  <div className="mt-2 flex justify-between text-[0.68rem] font-semibold text-mist">
                     <span>Menor peso</span><span>Mayor detalle</span>
                   </div>
-                  <p id="quality-help" className="mt-3 text-xs leading-5 text-slate-500">
+                  <p id="quality-help" className="mt-3 text-xs leading-5 text-mist">
                     {allPng
                       ? 'Canvas exporta PNG sin un control de calidad con pérdida. Reducir dimensiones sí aligera el archivo.'
                       : 'Entre 70% y 85% suele ofrecer un buen equilibrio. No se aplica a las salidas PNG.'}
@@ -395,10 +428,10 @@ export function CompressorPage() {
                         aria-invalid={customInvalid}
                         onChange={(event) => changeSetting(() => setCustomSide(event.target.valueAsNumber))}
                       />
-                      {customInvalid && <p className="mt-2 text-xs font-semibold text-red-700">Introduce un valor entero entre 16 y 12.000.</p>}
+                      {customInvalid && <p className="mt-2 text-xs font-semibold text-red-300">Introduce un valor entero entre 16 y 12.000.</p>}
                     </div>
                   )}
-                  <p id="resize-help" className="mt-3 text-xs leading-5 text-slate-500">
+                  <p id="resize-help" className="mt-3 text-xs leading-5 text-mist">
                     Mantiene la proporción y nunca amplía imágenes más pequeñas.
                   </p>
                 </div>
@@ -412,17 +445,17 @@ export function CompressorPage() {
 
                 {processing && (
                   <div className="mt-6" role="status" aria-live="polite">
-                    <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-slate-600">
+                    <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-mist">
                       <span className="min-w-0 truncate">{progress}</span><span className="shrink-0">Procesando localmente</span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 overflow-hidden rounded-full bg-white/5">
                       {items.length > 1 ? (
                         <div
-                          className="h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-[width] duration-300"
+                          className="h-full rounded-full bg-linear-to-r from-blue-600 to-electric-light transition-[width] duration-300"
                           style={{ width: `${Math.max(6, (done.length / items.length) * 100)}%` }}
                         />
                       ) : (
-                        <div className="h-full w-2/3 animate-pulse rounded-full bg-linear-to-r from-blue-500 to-violet-500" />
+                        <div className="h-full w-2/3 animate-pulse rounded-full bg-linear-to-r from-blue-600 to-electric-light" />
                       )}
                     </div>
                   </div>
@@ -431,29 +464,29 @@ export function CompressorPage() {
 
                 {/* El resumen aparece al terminar para que los controles no se desplacen durante el lote. */}
                 {done.length > 0 && !processing && (
-                  <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4" aria-live="polite">
+                  <div className="mt-6 rounded-2xl border border-line bg-panel-2 p-4" aria-live="polite">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[0.68rem] font-bold uppercase tracking-wider text-slate-400">Original</p>
-                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(totals.original)}</p>
+                        <p className="text-[0.68rem] font-bold uppercase tracking-wider text-mist">Original</p>
+                        <p className="mt-1 text-lg font-extrabold text-white">{formatBytes(totals.original)}</p>
                       </div>
                       <div>
-                        <p className="text-[0.68rem] font-bold uppercase tracking-wider text-slate-400">Resultado</p>
-                        <p className="mt-1 text-lg font-extrabold text-slate-900">{formatBytes(totals.output)}</p>
+                        <p className="text-[0.68rem] font-bold uppercase tracking-wider text-mist">Resultado</p>
+                        <p className="mt-1 text-lg font-extrabold text-white">{formatBytes(totals.output)}</p>
                       </div>
                     </div>
-                    <div className={`mt-4 rounded-xl px-3 py-2 text-sm font-bold ${totals.output < totals.original ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+                    <div className={`mt-4 rounded-xl px-3 py-2 text-sm font-bold ${totals.output < totals.original ? 'bg-emerald-400/15 text-emerald-200' : 'bg-amber-400/15 text-amber-100'}`}>
                       {totals.output < totals.original
                         ? `${formatPercent(totals.reduction)} menos peso${done.length > 1 ? ' en total' : ''}`
                         : `${formatPercent(totals.reduction)} más peso · no se considera comprimida`}
                     </div>
                     {done.length > 1 && (
-                      <p className="mt-3 text-xs leading-5 text-slate-600">
+                      <p className="mt-3 text-xs leading-5 text-mist">
                         {done.filter(isRealReduction).length} de {done.length} imágenes pesan menos que el original.
                       </p>
                     )}
                     {done.length === 1 && !isRealReduction(done[0]) && (
-                      <p className="mt-3 text-xs leading-5 text-slate-600">Prueba una calidad menor, el formato WebP o un tamaño máximo menor. Puedes descargar esta conversión, pero no reduce el archivo.</p>
+                      <p className="mt-3 text-xs leading-5 text-mist">Prueba una calidad menor, el formato WebP o un tamaño máximo menor. Puedes descargar esta conversión, pero no reduce el archivo.</p>
                     )}
                   </div>
                 )}
@@ -461,12 +494,12 @@ export function CompressorPage() {
                 <div className="mt-auto flex flex-col gap-2 pt-7">
                   {pending.length > 0 && (
                     <button className="btn btn-primary w-full" type="button" disabled={processing || customInvalid} onClick={processAll}>
-                      <Icon className="size-5" name="compress" />
+                      <Icon className="size-5" name={config.icon} />
                       {items.length === 1
-                        ? 'Comprimir ahora'
+                        ? `${config.verb} ahora`
                         : done.length > 0
                           ? pending.length === 1 ? 'Procesar la imagen restante' : `Procesar ${pending.length} restantes`
-                          : `Comprimir ${items.length} imágenes`}
+                          : `${config.verb} ${items.length} imágenes`}
                     </button>
                   )}
                   {done.length > 0 && !processing && (
@@ -499,14 +532,14 @@ export function CompressorPage() {
       <section className="page-container pb-16">
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            ['shield', 'Privado de verdad', 'Los archivos no se envían a PixelTools ni se almacenan en un servidor.'],
+            ['shield', 'Privado de verdad', 'Los archivos no se envían a Vélix Blue ni se almacenan en un servidor.'],
             ['sparkles', 'Resultado bajo control', 'Tú eliges formato, calidad y tamaño; mostramos el peso real antes de descargar.'],
             ['image', 'Por lotes', `Procesa hasta ${MAX_FILES} imágenes seguidas y descárgalas juntas en un ZIP.`],
           ].map(([icon, title, text]) => (
-            <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <Icon className="size-5 text-blue-600" name={icon as 'shield'} />
-              <h2 className="mt-4 font-extrabold text-slate-900">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+            <article key={title} className="rounded-2xl border border-line bg-panel p-5 shadow-sm">
+              <Icon className="size-5 text-electric-light" name={icon as 'shield'} />
+              <h2 className="mt-4 font-extrabold text-white">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-mist">{text}</p>
             </article>
           ))}
         </div>
@@ -536,33 +569,34 @@ function RejectedNotice({ files }: { files: string[] }) {
 
 interface BatchRowProps {
   item: BatchItem;
+  mode: Mode;
   selected: boolean;
   disabled: boolean;
   onSelect: () => void;
   onRemove: () => void;
 }
 
-function BatchRow({ item, selected, disabled, onSelect, onRemove }: BatchRowProps) {
+function BatchRow({ item, mode, selected, disabled, onSelect, onRemove }: BatchRowProps) {
   const { result } = item;
   const reduced = isRealReduction(item);
   return (
-    <li className={`flex items-center gap-2 px-3 py-2.5 ${selected ? 'bg-blue-50/70' : 'bg-white'}`}>
+    <li className={`flex items-center gap-2 px-3 py-2.5 ${selected ? 'bg-electric/10' : 'bg-panel'}`}>
       <button
         className="min-w-0 flex-1 rounded-lg px-1 py-0.5 text-left"
         type="button"
         aria-current={selected ? 'true' : undefined}
         onClick={onSelect}
       >
-        <span className="block truncate text-sm font-semibold text-slate-900">{item.file.name}</span>
-        <span className="mt-0.5 block text-xs text-slate-500">
+        <span className="block truncate text-sm font-semibold text-white">{item.file.name}</span>
+        <span className="mt-0.5 block text-xs text-mist">
           {formatBytes(item.file.size)}
           {result && ` → ${formatBytes(result.blob.size)}`}
           {item.status === 'processing' && ' · procesando…'}
-          {item.status === 'error' && <span className="text-red-700"> · {item.error}</span>}
+          {item.status === 'error' && <span className="text-red-300"> · {item.error}</span>}
         </span>
       </button>
       {result && (
-        <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[0.7rem] font-bold ${reduced ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+        <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[0.7rem] font-bold ${reduced ? 'bg-emerald-400/15 text-emerald-200' : 'bg-amber-400/15 text-amber-100'}`}>
           {reduced ? '−' : '+'}{formatPercent(reductionPercent(item.file.size, result.blob.size))}
         </span>
       )}
@@ -570,8 +604,8 @@ function BatchRow({ item, selected, disabled, onSelect, onRemove }: BatchRowProp
         <button
           className="btn btn-ghost size-9 min-h-0 shrink-0 p-0"
           type="button"
-          aria-label={`Descargar ${outputName(item)}`}
-          onClick={() => downloadBlob(result.blob, outputName(item))}
+          aria-label={`Descargar ${outputName(item, mode)}`}
+          onClick={() => downloadBlob(result.blob, outputName(item, mode))}
         >
           <Icon className="size-4" name="download" />
         </button>

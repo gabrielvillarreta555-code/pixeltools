@@ -1,8 +1,10 @@
-# PixelTools — guía para continuar el proyecto
+# Vélix Blue — guía para continuar el proyecto
 
-PixelTools es una aplicación React/TypeScript estática de Blue Lab Studios. Sus
-dos herramientas procesan imágenes reales en el navegador: compresión mediante
-Canvas y eliminación de fondos mediante ONNX Runtime Web y `u2netp.onnx`.
+Vélix Blue (antes PixelTools; el repositorio conserva ese nombre) es una
+aplicación React/TypeScript estática de Blue Lab Studios. Sus herramientas
+procesan imágenes reales en el navegador: eliminación de fondos con ONNX Runtime
+Web y `u2netp.onnx`; compresión, conversión, redimensión y recorte con Canvas; y
+eliminación de metadatos trabajando directamente sobre los bytes del archivo.
 
 ## Antes de modificar código
 
@@ -28,6 +30,12 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 - No sustituir `u2netp.onnx` sin verificar licencia, procedencia, tamaño y
   rendimiento móvil. Conserva las atribuciones de `THIRD_PARTY_NOTICES.md`.
 - No publicar anuncios reales todavía. Los espacios actuales son deliberados.
+- Solo las herramientas con ruta en `src/lib/tools.ts` son reales; las demás se
+  muestran como «Próximamente». No presentar como disponible algo que no existe.
+- No añadir «Precios», «Iniciar sesión» ni cuentas sin actualizar la política de
+  privacidad: hoy la promesa es «sin cuentas, sin subir fotos».
+- La paleta es azul (tokens en `src/index.css`); los estilos propios van en
+  `@layer components` para que las utilidades de Tailwind puedan sobrescribirlos.
 - Privacidad y términos son borradores pendientes de revisión jurídica.
 
 ## Arquitectura relevante
@@ -36,9 +44,15 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 - `src/lib/imageProcessing.ts`: decodificación, límites, Canvas y codificación.
 - `src/pages/BackgroundRemoverPage.tsx`: experiencia y estados del eliminador.
 - `src/lib/backgroundRemoval.ts`: carga del modelo, inferencia, máscara alfa y caja del sujeto.
-- `src/lib/composition.ts`: fondo transparente/color/desenfocado y recorte al sujeto.
+- `src/lib/composition.ts`: fondo transparente/color/degradado/imagen/desenfocado y recorte al sujeto.
 - `src/lib/geometry.ts`, `src/lib/zip.ts`: cálculos puros del recorte y ZIP sin dependencias.
 - `src/lib/serviceWorker.ts`, `src/components/AppStatus.tsx`: registro PWA y avisos.
+- `src/lib/tools.ts`: catálogo de herramientas (portada, menú y pie).
+- `src/lib/resize.ts`, `src/lib/crop.ts`: cálculos y procesamiento de redimensión y recorte.
+- `src/lib/metadata.ts`: lectura y limpieza de EXIF/XMP/IPTC sin recomprimir;
+  conserva perfil de color y orientación. Debe seguir comprobando la copia limpia.
+- `src/pages/ResizePage.tsx`, `CropPage.tsx`, `MetadataPage.tsx`: herramientas
+  nuevas (carga diferida). El convertidor es `CompressorPage` con `mode="convert"`.
 - `src/components/`: navegación, SEO en cliente y componentes reutilizables.
 - `scripts/generate-static-pages.mjs`: HTML y metadatos estáticos por ruta.
 - `scripts/copy-runtime-assets.mjs`: prepara WASM desde `onnxruntime-web`.

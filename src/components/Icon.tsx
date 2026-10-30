@@ -2,22 +2,52 @@ import type { SVGProps } from 'react';
 
 export type IconName =
   | 'arrow-right'
+  | 'bolt'
   | 'check'
   | 'chevron-down'
   | 'compress'
+  | 'convert'
+  | 'crop'
+  | 'devices'
   | 'download'
+  | 'droplet'
+  | 'file-pdf'
+  | 'flip'
+  | 'gift'
   | 'image'
+  | 'location'
+  | 'lock'
   | 'menu'
   | 'plus'
   | 'reset'
+  | 'resize'
+  | 'rotate-left'
+  | 'rotate-right'
   | 'scissors'
+  | 'search'
   | 'shield'
   | 'sparkles'
+  | 'text'
   | 'upload'
   | 'x';
 
 const paths: Record<IconName, React.ReactNode> = {
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
+  bolt: <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />,
+  convert: <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />,
+  crop: <path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14" />,
+  devices: <><rect x="2" y="4" width="14" height="11" rx="1.5" /><path d="M6 19h6M9 15v4" /><rect x="17" y="8" width="5" height="11" rx="1.2" /></>,
+  droplet: <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z" />,
+  'file-pdf': <><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" /><path d="M14 3v5h5M9 15h1.5a1.5 1.5 0 0 0 0-3H9v5" /></>,
+  flip: <path d="M12 3v18M8 7 3 17h5V7Zm8 0 5 10h-5V7Z" />,
+  gift: <><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13M5 12v9h14v-9M12 8C10 4 6.5 4.5 7.5 7c.5 1 2.5 1 4.5 1Zm0 0c2-4 5.5-3.5 4.5-1-.5 1-2.5 1-4.5 1Z" /></>,
+  location: <><path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></>,
+  lock: <><rect x="4.5" y="10.5" width="15" height="10.5" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" /></>,
+  resize: <path d="M4 9V4h5M20 15v5h-5M4 4l6.5 6.5M20 20l-6.5-6.5M15 4h5v5M9 20H4v-5" />,
+  'rotate-left': <path d="M4 4v5h5M4.6 13a7.5 7.5 0 1 0 1.9-7.3L4 9" />,
+  'rotate-right': <path d="M20 4v5h-5M19.4 13a7.5 7.5 0 1 1-1.9-7.3L20 9" />,
+  search: <><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.4-4.4" /></>,
+  text: <path d="M4 7V5h16v2M12 5v14M9 19h6M4 15v4h4M20 15v4h-4" />,
   check: <path d="m5 12 4 4L19 6" />,
   'chevron-down': <path d="m6 9 6 6 6-6" />,
   compress: <path d="M8 3v3a2 2 0 0 1-2 2H3m13-5v3a2 2 0 0 0 2 2h3M8 21v-3a2 2 0 0 0-2-2H3m13 5v-3a2 2 0 0 1 2-2h3" />,

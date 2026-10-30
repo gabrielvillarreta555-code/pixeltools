@@ -10,6 +10,9 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 
 const BackgroundRemoverPage = lazy(() => import('./pages/BackgroundRemoverPage'));
+const ResizePage = lazy(() => import('./pages/ResizePage'));
+const CropPage = lazy(() => import('./pages/CropPage'));
+const MetadataPage = lazy(() => import('./pages/MetadataPage'));
 
 export default function App() {
   return (
@@ -17,8 +20,12 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/comprimir-imagen" element={<CompressorPage />} />
+          <Route path="/comprimir-imagen" element={<CompressorPage key="comprimir" />} />
           <Route path="/eliminar-fondo" element={<BackgroundRemoverPage />} />
+          <Route path="/convertir-imagen" element={<CompressorPage key="convertir" mode="convert" />} />
+          <Route path="/redimensionar-imagen" element={<ResizePage />} />
+          <Route path="/recortar-imagen" element={<CropPage />} />
+          <Route path="/quitar-metadatos" element={<MetadataPage />} />
           <Route path="/privacidad" element={<PrivacyPage />} />
           <Route path="/terminos" element={<TermsPage />} />
           <Route path="/contacto" element={<ContactPage />} />

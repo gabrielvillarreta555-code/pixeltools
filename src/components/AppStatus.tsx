@@ -22,7 +22,7 @@ export function AppStatus() {
   if (online && !update) return null;
 
   return (
-    <div className="border-b border-slate-200 bg-slate-900 text-white" role="status" aria-live="polite">
+    <div className="border-b border-line bg-electric text-white" role="status" aria-live="polite">
       <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2.5 text-sm">
         {!online ? (
           <p>
@@ -31,7 +31,7 @@ export function AppStatus() {
           </p>
         ) : (
           <>
-            <p><span className="font-bold">Hay una versión nueva de PixelTools.</span> Se aplicará al recargar.</p>
+            <p><span className="font-bold">Hay una versión nueva de Vélix Blue.</span> Se aplicará al recargar.</p>
             <button
               className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-900"
               type="button"

@@ -1,5 +1,5 @@
 {
-  "name": "pixeltools",
+  "name": "velix-blue",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -14,6 +14,7 @@
     "test:e2e": "node e2e/smoke.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
     "onnxruntime-web": "1.23.2",
     "react": "19.2.0",
     "react-dom": "19.2.0",

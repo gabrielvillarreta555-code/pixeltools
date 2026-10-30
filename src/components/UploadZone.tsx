@@ -70,16 +70,16 @@ export function UploadZone({
         onChange={handleChange}
       />
       <span className="upload-icon"><Icon className="size-7" name="upload" /></span>
-      <p className="mt-5 text-lg font-bold tracking-tight text-slate-900">
+      <p className="mt-5 text-lg font-bold tracking-tight text-white">
         {multiple ? 'Arrastra tus imágenes aquí' : 'Arrastra tu imagen aquí'}
       </p>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-mist">
         {multiple ? 'o haz clic para elegir uno o varios archivos' : 'o haz clic para elegir un archivo'}
       </p>
       <span className="btn btn-secondary mt-6 pointer-events-none">
         {multiple ? 'Seleccionar imágenes' : 'Seleccionar imagen'}
       </span>
-      <p className="mt-5 text-xs leading-5 text-slate-500">{description}</p>
+      <p className="mt-5 text-xs leading-5 text-mist">{description}</p>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # Licencias y atribuciones de terceros
 
-PixelTools no modifica las licencias de sus dependencias. El inventario completo
+Vélix Blue (antes PixelTools) no modifica las licencias de sus dependencias. El inventario completo
 y las versiones exactas quedan fijados en `package-lock.json`.
 
 ## Modelo U²-Net pequeño (`public/models/u2netp.onnx`)
@@ -56,6 +56,10 @@ MIT del proyecto que publica la conversión dice:
 - Tailwind CSS: MIT, Tailwind Labs, Inc.
 - TypeScript: Apache-2.0, Microsoft Corporation.
 - Vitest: MIT, Anthony Fu y colaboradores.
+- Playwright (solo pruebas): Apache-2.0, Microsoft Corporation.
+- Plus Jakarta Sans (`@fontsource-variable/plus-jakarta-sans`): SIL Open Font
+  License 1.1, The Plus Jakarta Sans Project Authors
+  (<https://github.com/tokotype/PlusJakartaSans>).
 
 Las copias de licencia incluidas por cada paquete pueden consultarse después de
 `npm install` dentro de `node_modules/<paquete>/LICENSE*`.

@@ -1,11 +1,13 @@
-# PixelTools
+# Vélix Blue
 
-Primera versión funcional de una plataforma pública de herramientas para
-imágenes, desarrollada para Blue Lab Studios. Comprime y redimensiona JPG, PNG y
-WebP (también por lotes, con descarga en ZIP) y elimina fondos con un modelo ONNX
-ligero, con fondo transparente, de color o desenfocado y recorte automático al
-sujeto. Las operaciones se realizan localmente en el navegador y la web se puede
-instalar como aplicación (PWA) que funciona sin conexión.
+Herramientas de imagen privadas, un producto de Blue Lab Studios (antes
+«PixelTools»; el repositorio conserva ese nombre). Elimina fondos con IA,
+comprime, convierte, redimensiona y recorta imágenes, y quita sus metadatos.
+Todo se procesa localmente en el navegador y la web se puede instalar como
+aplicación (PWA) que funciona sin conexión.
+
+> Antes de registrar dominio o marca, comprueba que «Vélix Blue» esté libre
+> (DIGERPI en Panamá, EUIPO, USPTO). El nombre se cambia fácilmente en el código.
 
 ## Funciones
 
@@ -13,16 +15,32 @@ instalar como aplicación (PWA) que funciona sin conexión.
   calidad ajustable; tamaño máximo por lado (preajustes o personalizado, nunca
   amplía); resumen de peso total; descarga individual o en un ZIP generado en el
   navegador (`src/lib/zip.ts`, sin dependencias).
-- **Eliminador de fondos:** U²-Net pequeño; fondo transparente, de color o
+- **Eliminador de fondos:** U²-Net pequeño; comparador antes/después con
+  deslizador; fondo transparente, de color, degradado, imagen propia o
   desenfocado a partir del original; recorte al sujeto con margen; descarga en
   PNG o, con fondo opaco, JPG.
+- **Convertir formato:** el motor del compresor con textos propios; JPG, PNG o
+  WebP, por lotes y con ZIP. Los archivos se llaman siempre «-convertida».
+- **Redimensionar:** medidas de redes sociales (`SOCIAL_PRESETS`), medidas
+  exactas con proporción bloqueable o porcentaje; si la proporción cambia,
+  rellenar recortando o ajustar con bordes de color o transparentes.
+- **Recortar:** proporciones libres o 1:1, 4:5, 3:4, 3:2, 16:9 y 9:16; giro y
+  volteo; arrastre con dedo o ratón y control con teclado. La vista previa usa
+  una copia de 1.400 px; el recorte se aplica a la resolución original.
+- **Quitar metadatos:** lee y elimina EXIF (GPS, dispositivo, fecha, autor,
+  número de serie), XMP, IPTC, comentarios, fragmentos de texto PNG y las
+  imágenes incrustadas tras el final del JPEG, sin recomprimir. Conserva el
+  perfil de color y la orientación. Analiza de nuevo la copia antes de ofrecerla.
+- **Portada:** catálogo de herramientas con buscador (`src/lib/tools.ts`). Las
+  herramientas sin ruta se muestran como «Próximamente».
 - **PWA:** manifest con iconos PNG y *maskable*, service worker generado en el
   build y avisos de «sin conexión» y «versión nueva disponible».
 
 ## Tecnologías
 
 - React 19, TypeScript y Vite 7.
-- Tailwind CSS 4.
+- Tailwind CSS 4 con un tema oscuro propio (tokens en `src/index.css`).
+- Tipografía Plus Jakarta Sans (OFL) empaquetada con la app, sin servicios externos.
 - Canvas API, Blob, Object URL y `createImageBitmap` con alternativa para Safari.
 - ONNX Runtime Web (WASM) y U²-Net pequeño para segmentación.
 - React Router para navegación.
@@ -202,8 +220,18 @@ actualizaciones se detecten.
   comprimidas) y no admite más de 4 GB.
 - El fondo desenfocado se obtiene reduciendo y ampliando el original (compatible
   con Safari, donde `CanvasRenderingContext2D.filter` no está disponible).
-- Eliminador: 15 MB y 24 megapíxeles de entrada; la salida se limita a 16 MP y
-  4.096 px por lado para controlar memoria.
+- Eliminador: 15 MB, 100 megapíxeles y 32.768 px por lado de entrada. Antes de
+  mostrar la vista previa y cargar ONNX, lee las dimensiones y orientación del
+  archivo comprimido y prepara una copia proporcional de hasta 2048 px por lado
+  y 4 MP. Por ejemplo, 6750 × 9000 pasa a 1536 × 2048. La interfaz avisa del
+  cambio; el original permanece intacto. El redondeo puede variar menos de un
+  píxel respecto de la proporción matemática.
+- Para originales grandes se necesita `createImageBitmap` con reducción. Si no
+  existe, falla o ignora el tamaño solicitado, no se intenta una decodificación
+  completa como alternativa: se solicita una imagen menor. Los buffers de la
+  aplicación están limitados, pero el pico interno del decodificador depende del
+  navegador; no se garantiza ejecución en todos los móviles. Safari, Firefox y
+  teléfonos físicos requieren validación adicional.
 - Canvas vuelve a codificar la imagen y elimina metadatos EXIF. La orientación se
   intenta aplicar durante la decodificación, pero debe comprobarse en Safari.
 - PNG no ofrece un control de calidad con pérdida mediante Canvas.
@@ -212,6 +240,10 @@ actualizaciones se detecten.
 - U²-Net pequeño prioriza tamaño y compatibilidad. Puede producir bordes
   imperfectos en pelo, cristal, sombras, objetos finos o escenas sin contraste.
 - Equipos con poca memoria o sin WebAssembly pueden no ejecutar la segmentación.
+- Redimensionar: hasta 8.000 px por lado y 16 MP de salida. Recortar: 25 MB y
+  32 MP de entrada. Quitar metadatos: 50 MB; HEIC no es compatible.
+- Las herramientas nuevas trabajan con una imagen cada vez (el compresor y el
+  convertidor admiten lotes).
 - El correo, dominio, datos legales y jurisdicción son provisionales y deben
   configurarse/revisarse antes de publicar.
 
@@ -219,8 +251,10 @@ actualizaciones se detecten.
 
 - Pruebas E2E automatizadas en navegadores y dispositivos reales.
 - Procesamiento en Web Worker/OffscreenCanvas donde mejore compatibilidad.
-- Refinado manual de máscara y comparación con deslizador.
-- Recorte manual y eliminación de fondos por lotes.
+- Refinado manual de máscara y eliminación de fondos por lotes.
+- Lotes en redimensionar, recortar y quitar metadatos.
+- Herramientas marcadas «Próximamente»: imágenes a PDF, HEIC a JPG (revisar la
+  licencia del decodificador), marca de agua y OCR.
 - Analítica respetuosa con la privacidad y anuncios solo tras implementar el
   consentimiento legal necesario.
 - Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,
@@ -249,5 +283,5 @@ prueba en dispositivos reales.
 
 Consulta [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). El modelo U²-Net,
 su conversión y las dependencias conservan sus propias licencias. Blue Lab
-Studios debe decidir la licencia del código específico de PixelTools antes de
+Studios debe decidir la licencia del código específico de Vélix Blue antes de
 distribuirlo como proyecto reutilizable.

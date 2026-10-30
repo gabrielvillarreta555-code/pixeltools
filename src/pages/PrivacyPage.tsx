@@ -3,27 +3,27 @@ import { Seo } from '../components/Seo';
 export function PrivacyPage() {
   return (
     <>
-      <Seo title="Política de privacidad | PixelTools" description="Consulta cómo PixelTools procesa imágenes localmente y protege la privacidad de sus visitantes." path="/privacidad" />
+      <Seo title="Política de privacidad | Vélix Blue" description="Consulta cómo Vélix Blue procesa imágenes localmente y protege la privacidad de sus visitantes." path="/privacidad" />
       <article className="prose-page page-container max-w-3xl py-16 sm:py-20">
         <span className="eyebrow">Documento inicial</span>
-        <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.045em] text-slate-950 sm:text-5xl">Política de privacidad</h1>
-        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-950">
+        <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.045em] text-white sm:text-5xl">Política de privacidad</h1>
+        <div className="mt-6 rounded-xl border border-amber-300/35 bg-amber-400/10 px-4 py-3 text-sm font-semibold leading-6 text-amber-100">
           Borrador pendiente de revisión jurídica antes de publicar el servicio en producción.
         </div>
         <p>Última actualización técnica: 29 de octubre de 2026.</p>
 
         <h2>1. Responsable</h2>
-        <p>PixelTools es un producto de Blue Lab Studios. Los datos fiscales, dirección de contacto definitiva y jurisdicción deberán completarse antes de su publicación.</p>
+        <p>Vélix Blue es un producto de Blue Lab Studios. Los datos fiscales, dirección de contacto definitiva y jurisdicción deberán completarse antes de su publicación.</p>
 
         <h2>2. Procesamiento de imágenes</h2>
-        <p>El compresor y el eliminador de fondos procesan las imágenes en el navegador del visitante, también cuando se usan sin conexión. PixelTools no necesita enviar la fotografía a un servidor para realizar estas operaciones.</p>
+        <p>Todas las herramientas (eliminar fondos, comprimir, convertir, redimensionar, recortar y quitar metadatos) procesan las imágenes en el navegador del visitante, también cuando se usan sin conexión. Vélix Blue no necesita enviar la fotografía a un servidor para realizar estas operaciones.</p>
         <p>En el primer uso del eliminador, el navegador descarga desde el propio sitio un modelo ONNX y los archivos de ONNX Runtime Web. Esa descarga no contiene la fotografía seleccionada.</p>
 
         <h2>3. Imágenes y resultados</h2>
         <p>La aplicación no crea cuentas ni guarda las imágenes en el servidor ni en el almacenamiento del dispositivo. Las imágenes elegidas y sus resultados solo existen en la memoria de la pestaña hasta que reinicias la herramienta, reemplazas el archivo o cierras la página. Las vistas previas usan direcciones temporales del navegador que se revocan en esos mismos casos. Los archivos que descargas se guardan donde tú decidas.</p>
 
         <h2>4. Funcionamiento sin conexión y almacenamiento local</h2>
-        <p>Para que PixelTools funcione sin conexión, en la primera visita el navegador registra un <em>service worker</em> y guarda en su almacenamiento de caché (Cache Storage) los archivos de la propia aplicación:</p>
+        <p>Para que Vélix Blue funcione sin conexión, en la primera visita el navegador registra un <em>service worker</em> y guarda en su almacenamiento de caché (Cache Storage) los archivos de la propia aplicación:</p>
         <ul>
           <li>Las páginas, el código, los estilos y los iconos, menos de 1 MB, en cuanto visitas el sitio.</li>
           <li>El modelo del eliminador de fondos y ONNX Runtime Web, unos 16 MB, solo cuando usas el eliminador por primera vez.</li>

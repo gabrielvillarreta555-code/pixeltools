@@ -6,10 +6,10 @@ interface NoticeProps {
 }
 
 const styles = {
-  info: 'border-blue-200 bg-blue-50 text-blue-900',
-  warning: 'border-amber-200 bg-amber-50 text-amber-950',
-  error: 'border-red-200 bg-red-50 text-red-900',
-  success: 'border-emerald-200 bg-emerald-50 text-emerald-900',
+  info: 'border-electric-light/35 bg-electric/10 text-[#dbe7ff]',
+  warning: 'border-amber-300/35 bg-amber-400/10 text-amber-100',
+  error: 'border-red-400/40 bg-red-500/12 text-red-100',
+  success: 'border-emerald-300/35 bg-emerald-400/10 text-emerald-100',
 };
 
 export function Notice({ children, tone = 'info' }: NoticeProps) {
