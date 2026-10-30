@@ -88,6 +88,8 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
   const [items, setItems] = useState<BatchItem[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [quality, setQuality] = useState(80);
+  const [useTarget, setUseTarget] = useState(false);
+  const [targetKb, setTargetKb] = useState(200);
   const [outputChoice, setOutputChoice] = useState<OutputChoice>(config.defaultOutput);
   const [resizeChoice, setResizeChoice] = useState<string>('0');
   const [customSide, setCustomSide] = useState(1600);
@@ -111,6 +113,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
 
   const maxDimension = resizeChoice === 'custom' ? customSide : Number(resizeChoice);
   const customInvalid = resizeChoice === 'custom' && (!Number.isInteger(customSide) || customSide < 16 || customSide > 12_000);
+  const targetInvalid = useTarget && (!Number.isInteger(targetKb) || targetKb < 1 || targetKb > 25600);
 
   const targetType = (file: File): SupportedImageType => {
     if (outputChoice !== 'keep') return outputChoice;
@@ -171,12 +174,14 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
     setProgress('');
     setProcessing(false);
     setQuality(80);
+    setUseTarget(false);
+    setTargetKb(200);
     setOutputChoice(config.defaultOutput);
     setResizeChoice('0');
   };
 
   const processAll = async () => {
-    if (items.length === 0 || customInvalid) return;
+    if (items.length === 0 || customInvalid || targetInvalid) return;
     const controller = new AbortController();
     abortRef.current?.abort();
     abortRef.current = controller;
@@ -194,6 +199,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
           const output = await compressImage(item.file, {
             mimeType,
             quality: quality / 100,
+            targetBytes: mode === 'compress' && useTarget ? targetKb * 1024 : undefined,
             maxDimension: maxDimension || undefined,
             signal: controller.signal,
             onProgress: (message) => setProgress(prefix + message),
@@ -368,10 +374,26 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
                 </div>
 
                 <div className="mt-6">
+                  {mode === 'compress' && (
+                    <div className="mb-6 rounded-xl border border-line bg-panel-2 p-4">
+                      <label className="flex items-center gap-3 text-sm font-bold text-white">
+                        <input type="checkbox" className="size-4 accent-blue-600" checked={useTarget} disabled={processing} onChange={(event) => changeSetting(() => setUseTarget(event.target.checked))} />
+                        Comprimir a un tamaño objetivo
+                      </label>
+                      {useTarget && (
+                        <div className="mt-4">
+                          <label className="field-label" htmlFor="target-kb">Máximo por imagen (KB)</label>
+                          <input id="target-kb" className="text-field" type="number" min="1" max="25600" step="1" inputMode="numeric" value={Number.isFinite(targetKb) ? targetKb : ''} disabled={processing} aria-invalid={targetInvalid} aria-describedby="target-help" onChange={(event) => changeSetting(() => setTargetKb(event.target.valueAsNumber))} />
+                          <p id="target-help" className="mt-2 text-xs leading-5 text-mist">Entre 1 y 25.600 KB por imagen. JPG y WebP buscan una calidad entre 30% y 95%; PNG no admite ese ajuste. No se cambian las dimensiones salvo que lo elijas abajo.</p>
+                          {targetInvalid && <p className="mt-2 text-xs text-red-300" role="alert">Introduce un número entero entre 1 y 25.600 KB.</p>}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label className="field-label mb-0" htmlFor="quality">Calidad</label>
                     <span className="rounded-lg bg-white/5 px-2.5 py-1 text-xs font-bold text-slate-200">
-                      {allPng ? 'Sin ajuste' : `${quality}%`}
+                      {allPng ? 'Sin ajuste' : useTarget && mode === 'compress' ? 'Automática' : `${quality}%`}
                     </span>
                   </div>
                   <input
@@ -382,7 +404,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
                     max="95"
                     step="1"
                     value={quality}
-                    disabled={processing || allPng}
+                    disabled={processing || allPng || (useTarget && mode === 'compress')}
                     aria-describedby="quality-help"
                     onChange={(event) => changeSetting(() => setQuality(Number(event.target.value)))}
                   />
@@ -390,7 +412,9 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
                     <span>Menor peso</span><span>Mayor detalle</span>
                   </div>
                   <p id="quality-help" className="mt-3 text-xs leading-5 text-mist">
-                    {allPng
+                    {useTarget && mode === 'compress'
+                      ? 'La calidad se ajusta automáticamente para JPG y WebP; PNG se codifica sin pérdida.'
+                      : allPng
                       ? 'Canvas exporta PNG sin un control de calidad con pérdida. Reducir dimensiones sí aligera el archivo.'
                       : 'Entre 70% y 85% suele ofrecer un buen equilibrio. No se aplica a las salidas PNG.'}
                   </p>
@@ -485,6 +509,12 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
                         {done.filter(isRealReduction).length} de {done.length} imágenes pesan menos que el original.
                       </p>
                     )}
+                    {useTarget && mode === 'compress' && (
+                      <p className="mt-3 text-sm leading-6 text-slate-200" role="status">
+                        {done.filter((item) => item.result?.targetMet).length} de {done.length} imágenes alcanzaron el objetivo de {targetKb} KB por imagen.
+                        {done.some((item) => item.result?.targetMet === false) && ' Algunas no lo alcanzaron. Prueba reducir las dimensiones o elegir JPG/WebP; puedes descargar el mejor resultado obtenido.'}
+                      </p>
+                    )}
                     {done.length === 1 && !isRealReduction(done[0]) && (
                       <p className="mt-3 text-xs leading-5 text-mist">Prueba una calidad menor, el formato WebP o un tamaño máximo menor. Puedes descargar esta conversión, pero no reduce el archivo.</p>
                     )}
@@ -493,7 +523,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
 
                 <div className="mt-auto flex flex-col gap-2 pt-7">
                   {pending.length > 0 && (
-                    <button className="btn btn-primary w-full" type="button" disabled={processing || customInvalid} onClick={processAll}>
+                    <button className="btn btn-primary w-full" type="button" disabled={processing || customInvalid || targetInvalid} onClick={processAll}>
                       <Icon className="size-5" name={config.icon} />
                       {items.length === 1
                         ? `${config.verb} ahora`
@@ -591,6 +621,9 @@ function BatchRow({ item, mode, selected, disabled, onSelect, onRemove }: BatchR
         <span className="mt-0.5 block text-xs text-mist">
           {formatBytes(item.file.size)}
           {result && ` → ${formatBytes(result.blob.size)}`}
+          {result?.targetMet === true && ' · objetivo alcanzado'}
+          {result?.targetMet === false && ' · objetivo no alcanzado'}
+          {result?.actualQuality !== undefined && ` · calidad ${result.actualQuality}%`}
           {item.status === 'processing' && ' · procesando…'}
           {item.status === 'error' && <span className="text-red-300"> · {item.error}</span>}
         </span>
