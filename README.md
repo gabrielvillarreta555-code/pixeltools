@@ -220,8 +220,18 @@ actualizaciones se detecten.
   comprimidas) y no admite más de 4 GB.
 - El fondo desenfocado se obtiene reduciendo y ampliando el original (compatible
   con Safari, donde `CanvasRenderingContext2D.filter` no está disponible).
-- Eliminador: 15 MB y 24 megapíxeles de entrada; la salida se limita a 16 MP y
-  4.096 px por lado para controlar memoria.
+- Eliminador: 15 MB, 100 megapíxeles y 32.768 px por lado de entrada. Antes de
+  mostrar la vista previa y cargar ONNX, lee las dimensiones y orientación del
+  archivo comprimido y prepara una copia proporcional de hasta 2048 px por lado
+  y 4 MP. Por ejemplo, 6750 × 9000 pasa a 1536 × 2048. La interfaz avisa del
+  cambio; el original permanece intacto. El redondeo puede variar menos de un
+  píxel respecto de la proporción matemática.
+- Para originales grandes se necesita `createImageBitmap` con reducción. Si no
+  existe, falla o ignora el tamaño solicitado, no se intenta una decodificación
+  completa como alternativa: se solicita una imagen menor. Los buffers de la
+  aplicación están limitados, pero el pico interno del decodificador depende del
+  navegador; no se garantiza ejecución en todos los móviles. Safari, Firefox y
+  teléfonos físicos requieren validación adicional.
 - Canvas vuelve a codificar la imagen y elimina metadatos EXIF. La orientación se
   intenta aplicar durante la decodificación, pero debe comprobarse en Safari.
 - PNG no ofrece un control de calidad con pérdida mediante Canvas.

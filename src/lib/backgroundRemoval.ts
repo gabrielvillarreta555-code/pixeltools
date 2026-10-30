@@ -1,4 +1,5 @@
 import * as ort from 'onnxruntime-web/wasm';
+import { prepareBackgroundImage, type PreparedBackground } from './backgroundInput';
 import { createBackdrop } from './composition';
 import { findAlphaBounds, scaleBox, type Box } from './geometry';
 import { canvasToBlob, decodeImage, ImageProcessingError, validateDimensions } from './imageProcessing';
@@ -28,6 +29,7 @@ export interface BackgroundRemovalOutput {
 }
 
 interface BackgroundOptions {
+  preparedImage?: PreparedBackground;
   signal?: AbortSignal;
   onProgress?: (progress: BackgroundProgress) => void;
 }
@@ -189,10 +191,13 @@ export async function removeImageBackground(
     throw new ImageProcessingError('Este navegador no admite WebAssembly, necesario para la eliminación de fondos.');
   }
 
+  report(options, 'Preparando la fotografía con un tamaño seguro…', 1);
+  const prepared = options.preparedImage ?? await prepareBackgroundImage(file, options.signal);
+  throwIfAborted(options.signal);
   const session = await getSession(options);
   throwIfAborted(options.signal);
   report(options, 'Preparando la fotografía…', 42);
-  const decoded = await decodeImage(file, options.signal);
+  const decoded = await decodeImage(prepared.blob, options.signal);
   const resultCanvas = document.createElement('canvas');
   let maskCanvas: HTMLCanvasElement | null = null;
   let maskBounds: Box | null = null;
@@ -236,9 +241,9 @@ export async function removeImageBackground(
       blob,
       width: outputSize.width,
       height: outputSize.height,
-      originalWidth: decoded.width,
-      originalHeight: decoded.height,
-      resized: outputSize.resized,
+      originalWidth: prepared.originalWidth,
+      originalHeight: prepared.originalHeight,
+      resized: prepared.resized || outputSize.resized,
       subject: maskBounds
         ? scaleBox(maskBounds, maskCanvas.width, maskCanvas.height, outputSize.width, outputSize.height)
         : null,
