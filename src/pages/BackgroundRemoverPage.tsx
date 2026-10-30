@@ -9,6 +9,7 @@ import { downloadBlob, formatBytes, makeOutputName, validateImageFile } from '..
 import type { BackgroundProgress, BackgroundRemovalOutput } from '../lib/backgroundRemoval';
 import { composeCutout, type BackgroundFill, type ComposeOutput } from '../lib/composition';
 import { useObjectUrl } from '../lib/useObjectUrl';
+import { prepareBackgroundImage, type PreparedBackground } from '../lib/backgroundInput';
 
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
 const SWATCHES = [
@@ -44,6 +45,8 @@ type ComposedResult = ComposeOutput & { transparent: boolean; mimeType: ExportTy
 
 export default function BackgroundRemoverPage() {
   const [file, setFile] = useState<File | null>(null);
+  const [prepared, setPrepared] = useState<PreparedBackground | null>(null);
+  const [preparing, setPreparing] = useState(false);
   const [result, setResult] = useState<BackgroundRemovalOutput | null>(null);
   const [progress, setProgress] = useState<BackgroundProgress>({ message: '', percent: 0 });
   const [processing, setProcessing] = useState(false);
@@ -58,7 +61,7 @@ export default function BackgroundRemoverPage() {
   const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
   const [comparePosition, setComparePosition] = useState(50);
   const abortRef = useRef<AbortController | null>(null);
-  const inputUrl = useObjectUrl(file);
+  const inputUrl = useObjectUrl(prepared?.blob);
   const outputUrl = useObjectUrl(composed?.blob);
   // Con «Imagen» pero sin imagen elegida todavía, el fondo sigue transparente.
   const fill: BackgroundFill = useMemo(() => {
@@ -118,7 +121,7 @@ export default function BackgroundRemoverPage() {
     };
   }, [result, fill, fillKey, transparent, crop, effectiveType]);
 
-  const handleFiles = ([nextFile]: File[]) => {
+  const handleFiles = async ([nextFile]: File[]) => {
     abortRef.current?.abort();
     const validationError = validateImageFile(nextFile, { maxBytes: MAX_FILE_BYTES });
     if (validationError) {
@@ -129,12 +132,29 @@ export default function BackgroundRemoverPage() {
     setResult(null);
     setError('');
     setProgress({ message: '', percent: 0 });
+    setPrepared(null);
+    setPreparing(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      const image = await prepareBackgroundImage(nextFile, controller.signal);
+      if (!controller.signal.aborted) setPrepared(image);
+    } catch (caught) {
+      if (!controller.signal.aborted) setError(caught instanceof Error ? caught.message : 'No se pudo preparar la imagen.');
+    } finally {
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setPreparing(false);
+      }
+    }
   };
 
   const reset = () => {
     abortRef.current?.abort();
     abortRef.current = null;
     setFile(null);
+    setPrepared(null);
+    setPreparing(false);
     setResult(null);
     setError('');
     setProgress({ message: '', percent: 0 });
@@ -159,7 +179,7 @@ export default function BackgroundRemoverPage() {
   };
 
   const removeBackground = async () => {
-    if (!file || !wasmAvailable) return;
+    if (!file || !prepared || !wasmAvailable) return;
     const controller = new AbortController();
     abortRef.current?.abort();
     abortRef.current = controller;
@@ -170,6 +190,7 @@ export default function BackgroundRemoverPage() {
     try {
       const module = await import('../lib/backgroundRemoval');
       const output = await module.removeImageBackground(file, {
+        preparedImage: prepared,
         signal: controller.signal,
         onProgress: setProgress,
       });
@@ -211,7 +232,7 @@ export default function BackgroundRemoverPage() {
               {lowMemory && <div className="mb-4"><Notice tone="warning">Este dispositivo informa de poca memoria. Usa una fotografía pequeña y cierra otras pestañas antes de procesarla.</Notice></div>}
               {error && <div className="mb-4"><Notice tone="error">{error}</Notice></div>}
               <UploadZone
-                description="JPG, PNG o WebP · Máximo 15 MB · Hasta 24 megapíxeles"
+                description="JPG, PNG o WebP · Máximo 15 MB · Hasta 100 megapíxeles · Reducción automática a 2048 px / 4 MP"
                 disabled={!wasmAvailable}
                 onFiles={handleFiles}
               />
@@ -421,7 +442,11 @@ export default function BackgroundRemoverPage() {
               )}
 
               {error && <div className="mx-auto mt-6 max-w-xl"><Notice tone="error">{error}</Notice></div>}
-              {result?.resized && (
+              {preparing && <div className="mx-auto mt-6 max-w-xl"><Notice>Preparando una vista previa de tamaño seguro…</Notice></div>}
+              {prepared?.resized && (
+                <div className="mx-auto mt-6 max-w-xl"><Notice tone="info">Imagen redimensionada automáticamente de {prepared.originalWidth} × {prepared.originalHeight} a {prepared.width} × {prepared.height} px para reducir el uso de memoria. Se conservan las proporciones; el original no se modifica.</Notice></div>
+              )}
+              {result?.resized && !prepared?.resized && (
                 <div className="mx-auto mt-6 max-w-xl"><Notice tone="info">Para evitar errores de memoria, el resultado se redujo desde {result.originalWidth} × {result.originalHeight} px.</Notice></div>
               )}
 
@@ -436,7 +461,7 @@ export default function BackgroundRemoverPage() {
                     <Icon className="size-5" name="download" /> Descargar {effectiveType === 'image/png' ? 'PNG' : 'JPG'}
                   </button>
                 ) : (
-                  <button className="btn btn-primary flex-1" type="button" disabled={processing} onClick={removeBackground}>
+                  <button className="btn btn-primary flex-1" type="button" disabled={processing || preparing || !prepared} onClick={removeBackground}>
                     <Icon className="size-5" name="sparkles" /> Eliminar fondo
                   </button>
                 )}

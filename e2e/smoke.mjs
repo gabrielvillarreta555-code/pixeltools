@@ -115,7 +115,22 @@ async function createFixtures(browser) {
     context.fillStyle = '#2563eb';
     context.fillRect(0, 0, 16, 16);
 
+    const large = document.createElement('canvas');
+    large.width = 6750;
+    large.height = 9000;
+    context = large.getContext('2d');
+    context.fillStyle = '#78b478';
+    context.fillRect(0, 0, large.width, large.height);
+    context.fillStyle = '#c83c3c';
+    context.beginPath();
+    context.ellipse(3375, 4500, 1800, 2800, 0, 0, Math.PI * 2);
+    context.fill();
+    const largePhoto = await toBase64(large, 'image/jpeg', 0.85);
+    large.width = 0;
+    large.height = 0;
+
     return {
+      largePhoto,
       tiny: await toBase64(tiny, 'image/png'),
       photo: await toBase64(photo, 'image/jpeg', 0.95),
       transparent: await toBase64(transparent, 'image/png'),
@@ -125,6 +140,7 @@ async function createFixtures(browser) {
   await page.close();
   const file = (name, mimeType, base64) => ({ name, mimeType, buffer: Buffer.from(base64, 'base64') });
   return {
+    largePhoto: file('grande-6750x9000.jpg', 'image/jpeg', data.largePhoto),
     photo: (name = 'foto.jpg') => file(name, 'image/jpeg', data.photo),
     transparent: file('transparente.png', 'image/png', data.transparent),
     tiny: file('icono.png', 'image/png', data.tiny),
@@ -481,19 +497,47 @@ async function mobile(browser, base, fx) {
   await context.close();
 }
 
+async function largeBackground(browser, base, fx) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const requests = [];
+  page.on('request', (request) => requests.push({ method: request.method(), url: request.url() }));
+  try {
+    await page.goto(`${base}/eliminar-fondo`);
+    await page.locator('input[type=file]').setInputFiles(fx.largePhoto);
+    const notice = page.getByText(/Imagen redimensionada automáticamente/);
+    await notice.waitFor({ timeout: 60_000 });
+    check((await notice.innerText()).includes('6750 × 9000 a 1536 × 2048'), 'aviso de reducción proporcional antes de ejecutar IA');
+    check(await page.locator('img[alt="Imagen original antes de eliminar el fondo"]').evaluate((img) => img.naturalWidth === 1536 && img.naturalHeight === 2048), 'la vista previa también usa la copia reducida');
+    await page.getByRole('button', { name: 'Eliminar fondo', exact: true }).click();
+    const button = enabledButton(page, 'Descargar PNG');
+    await button.waitFor({ timeout: 180_000 });
+    const downloadPromise = page.waitForEvent('download');
+    await button.click();
+    const download = await downloadPromise;
+    const info = await inspectImage(page, await readFile(await download.path()));
+    check(info.width === 1536 && info.height === 2048, '6750 × 9000 produce PNG 1536 × 2048');
+    check(info.alphaMin < 20 && info.alphaMax > 230, 'el resultado grande conserva transparencia y sujeto');
+    // Las URL blob son buffers locales; no constituyen tráfico de red.
+    const network = requests.filter((r) => /^https?:/.test(r.url));
+    check(network.every((r) => r.method === 'GET' && new URL(r.url).origin === new URL(base).origin), 'el flujo no envía fotografías ni llama servicios externos');
+    check(await horizontalOverflow(page) === 0, 'aviso y resultado grande caben en 390 px');
+  } finally { await context.close(); }
+}
+
 // ---------- ejecución ----------
 
 const server = BASE_URL ? null : await preview({ logLevel: 'silent', preview: { port: 4317, strictPort: false } });
 const base = BASE_URL || server.resolvedUrls.local[0].replace(/\/$/, '');
 console.log(`Probando ${base}`);
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 try {
   const fx = await createFixtures(browser);
   for (let round = 1; round <= REPEAT; round += 1) {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);
