@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFile, rm, writeFile } from 'node:fs/promises';
 
 // Solo el dominio confirmado puede indexarse. En Cloudflare la rama de
 // producción debe ser main; una variable heredada no habilita previews.
@@ -87,9 +87,9 @@ for (const page of pages) {
     await writeFile(new URL('index.html', dist), html);
     continue;
   }
-  const directory = new URL(`.${page.path}/`, dist);
-  await mkdir(directory, { recursive: true });
-  await writeFile(new URL('index.html', directory), html);
+  // «ruta.html» en lugar de «ruta/index.html»: Cloudflare Pages sirve así
+  // /ruta sin redirigir a /ruta/, y coincide con el canonical y el sitemap.
+  await writeFile(new URL(`.${page.path}.html`, dist), html);
 }
 
 const notFound = template

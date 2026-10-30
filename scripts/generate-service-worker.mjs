@@ -29,8 +29,7 @@ const precache = files
   .filter((url) => !url.endsWith('.map'))
   .filter((url) => !/^\/(models|ort)\//.test(url))
   .filter((url) => !['/sw.js', '/_headers', '/robots.txt', '/sitemap.xml', '/404.html', '/og-image.svg', '/og-image.png'].includes(url))
-  .map((url) => url.replace(/\/index\.html$/, '/'))
-  .map((url) => (url.length > 1 ? url.replace(/\/$/, '') : url));
+  .map((url) => (url === '/index.html' ? '/' : url.replace(/\.html$/, '')));
 
 // Recursos pesados del eliminador: se guardan la primera vez que se usan.
 const heavy = files.map(toUrl).filter((url) => /^\/(models\/.*\.onnx|ort\/.*)$/.test(url));
@@ -39,7 +38,7 @@ async function digest(urls) {
   const hash = createHash('sha256');
   for (const url of urls) {
     const path = join(dist, url === '/' ? 'index.html' : url.slice(1));
-    const target = url !== '/' && !url.includes('.') ? join(path, 'index.html') : path;
+    const target = url !== '/' && !url.includes('.') ? `${path}.html` : path;
     hash.update(url).update(await readFile(target));
   }
   return hash.digest('hex').slice(0, 12);

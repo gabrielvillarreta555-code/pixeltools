@@ -29,7 +29,7 @@ describe('SEO estático', () => {
     expect(sitemap.match(/<loc>/g)).toHaveLength(paths.length);
     for (const path of paths) {
       const url = `https://velixblue.com/${path}`;
-      const html = read(path ? `${path}/index.html` : 'index.html');
+      const html = read(path ? `${path}.html` : 'index.html');
       expect(sitemap).toContain(`<loc>${url}</loc>`);
       expect(html).toContain(`rel="canonical" href="${url}"`);
       expect(html).toContain('name="robots" content="index,follow,max-image-preview:large"');

@@ -180,7 +180,9 @@ de producción elegida en `<proyecto>.pages.dev`. Elige como producción la rama
 que de verdad quieras mostrar en esa dirección.
 
 Comportamiento comprobado con `wrangler pages dev` (emulador de Pages):
-`/ruta` redirige con 308 a `/ruta/`, las rutas inexistentes devuelven `404.html`
+cada página se genera como `ruta.html`, así `/ruta` responde 200 sin redirigir y
+coincide con el canonical y el sitemap (`/ruta/` y `/ruta.html` redirigen con 308
+a `/ruta`); las rutas inexistentes devuelven `404.html`
 con estado 404, `_headers` aplica COOP/COEP y caché inmutable a `/assets`,
 `/models` y `/ort`, y el service worker funciona con esas redirecciones.
 

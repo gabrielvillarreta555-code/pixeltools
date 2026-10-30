@@ -54,7 +54,9 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 - `src/pages/ResizePage.tsx`, `CropPage.tsx`, `MetadataPage.tsx`: herramientas
   nuevas (carga diferida). El convertidor es `CompressorPage` con `mode="convert"`.
 - `src/components/`: navegación, SEO en cliente y componentes reutilizables.
-- `scripts/generate-static-pages.mjs`: HTML y metadatos estáticos por ruta.
+- `scripts/generate-static-pages.mjs`: HTML y metadatos estáticos por ruta. Genera
+  `ruta.html` (no `ruta/index.html`) para que Cloudflare sirva `/ruta` sin redirigir:
+  el canonical y el sitemap no deben apuntar a una dirección que redirige.
 - `scripts/copy-runtime-assets.mjs`: prepara WASM desde `onnxruntime-web`.
 - `scripts/generate-service-worker.mjs`: genera `dist/sw.js`. Nunca debe cachear
   fotografías del usuario; solo archivos de la aplicación.
