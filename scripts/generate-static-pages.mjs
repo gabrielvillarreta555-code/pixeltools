@@ -1,16 +1,20 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 
-// Solo un dominio configurado permite indexar. Sin él (despliegue de prueba en
-// *.pages.dev o build local) se usa la URL que Cloudflare Pages da al despliegue
-// y todo el sitio se marca noindex: robots.txt, meta robots y X-Robots-Tag.
+// Solo el dominio confirmado puede indexarse. En Cloudflare la rama de
+// producción debe ser main; una variable heredada no habilita previews.
+const productionUrl = 'https://velixblue.com';
 const configuredUrl = (process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
-const indexable = Boolean(configuredUrl);
-const siteUrl = configuredUrl || (process.env.CF_PAGES_URL || 'http://localhost:4173').replace(/\/$/, '');
+const cloudflare = process.env.CF_PAGES === '1';
+const indexable = cloudflare
+  ? process.env.CF_PAGES_BRANCH === 'main' && (!configuredUrl || configuredUrl === productionUrl)
+  : configuredUrl === productionUrl;
+const siteUrl = indexable ? productionUrl : (process.env.CF_PAGES_URL || 'http://localhost:4173').replace(/\/$/, '');
 const robotsMeta = indexable ? 'index,follow,max-image-preview:large' : 'noindex,nofollow';
 const dist = new URL('../dist/', import.meta.url);
 // index.html usa https://sitio.invalid como marcador en desarrollo.
 const template = (await readFile(new URL('index.html', dist), 'utf8'))
   .replaceAll('https://sitio.invalid', siteUrl)
+  .replace('</head>', `  <meta name="velix-indexable" content="${indexable}" />\n    <meta name="velix-site-url" content="${siteUrl}" />\n  </head>`)
   .replace('content="index,follow,max-image-preview:large"', `content="${robotsMeta}"`);
 
 const pages = [

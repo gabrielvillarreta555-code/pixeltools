@@ -83,10 +83,13 @@ Node.js 20.19 o posterior. El build debe seguir siendo una salida estática en
 
 Variables documentadas en `.env.example`:
 
-- `SITE_URL` (o su equivalente `VITE_SITE_URL`): dominio público definitivo.
-  Solo con él se permite indexar; sin él el build es de prueba (`noindex`,
-  `robots.txt` bloqueante, canonical a `CF_PAGES_URL`). No reintroducir un dominio
-  por defecto: `pixeltools.pages.dev` no es de este proyecto.
+- `SITE_URL` (o `VITE_SITE_URL`): solo `https://velixblue.com` habilita un
+  build de producción local. En Cloudflare Pages la rama `main` usa ese dominio
+  automáticamente; las demás ramas siguen bloqueadas aunque hereden variables.
+- `functions/_middleware.ts` protege por host los alias `*.pages.dev` incluso
+  cuando sirven el build de producción: robots bloqueante y `X-Robots-Tag`.
+  El despliegue debe incluir Pages Functions; servir únicamente `dist/` en otro
+  proveedor no aplica esa protección a alias del build de producción.
 - `VITE_CONTACT_EMAIL`: activa el contacto por `mailto:`.
 - `public/_headers` debe tener una sola regla `/*`; Cloudflare Pages no combina
   reglas `/*` repetidas y el modo prueba añade `X-Robots-Tag` dentro de ella.

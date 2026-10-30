@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 
-// Vacío mientras no haya dominio definitivo: entonces se usa la dirección actual
-// (por ejemplo, un despliegue de prueba en *.pages.dev) y no se permite indexar.
-const CONFIGURED_SITE_URL = import.meta.env.VITE_SITE_URL;
+// Estos valores proceden del build estático; no dependen de variables Vite que
+// puedan diferir de las utilizadas por el generador de páginas.
+const BUILD_SITE_URL = document.querySelector<HTMLMetaElement>('meta[name="velix-site-url"]')?.content;
+const BUILD_INDEXABLE = document.querySelector<HTMLMetaElement>('meta[name="velix-indexable"]')?.content === 'true';
 
 function setMeta(selector: string, attributes: Record<string, string>) {
   let element = document.head.querySelector<HTMLMetaElement>(selector);
@@ -22,9 +23,9 @@ interface SeoProps {
 
 export function Seo({ title, description, path, noIndex = false }: SeoProps) {
   useEffect(() => {
-    const siteUrl = CONFIGURED_SITE_URL || window.location.origin;
+    const siteUrl = BUILD_SITE_URL || window.location.origin;
     const url = `${siteUrl}${path === '/' ? '/' : path}`;
-    const robots = !CONFIGURED_SITE_URL ? 'noindex,nofollow' : noIndex ? 'noindex,follow' : 'index,follow,max-image-preview:large';
+    const robots = !BUILD_INDEXABLE || window.location.hostname !== 'velixblue.com' ? 'noindex,nofollow' : noIndex ? 'noindex,follow' : 'index,follow,max-image-preview:large';
     document.title = title;
     setMeta('meta[name="description"]', { name: 'description', content: description });
     setMeta('meta[name="robots"]', { name: 'robots', content: robots });

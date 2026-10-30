@@ -84,7 +84,7 @@ desde `onnxruntime-web` antes de iniciar el servidor.
 Variables opcionales (consulta `.env.example`):
 
 ```bash
-SITE_URL=https://dominio-final.example
+SITE_URL=https://velixblue.com
 VITE_CONTACT_EMAIL=contacto@dominio-final.example
 ```
 
@@ -93,19 +93,20 @@ El contacto queda claramente desactivado si no se configura una dirección.
 ## Compilación
 
 ```bash
-SITE_URL=https://dominio-final.example npm run build
+SITE_URL=https://velixblue.com npm run build
 ```
 
 El resultado se escribe en `dist/`. Después de Vite, el script SEO crea HTML
 estático con título, descripción, canonical y Open Graph para cada ruta, además
 de `robots.txt` y `404.html`.
 
-**Indexación:** solo se permite cuando `SITE_URL` (o su equivalente
-`VITE_SITE_URL`) está configurado. Sin dominio, el build entra en modo prueba:
-usa la URL del despliegue (`CF_PAGES_URL` en Cloudflare Pages), marca todas las
-páginas `noindex,nofollow`, añade `X-Robots-Tag` en `_headers`, escribe un
-`robots.txt` que lo bloquea todo y no genera `sitemap.xml`. Así un despliegue de
-prueba en `*.pages.dev` no aparece en buscadores ni apunta a un dominio ajeno.
+**Indexación:** en Cloudflare Pages, la rama `main` genera las páginas indexables
+con canonical y sitemap de `https://velixblue.com`. Las demás ramas generan
+`noindex,nofollow`, `X-Robots-Tag`, un `robots.txt` bloqueante y ningún sitemap,
+incluso si heredan la variable de producción. Fuera de Cloudflare, solo
+`SITE_URL=https://velixblue.com` (o `VITE_SITE_URL`) habilita el build de
+producción. La función `functions/_middleware.ts` bloquea los alias de prueba
+por host, incluidos los `*.pages.dev` que sirven el mismo build de producción.
 
 ## Pruebas
 
@@ -157,9 +158,22 @@ Configuración del proyecto:
 
 - Comando de compilación: `npm run build`. Directorio de salida: `dist`.
 - Node: `.node-version` fija la versión usada en local (22.22.0).
-- Despliegue de prueba: no definas `SITE_URL`; el sitio queda en modo `noindex`.
-- Publicación definitiva: define `SITE_URL` y `VITE_CONTACT_EMAIL` en las
-  variables de **Production** y revisa antes privacidad, términos y correo.
+- Rama de producción: `main`. Confirma que `velixblue.com` esté asociado al
+  despliegue de producción de este proyecto, no a un despliegue de prueba.
+- Variables: `SITE_URL=https://velixblue.com` es opcional en producción;
+  configura `VITE_CONTACT_EMAIL` y revisa privacidad y términos. Las ramas de
+  prueba permanecen en modo `noindex` incluso si heredan `SITE_URL`.
+- Pages debe desplegar el directorio `functions/` junto con `dist/`. Un despliegue
+  puramente estático que copie solo `dist/` no protege los alias de producción.
+
+Después del despliegue, verifica con `curl -i https://velixblue.com/robots.txt`
+que aparezca `Allow: /` y el sitemap correcto, y con
+`curl -I https://velixblue.com/` que no haya `X-Robots-Tag: noindex`.
+Comprueba `https://velixblue.com/sitemap.xml` y los canonical en el HTML de cada
+ruta. En la URL de prueba `*.pages.dev`, comprueba `Disallow: /` y el encabezado
+`X-Robots-Tag: noindex, nofollow`. Si persiste contenido antiguo, revisa la
+asociación del dominio y la caché de Cloudflare antes de solicitar en Search
+Console la validación y el rastreo; la indexación no es inmediata ni automática.
 
 Atención: al pulsar **Save and Deploy**, Cloudflare despliega en el acto la rama
 de producción elegida en `<proyecto>.pages.dev`. Elige como producción la rama
