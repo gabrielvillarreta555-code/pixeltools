@@ -235,6 +235,13 @@ actualizaciones se detecten.
 - Canvas vuelve a codificar la imagen y elimina metadatos EXIF. La orientación se
   intenta aplicar durante la decodificación, pero debe comprobarse en Safari.
 - PNG no ofrece un control de calidad con pérdida mediante Canvas.
+- El compresor permite un objetivo de 1 a 25.600 KB por imagen, también en lotes.
+  Para JPG/WebP prueba hasta nueve calidades entre 30% y 95% y conserva la mayor
+  calidad probada que cumple el límite; no cambia las dimensiones salvo que el
+  usuario lo seleccione. Si no lo alcanza, informa y entrega el menor archivo
+  probado. Para PNG se codifica sin pérdida y se comprueba el tamaño real.
+  La búsqueda es acotada y no garantiza la mejor calidad posible: los
+  codificadores de los navegadores pueden no producir tamaños monótonos.
 - La cancelación no puede interrumpir una llamada ONNX ya iniciada; descarta el
   resultado al finalizar.
 - U²-Net pequeño prioriza tamaño y compatibilidad. Puede producir bordes

@@ -525,6 +525,45 @@ async function largeBackground(browser, base, fx) {
   } finally { await context.close(); }
 }
 
+async function targetCompression(browser, base, fx) {
+  console.log('Compresión por tamaño objetivo');
+  const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  try {
+    await page.goto(`${base}/comprimir-imagen`);
+    await page.locator('input[type=file]').first().setInputFiles(fx.photo());
+    await page.selectOption('#output-format', 'image/jpeg');
+    await page.getByLabel('Comprimir a un tamaño objetivo').check();
+    await page.locator('#target-kb').fill('0');
+    check(await page.getByRole('button', { name: 'Comprimir ahora' }).isDisabled(), 'rechaza objetivo cero');
+    await page.locator('#target-kb').fill('200');
+    await page.selectOption('#resize', '1280');
+    await page.getByRole('button', { name: 'Comprimir ahora' }).click();
+    await enabledButton(page, 'Descargar').first().waitFor({ timeout: 120_000 });
+    const result = await download(page, () => enabledButton(page, 'Descargar').last().click());
+    check(result.buffer.length <= 200 * 1024, 'JPG descargado alcanza 200 KB');
+    const dimensions = await inspectImage(page, result.buffer);
+    check(dimensions.width === 1280 && dimensions.height === 853, 'respeta la redimensión elegida y las proporciones');
+    check(await page.getByText(/1 de 1 imágenes alcanzaron el objetivo/).isVisible(), 'informa cuando se cumple el objetivo');
+    check(await horizontalOverflow(page) === 0, 'controles de objetivo caben en 390 px');
+
+    await page.selectOption('#output-format', 'image/png');
+    await page.locator('#target-kb').fill('1');
+    await page.getByRole('button', { name: 'Comprimir ahora' }).click();
+    await enabledButton(page, 'Descargar').first().waitFor({ timeout: 120_000 });
+    check(await page.getByText(/0 de 1 imágenes alcanzaron el objetivo/).isVisible(), 'PNG imposible informa que no alcanzó el objetivo');
+    check(await page.getByText(/Algunas no lo alcanzaron/).isVisible(), 'ofrece alternativas si no se alcanza');
+    await page.goto(`${base}/comprimir-imagen`);
+    await page.locator('input[type=file]').first().setInputFiles([fx.photo(), fx.tiny]);
+    await page.getByLabel('Comprimir a un tamaño objetivo').check();
+    await page.locator('#target-kb').fill('1');
+    await page.getByRole('button', { name: 'Comprimir 2 imágenes' }).click();
+    await enabledButton(page, 'Descargar 2 imágenes (ZIP)').waitFor({ timeout: 120_000 });
+    const rows = await page.locator('ul[aria-label="Imágenes del lote"] li').allInnerTexts();
+    check(rows.some((row) => row.includes('objetivo alcanzado')) && rows.some((row) => row.includes('objetivo no alcanzado')), 'lote informa el objetivo de cada archivo');
+  } finally { await context.close(); }
+}
+
 // ---------- ejecución ----------
 
 const server = BASE_URL ? null : await preview({ logLevel: 'silent', preview: { port: 4317, strictPort: false } });
@@ -537,7 +576,7 @@ try {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);

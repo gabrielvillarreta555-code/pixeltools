@@ -1,4 +1,5 @@
 import type { SupportedImageType } from './files';
+import { findTargetEncoding } from './targetCompression';
 
 const MAX_PIXELS = 32_000_000;
 const MAX_DIMENSION = 12_000;
@@ -132,6 +133,7 @@ export function canvasToBlob(
 export interface CompressOptions {
   mimeType: SupportedImageType;
   quality: number;
+  targetBytes?: number;
   /** Lado máximo en píxeles; si se omite se conservan las dimensiones originales. */
   maxDimension?: number;
   signal?: AbortSignal;
@@ -145,6 +147,8 @@ export interface CompressionOutput {
   originalWidth: number;
   originalHeight: number;
   resized: boolean;
+  targetMet?: boolean;
+  actualQuality?: number;
 }
 
 export async function compressImage(file: File, options: CompressOptions): Promise<CompressionOutput> {
@@ -185,7 +189,23 @@ export async function compressImage(file: File, options: CompressOptions): Promi
 
     options.onProgress?.('Optimizando el archivo…');
     const quality = options.mimeType === 'image/png' ? undefined : options.quality;
-    const blob = await canvasToBlob(canvas, options.mimeType, quality, options.signal);
+    let blob: Blob;
+    let targetMet: boolean | undefined;
+    let actualQuality: number | undefined;
+    if (options.targetBytes && options.mimeType !== 'image/png') {
+      options.onProgress?.('Buscando una calidad para el tamaño objetivo…');
+      const result = await findTargetEncoding(
+        (value) => canvasToBlob(canvas, options.mimeType, value, options.signal),
+        options.targetBytes,
+        options.signal,
+      );
+      blob = result.blob;
+      targetMet = result.met;
+      actualQuality = result.quality;
+    } else {
+      blob = await canvasToBlob(canvas, options.mimeType, quality, options.signal);
+      if (options.targetBytes) targetMet = blob.size <= options.targetBytes;
+    }
     return {
       blob,
       width: target.width,
@@ -193,6 +213,8 @@ export async function compressImage(file: File, options: CompressOptions): Promi
       originalWidth: decoded.width,
       originalHeight: decoded.height,
       resized: target.resized,
+      targetMet,
+      actualQuality,
     };
   } finally {
     decoded.release();
