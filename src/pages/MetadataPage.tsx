@@ -1,3 +1,4 @@
+import { BlueHint } from '../components/BlueHint';
 import { useState } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
@@ -72,6 +73,7 @@ export default function MetadataPage() {
         <ToolIntro
           icon="location"
           eyebrow="Quitar metadatos"
+          blueTip="Elige una imagen para revisar sus datos y decidir si quieres guardar una copia limpia."
           title="Tus fotos cuentan más de lo que crees."
           description="Muchas fotos guardan dónde se tomaron, con qué teléfono y cuándo. Descúbrelo y bórralo antes de compartirlas, sin perder calidad."
         />
@@ -135,6 +137,7 @@ export default function MetadataPage() {
                       </div>
                     )}
 
+                    {analysis && hasMetadata && <BlueHint status message={analysis.cleanReport.entries.length === 0 ? 'La copia limpia está lista para descargar.' : 'La copia está lista; revisa el aviso sobre los datos que permanecen.'} />}
                     {analysis && hasMetadata && (
                       <div className="mt-auto rounded-2xl border border-line bg-white/[0.03] p-4">
                         {analysis.cleanReport.entries.length === 0 ? (

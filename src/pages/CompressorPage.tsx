@@ -1,3 +1,4 @@
+import { BlueHint } from '../components/BlueHint';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
@@ -260,6 +261,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
           eyebrow={config.eyebrow}
           title={config.title}
           description={config.description}
+          blueTip={mode === 'compress' ? 'Elige tus imágenes y ajusta el tamaño o la calidad antes de comprimir.' : 'Elige tus imágenes y el formato al que quieres convertirlas.'}
         />
 
         <div className="tool-shell mx-auto mt-10 max-w-5xl">
@@ -489,6 +491,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
                 {/* El resumen aparece al terminar para que los controles no se desplacen durante el lote. */}
                 {done.length > 0 && !processing && (
                   <div className="mt-6 rounded-2xl border border-line bg-panel-2 p-4" aria-live="polite">
+                    <BlueHint status message="¡Hay resultados listos! Revisa el resumen antes de descargarlos." />
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-[0.68rem] font-bold uppercase tracking-wider text-mist">Original</p>

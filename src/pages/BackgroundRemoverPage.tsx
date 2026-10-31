@@ -1,3 +1,4 @@
+import { BlueHint } from '../components/BlueHint';
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
@@ -221,6 +222,7 @@ export default function BackgroundRemoverPage() {
         <ToolIntro
           icon="scissors"
           eyebrow="Eliminador de fondos"
+          blueTip="Elige una imagen y después podrás revisar el recorte y probar distintos fondos."
           title="Tu sujeto, sin distracciones."
           description="La inteligencia artificial separa el elemento principal del fondo en tu propio dispositivo. Déjalo transparente o ponle un color, un degradado, tu propia imagen o un desenfoque. El primer uso descarga un modelo ligero de 4,6 MB."
         />
@@ -446,6 +448,7 @@ export default function BackgroundRemoverPage() {
               {prepared?.resized && (
                 <div className="mx-auto mt-6 max-w-xl"><Notice tone="info">Imagen redimensionada automáticamente de {prepared.originalWidth} × {prepared.originalHeight} a {prepared.width} × {prepared.height} px para reducir el uso de memoria. Se conservan las proporciones; el original no se modifica.</Notice></div>
               )}
+              {result && composed && !composing && <BlueHint status message="¡Tu resultado está listo! Puedes revisar el fondo y descargarlo." />}
               {result?.resized && !prepared?.resized && (
                 <div className="mx-auto mt-6 max-w-xl"><Notice tone="info">Para evitar errores de memoria, el resultado se redujo desde {result.originalWidth} × {result.originalHeight} px.</Notice></div>
               )}

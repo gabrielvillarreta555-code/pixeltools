@@ -1,3 +1,4 @@
+import { BlueHint } from '../components/BlueHint';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
@@ -237,6 +238,7 @@ export default function CropPage() {
         <ToolIntro
           icon="crop"
           eyebrow="Recortar imagen"
+          blueTip="Elige una imagen y ajusta el área que quieres conservar."
           title="Encuadra justo lo que importa."
           description="Recorta con proporciones listas para redes o a mano alzada, y gira o voltea la foto en un toque. Sin perder resolución."
         />
@@ -352,6 +354,7 @@ export default function CropPage() {
                 {mimeType === 'image/jpeg' && file.type === 'image/png' && <Notice tone="warning">JPG no admite transparencia. Las áreas transparentes se rellenarán en blanco.</Notice>}
                 {error && <Notice tone="error">{error}</Notice>}
 
+                {result && <BlueHint status message="¡Tu recorte está listo! Puedes descargarlo o seguir editando." />}
                 <div className="mt-auto flex flex-col gap-2">
                   {result ? (
                     <>
