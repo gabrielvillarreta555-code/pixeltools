@@ -92,6 +92,15 @@ export function HomePage() {
           <p className="mt-5 max-w-xl text-pretty text-base leading-7 text-mist sm:text-lg">
             Edita, convierte, comprime y transforma tus imágenes directamente en tu navegador. Rápido, privado y sin cuentas.
           </p>
+          <div className="blue-welcome">
+            <span
+              className="blue-welcome-avatar"
+              role="img"
+              aria-label="Blue, la mascota luminosa de Blue Lab Studios"
+              style={{ backgroundImage: `url(${import.meta.env.BASE_URL}blue-referencia.jpg)` }}
+            />
+            <div><strong>Hola, soy Blue 💙</strong><p>Te acompaño mientras exploras las herramientas.</p></div>
+          </div>
           <ul className="mt-7 flex flex-wrap gap-x-7 gap-y-4">
             {HIGHLIGHTS.map(([icon, title, text]) => (
               <li key={title} className="flex items-center gap-3">

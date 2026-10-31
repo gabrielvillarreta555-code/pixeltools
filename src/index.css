@@ -6,19 +6,19 @@
  */
 @theme {
   --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-night: #050a1a;
-  --color-panel: #0b1430;
-  --color-panel-2: #101c40;
-  --color-line: rgb(120 160 255 / 0.16);
-  --color-line-strong: rgb(120 160 255 / 0.3);
-  --color-mist: #a8b4d8;
+  --color-night: #070b1d;
+  --color-panel: #0c1330;
+  --color-panel-2: #111b3d;
+  --color-line: rgb(160 180 255 / 0.14);
+  --color-line-strong: rgb(160 180 255 / 0.28);
+  --color-mist: #a9b3d6;
   --color-electric: #2f7bff;
   --color-electric-light: #60a5fa;
 }
 
 :root {
   font-family: var(--font-sans);
-  color: #eef3ff;
+  color: #eef1ff;
   background: var(--color-night);
   color-scheme: dark;
   font-synthesis: none;
@@ -98,6 +98,36 @@ img {
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+/* Blue: presencia de marca sin bloquear las herramientas. */
+.blue-welcome {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 1.5rem;
+  padding: .65rem .9rem .65rem .65rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 1.1rem;
+  background: rgb(12 19 48 / .82);
+}
+.blue-welcome-avatar {
+  width: 64px;
+  height: 72px;
+  flex: none;
+  border-radius: .85rem;
+  background-color: #070b1d;
+  background-repeat: no-repeat;
+  background-size: 270px 180px;
+  background-position: -45px -31px;
+}
+.blue-welcome strong { display: block; color: #eef1ff; font-size: .9rem; }
+.blue-welcome p { margin: .2rem 0 0; color: var(--color-mist); font-size: .8rem; line-height: 1.45; }
+@media (prefers-reduced-motion: no-preference) {
+  .blue-welcome-avatar { animation: blue-breathe 6s ease-in-out infinite; }
+  @keyframes blue-breathe { 50% { transform: translateY(-3px); } }
 }
 
 /* Botones */
@@ -250,7 +280,7 @@ img {
   overflow: hidden;
   border: 1px solid var(--color-line);
   border-radius: 1.5rem;
-  background: rgb(11 20 48 / 0.82);
+  background: rgb(12 19 48 / 0.82);
   box-shadow: 0 28px 80px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(47 123 255 / 0.05);
   backdrop-filter: blur(10px);
 }
@@ -313,8 +343,8 @@ img {
 }
 
 .select-field option {
-  background: #0b1430;
-  color: #eef3ff;
+  background: #0c1330;
+  color: #eef1ff;
 }
 
 .select-field:focus,
