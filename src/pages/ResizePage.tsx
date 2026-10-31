@@ -1,3 +1,4 @@
+import { BlueHint } from '../components/BlueHint';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Icon } from '../components/Icon';
@@ -151,6 +152,7 @@ export default function ResizePage() {
         <ToolIntro
           icon="resize"
           eyebrow="Redimensionar imagen"
+          blueTip="Elige tu imagen y selecciona una medida o un tamaño para redes."
           title="La medida justa para cada sitio."
           description="Ajusta tus fotos a medidas exactas, a un porcentaje o a los tamaños de Instagram, WhatsApp, Facebook, YouTube y más."
         />
@@ -325,6 +327,7 @@ export default function ResizePage() {
                 {sizeError && <Notice tone="error">{sizeError}</Notice>}
                 {error && <Notice tone="error">{error}</Notice>}
 
+                {result && <BlueHint status message="¡La imagen está lista! Revisa sus medidas antes de descargarla." />}
                 <div className="mt-auto flex flex-col gap-2">
                   {result ? (
                     <button
