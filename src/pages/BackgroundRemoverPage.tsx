@@ -433,6 +433,7 @@ export default function BackgroundRemoverPage() {
 
               {processing && (
                 <div className="mx-auto mt-7 max-w-xl" role="status" aria-live="polite">
+                  <BlueHint message="La herramienta está preparando el resultado en este dispositivo." />
                   <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-mist">
                     <span>{progress.message}</span><span>{Math.round(progress.percent)}%</span>
                   </div>
