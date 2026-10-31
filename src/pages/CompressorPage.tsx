@@ -471,6 +471,7 @@ export function CompressorPage({ mode = 'compress' }: { mode?: Mode }) {
 
                 {processing && (
                   <div className="mt-6" role="status" aria-live="polite">
+                    <BlueHint message="La herramienta está procesando tus imágenes en este dispositivo." />
                     <div className="mb-2 flex justify-between gap-3 text-xs font-semibold text-mist">
                       <span className="min-w-0 truncate">{progress}</span><span className="shrink-0">Procesando localmente</span>
                     </div>

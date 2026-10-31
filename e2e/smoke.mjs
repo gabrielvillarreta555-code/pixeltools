@@ -287,6 +287,8 @@ async function compressorCancel(browser, base, fx) {
   await page.getByRole('button', { name: 'Comprimir ahora' }).click();
   await page.getByRole('button', { name: 'Descargar resultado JPG' }).waitFor({ timeout: 30_000 });
   check(await page.getByText('más peso · no se considera comprimida').isVisible(), 'no llama «comprimida» a un resultado más pesado');
+  check(await page.getByText('¡Hay resultados listos! Revisa el resumen antes de descargarlos.').isVisible(), 'Blue orienta cuando el resultado está listo');
+  check(await page.locator('.blue-hint-avatar').first().evaluate((img) => img.complete && img.naturalWidth > 0), 'el personaje completo de Blue se carga');
   await page.close();
 }
 
