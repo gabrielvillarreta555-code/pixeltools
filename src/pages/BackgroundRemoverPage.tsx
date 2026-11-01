@@ -10,9 +10,10 @@ import { downloadBlob, formatBytes, makeOutputName, validateImageFile } from '..
 import type { BackgroundProgress, BackgroundRemovalOutput } from '../lib/backgroundRemoval';
 import { composeCutout, type BackgroundFill, type ComposeOutput } from '../lib/composition';
 import { useObjectUrl } from '../lib/useObjectUrl';
-import { prepareBackgroundImage, type PreparedBackground } from '../lib/backgroundInput';
+import { MAX_BACKGROUND_FILE_BYTES, prepareBackgroundImage, type PreparedBackground } from '../lib/backgroundInput';
 
-const MAX_FILE_BYTES = 15 * 1024 * 1024;
+// Las imágenes elegidas como fondo se decodifican de otra forma y conservan su límite anterior.
+const MAX_FILL_BYTES = 15 * 1024 * 1024;
 const SWATCHES = [
   ['#ffffff', 'Blanco'],
   ['#0f172a', 'Negro'],
@@ -124,7 +125,7 @@ export default function BackgroundRemoverPage() {
 
   const handleFiles = async ([nextFile]: File[]) => {
     abortRef.current?.abort();
-    const validationError = validateImageFile(nextFile, { maxBytes: MAX_FILE_BYTES });
+    const validationError = validateImageFile(nextFile, { maxBytes: MAX_BACKGROUND_FILE_BYTES });
     if (validationError) {
       setError(validationError);
       return;
@@ -170,7 +171,7 @@ export default function BackgroundRemoverPage() {
     const next = event.target.files?.[0];
     event.target.value = '';
     if (!next) return;
-    const validationError = validateImageFile(next, { maxBytes: MAX_FILE_BYTES });
+    const validationError = validateImageFile(next, { maxBytes: MAX_FILL_BYTES });
     if (validationError) {
       setError(`Imagen de fondo: ${validationError}`);
       return;
@@ -234,7 +235,7 @@ export default function BackgroundRemoverPage() {
               {lowMemory && <div className="mb-4"><Notice tone="warning">Este dispositivo informa de poca memoria. Usa una fotografía pequeña y cierra otras pestañas antes de procesarla.</Notice></div>}
               {error && <div className="mb-4"><Notice tone="error">{error}</Notice></div>}
               <UploadZone
-                description="JPG, PNG o WebP · Máximo 15 MB · Hasta 100 megapíxeles · Reducción automática a 2048 px / 4 MP"
+                description="JPG, PNG o WebP · Hasta 50 MB y 100 megapíxeles · Reducción automática a 2048 px / 4 MP. En teléfonos con poca memoria, algunas imágenes pueden necesitar compresión previa."
                 disabled={!wasmAvailable}
                 onFiles={handleFiles}
               />

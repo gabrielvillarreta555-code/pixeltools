@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { backgroundSize, prepareBackgroundImage, readImageSize } from '../src/lib/backgroundInput';
+import { MAX_BACKGROUND_FILE_BYTES, backgroundSize, prepareBackgroundImage, readImageSize } from '../src/lib/backgroundInput';
+import { validateImageFile } from '../src/lib/files';
 import { orientationTiff } from '../src/lib/metadata';
 
 function png(width: number, height: number) {
@@ -35,6 +36,17 @@ describe('tamaño seguro para el eliminador', () => {
 });
 
 describe('preparación previa a la IA', () => {
+  it('admite archivos de más de 15 MB hasta 50 MB, pero mantiene el límite', async () => {
+    expect(validateImageFile({ name: 'grande.jpg', type: 'image/jpeg', size: 20 * 1024 * 1024 }, { maxBytes: MAX_BACKGROUND_FILE_BYTES })).toBeNull();
+    expect(validateImageFile({ name: 'grande.jpg', type: 'image/jpeg', size: MAX_BACKGROUND_FILE_BYTES + 1 }, { maxBytes: MAX_BACKGROUND_FILE_BYTES })).toContain('50');
+    const tooLarge = { size: MAX_BACKGROUND_FILE_BYTES + 1, arrayBuffer: vi.fn() } as unknown as Blob;
+    await expect(prepareBackgroundImage(tooLarge)).rejects.toThrow('50 MB');
+    expect(tooLarge.arrayBuffer).not.toHaveBeenCalled();
+  });
+  it('ofrece una indicación útil si el navegador no puede leer el archivo pesado', async () => {
+    const file = { size: 20 * 1024 * 1024, arrayBuffer: vi.fn().mockRejectedValue(new RangeError('allocation')) } as unknown as Blob;
+    await expect(prepareBackgroundImage(file)).rejects.toThrow('memoria');
+  });
   it('aplica la orientación EXIF a las dimensiones JPEG', () => {
     const exif = [69, 120, 105, 102, 0, 0, ...orientationTiff(6)];
     const bytes = new Uint8Array([
