@@ -19,6 +19,11 @@ describe('tamaño seguro para el eliminador', () => {
   it('reduce 6750 × 9000 manteniendo 3:4', () => {
     expect(backgroundSize(6750, 9000)).toEqual({ width: 1536, height: 2048 });
   });
+  it('admite 108 megapíxeles y los reduce proporcionalmente', () => {
+    expect(backgroundSize(9000, 12000)).toEqual({ width: 1536, height: 2048 });
+    expect(readImageSize(png(9000, 12000))).toEqual({ width: 9000, height: 12000 });
+    expect(() => backgroundSize(10000, 12000)).not.toThrow();
+  });
   it.each([[9000, 6750], [4000, 4000], [32768, 1], [1, 32768], [1920, 1080]])('acota %i × %i sin ampliar', (width, height) => {
     const result = backgroundSize(width, height);
     expect(result.width * result.height).toBeLessThanOrEqual(4_000_000);
@@ -30,7 +35,7 @@ describe('tamaño seguro para el eliminador', () => {
     expect(Math.abs(result.height - height * scale)).toBeLessThan(1);
   });
   it('conserva imágenes pequeñas', () => expect(backgroundSize(800, 600)).toEqual({ width: 800, height: 600 }));
-  it.each([[0, 100], [NaN, 100], [Infinity, 1], [1.5, 100], [11000, 10000], [32769, 1]])('rechaza dimensiones inseguras %i × %i', (w, h) => {
+  it.each([[0, 100], [NaN, 100], [Infinity, 1], [1.5, 100], [11000, 11000], [32769, 1]])('rechaza dimensiones inseguras %i × %i', (w, h) => {
     expect(() => backgroundSize(w, h)).toThrow();
   });
 });
