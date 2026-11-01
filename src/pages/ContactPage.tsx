@@ -27,8 +27,8 @@ export function ContactPage() {
           <p className="mt-5 max-w-md text-base leading-7 text-mist">Comparte una incidencia, sugerencia o consulta sobre Vélix Blue. El formulario abre tu aplicación de correo y no almacena el mensaje.</p>
           <div className="mt-8 rounded-2xl border border-line bg-panel p-5 shadow-sm">
             <Icon className="size-5 text-electric-light" name="shield" />
-            <p className="mt-3 text-sm font-bold text-white">Canal sin seguimiento</p>
-            <p className="mt-2 text-sm leading-6 text-mist">No hay un formulario externo ni un proveedor que recopile los campos en esta versión.</p>
+            <p className="mt-3 text-sm font-bold text-white">Contacto mediante tu correo</p>
+            <p className="mt-2 text-sm leading-6 text-mist">Al preparar el mensaje se abre tu aplicación de correo; el envío y el tratamiento posterior dependen del servicio de correo que uses.</p>
           </div>
         </div>
         <div className="rounded-3xl border border-line bg-panel p-6 shadow-[0_20px_60px_rgba(0,0,0,0.3)] sm:p-8">

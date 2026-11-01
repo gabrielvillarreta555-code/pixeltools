@@ -18,7 +18,8 @@ aplicación (PWA) que funciona sin conexión.
 - **Eliminador de fondos:** U²-Net pequeño; comparador antes/después con
   deslizador; fondo transparente, de color, degradado, imagen propia o
   desenfocado a partir del original; recorte al sujeto con margen; descarga en
-  PNG o, con fondo opaco, JPG.
+  PNG o, con fondo opaco, JPG. Incluye pincel para borrar o restaurar zonas y
+  deshacer la última pincelada, con controles táctiles y de teclado.
 - **Convertir formato:** el motor del compresor con textos propios; JPG, PNG o
   WebP, por lotes y con ZIP. Los archivos se llaman siempre «-convertida».
 - **Redimensionar:** medidas de redes sociales (`SOCIAL_PRESETS`), medidas
@@ -31,9 +32,14 @@ aplicación (PWA) que funciona sin conexión.
   número de serie), XMP, IPTC, comentarios, fragmentos de texto PNG y las
   imágenes incrustadas tras el final del JPEG, sin recomprimir. Conserva el
   perfil de color y la orientación. Analiza de nuevo la copia antes de ofrecerla.
-- **Extraer texto:** OCR local de texto impreso en español o inglés, editable,
+- **Extraer texto:** OCR local de texto impreso en español o inglés, con giro y
+  selección opcional del área que se quiere leer; el resultado es editable,
   copiable y descargable como TXT. El motor y el idioma se descargan desde el
   sitio al usarse y pueden quedar en caché para uso sin conexión.
+- **Imágenes a PDF:** hasta 10 fotos JPG, PNG o WebP en un documento local,
+  reordenables, con páginas A4 o carta y orientación automática. Imágenes de
+  hasta 50 MB cada una y 80 MB en total; se reducen a un máximo de 2048 px por
+  lado / 4 MP y se recomprimen a JPG sobre fondo blanco.
 - **Portada:** catálogo de herramientas con buscador (`src/lib/tools.ts`). Las
   herramientas sin ruta se muestran como «Próximamente».
 - **PWA:** manifest con iconos PNG y *maskable*, service worker generado en el
@@ -48,6 +54,7 @@ aplicación (PWA) que funciona sin conexión.
 - ONNX Runtime Web (WASM) y U²-Net pequeño para segmentación.
 - Tesseract.js y modelos de idioma para OCR local; licencias y procedencia en
   `THIRD_PARTY_NOTICES.md`.
+- pdf-lib para generar archivos PDF en el navegador (MIT).
 - React Router para navegación.
 - Vitest para pruebas unitarias.
 - Salida estática compatible con Cloudflare Pages.
@@ -131,6 +138,8 @@ comprobaciones adicionales.
 ```bash
 npm run build
 npm run test:e2e                # una ronda
+npm run test:e2e:ocr-crop       # recorte y giro aplicados realmente al OCR
+node e2e/mask-brush.mjs         # pincel, transparencia y descarga
 E2E_REPEAT=5 npm run test:e2e   # varias rondas para detectar inestabilidad
 E2E_ONLY=compressorCancel,mobile npm run test:e2e
 ```
@@ -228,6 +237,9 @@ actualizaciones se detecten.
 - Los bytes de la fotografía no se envían a una API.
 - El navegador descarga el JavaScript, ONNX Runtime y el modelo de 4,57 MB desde
   el sitio; después la inferencia es local.
+- Para preparar un JPEG se leen solo las cabeceras y la orientación EXIF, sin
+  copiar todo el archivo comprimido a memoria. El navegador puede necesitar
+  memoria adicional al decodificarlo, incluso cuando se solicita reducción.
 - Los Object URL temporales se revocan y los canvas liberan sus buffers.
 - Se comprueban MIME, peso y dimensiones.
 - La salida JPEG se compone sobre blanco porque JPEG no admite transparencia.
@@ -272,15 +284,20 @@ actualizaciones se detecten.
   resultado al finalizar.
 - U²-Net pequeño prioriza tamaño y compatibilidad. Puede producir bordes
   imperfectos en pelo, cristal, sombras, objetos finos o escenas sin contraste.
+- El pincel permite deshacer solo la última pincelada; cancelar descarta todas
+  las modificaciones aún no aplicadas en ese editor.
 - Equipos con poca memoria o sin WebAssembly pueden no ejecutar la segmentación.
 - Redimensionar: hasta 8.000 px por lado y 16 MP de salida. Recortar: 25 MB y
   32 MP de entrada. Quitar metadatos: 50 MB; HEIC no es compatible.
+- Imágenes a PDF: hasta 10 imágenes y 80 MB en total. El PDF contiene imágenes,
+  no texto seleccionable; la calidad disminuye al redimensionar y recomprimir.
+  El consumo de memoria depende del navegador, incluso con procesamiento secuencial.
 - OCR: una imagen por vez, español o inglés por separado; no garantiza exactitud,
   especialmente con escritura a mano, tablas o texto pequeño. Las imágenes
   grandes se reducen a 2048 px / 4 MP y el texto pequeño puede perder legibilidad.
   El dispositivo y navegador determinan el tiempo y la memoria necesarios.
-- Las herramientas nuevas trabajan con una imagen cada vez (el compresor y el
-  convertidor admiten lotes).
+- OCR, recortar y quitar metadatos trabajan con una imagen a la vez; compresor,
+  convertidor e imágenes a PDF admiten varias imágenes con límites distintos.
 - El correo, dominio, datos legales y jurisdicción son provisionales y deben
   configurarse/revisarse antes de publicar.
 
@@ -288,10 +305,10 @@ actualizaciones se detecten.
 
 - Pruebas E2E automatizadas en navegadores y dispositivos reales.
 - Procesamiento en Web Worker/OffscreenCanvas donde mejore compatibilidad.
-- Refinado manual de máscara y eliminación de fondos por lotes.
+- Eliminación de fondos por lotes y más niveles de deshacer del pincel.
 - Lotes en redimensionar, recortar y quitar metadatos.
-- Herramientas marcadas «Próximamente»: imágenes a PDF, HEIC a JPG (revisar la
-  licencia del decodificador) y marca de agua.
+- Herramientas marcadas «Próximamente»: HEIC a JPG (revisar la licencia del
+  decodificador) y marca de agua.
 - Revisar la configuración real de analítica, la política y cualquier requisito
   legal antes de añadir publicidad u otras mediciones.
 - Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,

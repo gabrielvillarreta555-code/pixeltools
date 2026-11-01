@@ -12,6 +12,7 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
+import { PDFDocument } from 'pdf-lib';
 
 const REPEAT = Number(process.env.E2E_REPEAT || 1);
 const failures = [];
@@ -650,6 +651,41 @@ async function ocrDownloadFailure(browser, base) {
   } finally { await context.close(); }
 }
 
+async function imagePdf(browser, base, fx) {
+  console.log('Imágenes a PDF local en móvil');
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const requests = [];
+  page.on('request', request => requests.push({ method: request.method(), url: request.url() }));
+  try {
+    await page.goto(`${base}/imagenes-a-pdf`);
+    const portrait = await page.evaluate(async () => { const canvas = document.createElement('canvas'); canvas.width = 480; canvas.height = 720; const ctx = canvas.getContext('2d'); ctx.fillStyle = '#2255aa'; ctx.fillRect(0, 0, 480, 720); const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png')); return Array.from(new Uint8Array(await blob.arrayBuffer())); });
+    const input = page.locator('input[type=file]').first();
+    await input.setInputFiles([{ name: 'vertical.png', mimeType: 'image/png', buffer: Buffer.from(portrait) }, fx.transparent]);
+    check(await page.locator('ol[aria-label="Orden de las páginas"] li').count() === 2, 'selecciona dos imágenes');
+    await page.getByRole('button', { name: 'Bajar vertical.png' }).click();
+    check((await page.locator('ol[aria-label="Orden de las páginas"] li').first().innerText()).includes('transparente.png'), 'permite reordenar las imágenes');
+    const pdfFile = await download(page, () => page.getByRole('button', { name: 'Crear y descargar PDF' }).click());
+    const pdf = await PDFDocument.load(pdfFile.buffer);
+    const pages = pdf.getPages();
+    check(pdfFile.name.endsWith('.pdf') && pages.length === 2, 'descarga un PDF válido de dos páginas');
+    check(pages[0].getWidth() > pages[0].getHeight() && pages[1].getWidth() < pages[1].getHeight(), 'el orden y la orientación de las páginas son correctos');
+    await page.getByRole('button', { name: 'Eliminar vertical.png' }).click();
+    check(await page.locator('ol[aria-label="Orden de las páginas"] li').count() === 1, 'permite quitar una imagen');
+    await page.locator('input[type=file]').setInputFiles(fx.svg);
+    check(await page.getByRole('alert').filter({ hasText: 'Formato no compatible' }).isVisible() && await page.locator('ol[aria-label="Orden de las páginas"] li').count() === 1, 'rechaza archivos inválidos sin borrar la lista');
+    await page.locator('input[type=file]').setInputFiles(fx.fakePng);
+    let downloads = 0; page.on('download', () => { downloads += 1; });
+    await page.getByRole('button', { name: 'Crear y descargar PDF' }).click();
+    await page.getByRole('alert').waitFor({ timeout: 30000 });
+    check(downloads === 0 && await page.locator('ol[aria-label="Orden de las páginas"] li').count() === 2, 'un archivo dañado no descarga un PDF parcial ni borra la lista');
+    await page.getByRole('button', { name: 'Eliminar falso.png' }).click();
+    check(await horizontalOverflow(page) === 0, 'interfaz de PDF sin desbordamiento a 390 px');
+    const network = requests.filter(r => /^https?:/.test(r.url));
+    check(network.every(r => r.method === 'GET' && new URL(r.url).origin === new URL(base).origin), 'no se envían imágenes a servicios externos durante la conversión');
+  } finally { await context.close(); }
+}
+
 async function targetCompression(browser, base, fx) {
   console.log('Compresión por tamaño objetivo');
   const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
@@ -701,7 +737,7 @@ try {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, phone108MP, ocr, ocrDownloadFailure, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, phone108MP, ocr, ocrDownloadFailure, imagePdf, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);

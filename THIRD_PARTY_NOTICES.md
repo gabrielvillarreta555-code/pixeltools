@@ -71,6 +71,8 @@ MIT del proyecto que publica la conversión dice:
 - TypeScript: Apache-2.0, Microsoft Corporation.
 - Vitest: MIT, Anthony Fu y colaboradores.
 - Playwright (solo pruebas): Apache-2.0, Microsoft Corporation.
+- pdf-lib: MIT, Andrew Dillon; <https://github.com/Hopding/pdf-lib>. Licencia y
+  aviso de copyright en `LICENSES/pdf-lib-MIT.txt`.
 - Plus Jakarta Sans (`@fontsource-variable/plus-jakarta-sans`): SIL Open Font
   License 1.1, The Plus Jakarta Sans Project Authors
   (<https://github.com/tokotype/PlusJakartaSans>).

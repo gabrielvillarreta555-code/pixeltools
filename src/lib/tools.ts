@@ -58,6 +58,7 @@ export const TOOLS: ToolInfo[] = [
     name: 'Imágenes a PDF',
     description: 'Une varias imágenes en un solo PDF.',
     icon: 'file-pdf',
+    path: '/imagenes-a-pdf',
     keywords: 'pdf unir documento',
   },
   {

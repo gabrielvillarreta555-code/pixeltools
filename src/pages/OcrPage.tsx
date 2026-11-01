@@ -2,17 +2,20 @@ import { useEffect, useRef, useState } from 'react';
 import { BlueHint } from '../components/BlueHint';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
+import { OcrCropEditor } from '../components/OcrCropEditor';
 import { Seo } from '../components/Seo';
 import { ToolIntro } from '../components/ToolIntro';
 import { UploadZone } from '../components/UploadZone';
 import { MAX_BACKGROUND_FILE_BYTES, prepareBackgroundImage, type PreparedBackground } from '../lib/backgroundInput';
+import { centeredRect, cropImage, type Rect } from '../lib/crop';
 import { downloadBlob, formatBytes, validateImageFile } from '../lib/files';
 import { recognizeText, type OcrLanguage, type OcrProgress } from '../lib/ocr';
-import { useObjectUrl } from '../lib/useObjectUrl';
 
 export default function OcrPage() {
   const [file, setFile] = useState<File | null>(null);
   const [prepared, setPrepared] = useState<PreparedBackground | null>(null);
+  const [crop, setCrop] = useState<Rect | null>(null);
+  const [turns, setTurns] = useState(0);
   const [language, setLanguage] = useState<OcrLanguage>('spa');
   const [busy, setBusy] = useState(false);
   const [preparing, setPreparing] = useState(false);
@@ -22,23 +25,26 @@ export default function OcrPage() {
   const [error, setError] = useState('');
   const [progress, setProgress] = useState<OcrProgress>({ status: '', progress: 0 });
   const controller = useRef<AbortController | null>(null);
-  const imageUrl = useObjectUrl(prepared?.blob);
 
   useEffect(() => () => controller.current?.abort(), []);
-  const reset = () => { controller.current?.abort(); controller.current = null; setFile(null); setPrepared(null); setPreparing(false); setBusy(false); setText(''); setHasResult(false); setError(''); setMessage(''); };
+  const reset = () => { controller.current?.abort(); controller.current = null; setFile(null); setPrepared(null); setCrop(null); setTurns(0); setPreparing(false); setBusy(false); setText(''); setHasResult(false); setError(''); setMessage(''); };
   const handleFiles = async ([next]: File[]) => {
     const validation = validateImageFile(next, { maxBytes: MAX_BACKGROUND_FILE_BYTES });
     if (validation) { setError(validation); return; }
     controller.current?.abort(); const task = new AbortController(); controller.current = task;
-    setFile(next); setPrepared(null); setText(''); setHasResult(false); setError(''); setMessage(''); setPreparing(true);
-    try { const image = await prepareBackgroundImage(next, task.signal); if (!task.signal.aborted) setPrepared(image); }
+    setFile(next); setPrepared(null); setCrop(null); setTurns(0); setText(''); setHasResult(false); setError(''); setMessage(''); setPreparing(true);
+    try { const image = await prepareBackgroundImage(next, task.signal); if (!task.signal.aborted) { setPrepared(image); setCrop(centeredRect(image.width, image.height, null)); } }
     catch (caught) { if (!task.signal.aborted) setError(caught instanceof Error ? caught.message : 'No se pudo preparar la imagen.'); }
     finally { if (controller.current === task) { controller.current = null; setPreparing(false); } }
   };
   const run = async () => {
-    if (!prepared || busy) return;
+    if (!prepared || !crop || busy) return;
     const task = new AbortController(); controller.current = task; setBusy(true); setError(''); setText(''); setHasResult(false); setMessage(''); setProgress({ status: 'Preparando…', progress: 0 });
-    try { const result = await recognizeText(prepared.blob, language, task.signal, setProgress); if (!task.signal.aborted) { setText(result); setHasResult(true); } }
+    try {
+      const unchanged = turns === 0 && crop.x === 0 && crop.y === 0 && crop.width === prepared.width && crop.height === prepared.height;
+      const image = unchanged ? prepared.blob : (await cropImage(prepared.blob, crop, { quarterTurns: turns, flipHorizontal: false }, 'image/png', task.signal)).blob;
+      const result = await recognizeText(image, language, task.signal, setProgress); if (!task.signal.aborted) { setText(result); setHasResult(true); }
+    }
     catch { if (!task.signal.aborted) setError('No se pudo extraer el texto. Comprueba la conexión para la primera descarga, prueba otra imagen o cierra otras aplicaciones.'); }
     finally { if (controller.current === task) { controller.current = null; setBusy(false); } }
   };
@@ -54,7 +60,7 @@ export default function OcrPage() {
           <div className="grid lg:grid-cols-2">
             <div className="min-w-0 border-b border-line p-5 sm:p-7 lg:border-r lg:border-b-0">
               <div className="flex flex-wrap items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-white">{file.name}</p><p className="mt-1 text-xs text-mist">{formatBytes(file.size)} · procesamiento local</p></div><button className="btn btn-ghost" type="button" onClick={reset}><Icon className="size-4" name="reset" /> Otra imagen</button></div>
-              {imageUrl && <div className="mt-5 grid min-h-48 place-items-center overflow-hidden rounded-2xl border border-line bg-white/[0.03] p-3"><img className="h-auto max-h-96 w-auto max-w-full rounded-lg object-contain" src={imageUrl} alt="Vista previa de la imagen seleccionada" /></div>}
+              {prepared && crop && <OcrCropEditor image={prepared.blob} width={prepared.width} height={prepared.height} turns={turns} rect={crop} disabled={busy} onError={setError} onChange={(next, nextTurns) => { setCrop(next); setTurns(nextTurns); setHasResult(false); setText(''); setMessage(''); }} />}
               {preparing && <div className="mt-4"><Notice>Preparando la imagen…</Notice></div>}
               {prepared?.resized && <div className="mt-4"><Notice tone="info">La imagen se redujo a {prepared.width} × {prepared.height} px para ahorrar memoria. El texto pequeño podría perder nitidez.</Notice></div>}
             </div>
@@ -63,7 +69,7 @@ export default function OcrPage() {
               <p className="text-xs leading-5 text-mist">La primera vez se descargan el motor y el idioma desde Vélix Blue. Después del reconocimiento, revisa el texto: puede contener errores. No se envía tu imagen al motor de OCR por internet.</p>
               {error && <Notice tone="error">{error}</Notice>}
               {busy && <div role="status" aria-live="polite"><p className="text-sm text-mist">{progress.status} {Math.round(progress.progress * 100)}%</p><progress className="mt-2 w-full" max="100" value={Math.round(progress.progress * 100)} aria-label="Progreso del reconocimiento" /></div>}
-              <div className="flex flex-wrap gap-2"><button className="btn btn-primary flex-1" type="button" disabled={!prepared || preparing || busy} onClick={run}><Icon className="size-5" name="text" /> Extraer texto</button>{busy && <button className="btn btn-secondary" type="button" onClick={cancel}>Cancelar</button>}</div>
+              <div className="flex flex-wrap gap-2"><button className="btn btn-primary flex-1" type="button" disabled={!prepared || !crop || preparing || busy} onClick={run}><Icon className="size-5" name="text" /> Extraer texto</button>{busy && <button className="btn btn-secondary" type="button" onClick={cancel}>Cancelar</button>}</div>
               {hasResult && <div className="flex flex-col gap-3"><BlueHint status message={text ? 'Ya puedes revisar y editar el texto.' : 'No encontré texto. Prueba con una imagen más nítida.'} /><label className="field-label" htmlFor="ocr-result">Texto reconocido · editable</label><textarea id="ocr-result" className="textarea-field min-h-48 w-full resize-y" value={text} onChange={e => setText(e.target.value)} /><div className="flex flex-wrap gap-2"><button className="btn btn-secondary flex-1" type="button" disabled={!text} onClick={copy}>Copiar texto</button><button className="btn btn-secondary flex-1" type="button" disabled={!text} onClick={() => downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), 'texto-extraido.txt')}>Descargar TXT</button></div></div>}
               {message && <p className="text-sm text-mist" role="status">{message}</p>}
             </div>

@@ -59,6 +59,11 @@ const pages = [
     description: 'Convierte fotos e imágenes en texto editable en español o inglés, directamente en tu navegador.',
   },
   {
+    path: '/imagenes-a-pdf',
+    title: 'Convertir imágenes a PDF gratis y en privado | Vélix Blue',
+    description: 'Une fotos JPG, PNG y WebP en un solo PDF desde tu navegador, sin subirlas a un servidor.',
+  },
+  {
     path: '/privacidad',
     title: 'Política de privacidad | Vélix Blue',
     description: 'Consulta cómo Vélix Blue procesa imágenes localmente y protege la privacidad de sus visitantes.',
