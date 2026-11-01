@@ -116,7 +116,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
           <div className="mt-10 flex flex-col gap-2 border-t border-line pt-6 text-xs text-mist sm:flex-row sm:items-center sm:justify-between">
             <p>© {new Date().getFullYear()} Blue Lab Studios. Vélix Blue es un producto de Blue Lab Studios.</p>
-            <p>Procesamiento local · Sin cuentas · Sin seguimiento</p>
+            <p>Procesamiento local · Sin cuentas</p>
           </div>
         </div>
       </footer>

@@ -27,12 +27,12 @@ const files = (await listFiles(dist)).sort();
 const precache = files
   .map(toUrl)
   .filter((url) => !url.endsWith('.map'))
-  .filter((url) => !/^\/(models|ort)\//.test(url))
+  .filter((url) => !/^\/(models|ort|ocr)\//.test(url))
   .filter((url) => !['/sw.js', '/_headers', '/robots.txt', '/sitemap.xml', '/404.html', '/og-image.svg', '/og-image.png'].includes(url))
   .map((url) => (url === '/index.html' ? '/' : url.replace(/\.html$/, '')));
 
 // Recursos pesados del eliminador: se guardan la primera vez que se usan.
-const heavy = files.map(toUrl).filter((url) => /^\/(models\/.*\.onnx|ort\/.*)$/.test(url));
+const heavy = files.map(toUrl).filter((url) => /^\/(models\/.*\.onnx|ort\/.*|ocr\/.*)$/.test(url));
 
 async function digest(urls) {
   const hash = createHash('sha256');

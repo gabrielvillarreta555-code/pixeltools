@@ -48,6 +48,20 @@ MIT del proyecto que publica la conversión dice:
 - Proyecto: <https://github.com/microsoft/onnxruntime>
 - Licencia: MIT, Copyright (c) Microsoft Corporation.
 
+## OCR local
+
+- `tesseract.js` y `tesseract.js-core` 7.0.0: Apache License 2.0;
+  <https://github.com/naptha/tesseract.js> y <https://github.com/naptha/tesseract.js-core>.
+- Datos de español e inglés `@tesseract.js-data/spa` y `@tesseract.js-data/eng`
+  1.0.0, variantes `4.0.0_best_int`: paquetes publicados bajo MIT y modelos
+  derivados de Tesseract tessdata; procedencia documentada en
+  <https://github.com/naptha/tessdata> y licencia Apache 2.0 del proyecto de
+  modelos <https://github.com/tesseract-ocr/tessdata_best/blob/main/LICENSE>.
+- SHA-256 español: `40be52f97b5d4eb7460073dc1f94cd546b27150333c0bf854ed7e7132db6bceb`.
+- SHA-256 inglés: `45b4cb346724ac1774f1c36f42f182b887bcdb28ebe63e6fff90ac41f3fcff91`.
+- Se copian desde dependencias fijadas al compilar y se sirven desde el sitio.
+  La licencia Apache 2.0 está en `LICENSES/Apache-2.0.txt`.
+
 ## Interfaz web
 
 - React y React DOM: MIT, Meta Platforms, Inc. y colaboradores.

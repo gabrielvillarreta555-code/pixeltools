@@ -584,6 +584,72 @@ async function phone108MP(browser, base) {
   } finally { await context.close(); }
 }
 
+async function ocr(browser, base) {
+  console.log('OCR local en móvil');
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const requests = [];
+  page.on('request', request => requests.push({ method: request.method(), url: request.url() }));
+  try {
+    await page.goto(`${base}/extraer-texto`);
+    const encoded = await page.evaluate(async () => {
+      const canvas = document.createElement('canvas'); canvas.width = 1400; canvas.height = 420;
+      const ctx = canvas.getContext('2d'); ctx.fillStyle = 'white'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'black'; ctx.font = 'bold 90px Arial'; ctx.fillText('HOLA PANAMA 2026', 80, 150); ctx.fillText('TEXTO DE PRUEBA', 80, 290);
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const bytes = new Uint8Array(await blob.arrayBuffer()); let binary = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(binary);
+    });
+    await page.locator('input[type=file]').first().setInputFiles({ name: 'texto-sintetico.png', mimeType: 'image/png', buffer: Buffer.from(encoded, 'base64') });
+    await enabledButton(page, 'Extraer texto').click();
+    const output = page.locator('#ocr-result'); await output.waitFor({ timeout: 180_000 });
+    const result = await output.inputValue();
+    check(/HOLA\s+PANAMA\s+2026/i.test(result) && /TEXTO\s+DE\s+PRUEBA/i.test(result), 'extrae texto impreso en español');
+    await output.fill('Texto corregido');
+    const file = await download(page, () => page.getByRole('button', { name: 'Descargar TXT' }).click());
+    check(file.buffer.toString('utf8') === 'Texto corregido', 'descarga el texto editado por el usuario');
+    await page.locator('#ocr-language').selectOption('eng');
+    await enabledButton(page, 'Extraer texto').click();
+    await page.locator('#ocr-result').waitFor({ timeout: 180_000 });
+    check(/HOLA\s+PANAMA\s+2026/i.test(await page.locator('#ocr-result').inputValue()), 'extrae texto con el modelo inglés');
+    await page.locator('#ocr-language').selectOption('spa');
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await context.setOffline(true);
+    await enabledButton(page, 'Extraer texto').click();
+    await page.locator('#ocr-result').waitFor({ timeout: 180_000 });
+    check(/HOLA\s+PANAMA\s+2026/i.test(await page.locator('#ocr-result').inputValue()), 'OCR funciona sin conexión después de descargar el idioma');
+    await context.setOffline(false);
+    check(await horizontalOverflow(page) === 0, 'OCR sin desbordamiento horizontal a 390 px');
+    const network = requests.filter(r => /^https?:/.test(r.url));
+    check(network.every(r => r.method === 'GET' && new URL(r.url).origin === new URL(base).origin), 'el OCR no envía imágenes ni texto y descarga recursos del mismo origen');
+    await page.getByRole('button', { name: 'Otra imagen' }).click();
+    check(await page.locator('#ocr-result').count() === 0, 'otra imagen elimina el resultado anterior');
+    await page.locator('input[type=file]').first().setInputFiles({ name: 'falso.svg', mimeType: 'image/svg+xml', buffer: Buffer.from('<svg/>') });
+    check(await page.getByRole('alert').filter({ hasText: 'Formato no compatible' }).isVisible(), 'rechaza formatos no compatibles');
+  } finally { await context.close(); }
+}
+
+async function ocrDownloadFailure(browser, base) {
+  console.log('OCR: error de descarga y cancelación');
+  const context = await browser.newContext({ serviceWorkers: 'block' });
+  const page = await context.newPage();
+  try {
+    await page.route('**/ocr/lang/spa.traineddata.gz', route => route.abort());
+    await page.goto(`${base}/extraer-texto`);
+    const bytes = await page.evaluate(async () => { const c = document.createElement('canvas'); c.width = 100; c.height = 100; const blob = await new Promise(r => c.toBlob(r, 'image/png')); return Array.from(new Uint8Array(await blob.arrayBuffer())); });
+    await page.locator('input[type=file]').first().setInputFiles({ name: 'prueba.png', mimeType: 'image/png', buffer: Buffer.from(bytes) });
+    await enabledButton(page, 'Extraer texto').click();
+    await page.getByRole('alert').filter({ hasText: 'No se pudo extraer el texto' }).waitFor({ timeout: 30000 });
+    check(await enabledButton(page, 'Extraer texto').isEnabled(), 'muestra error recuperable al fallar la descarga');
+    await page.unroute('**/ocr/lang/spa.traineddata.gz');
+    await page.route('**/ocr/lang/spa.traineddata.gz', async route => { await new Promise(r => setTimeout(r, 2000)); await route.continue().catch(() => {}); });
+    await enabledButton(page, 'Extraer texto').click();
+    await page.getByRole('button', { name: 'Cancelar' }).click();
+    check(await page.getByText('Operación cancelada.').isVisible(), 'permite cancelar sin bloquear la interfaz');
+  } finally { await context.close(); }
+}
+
 async function targetCompression(browser, base, fx) {
   console.log('Compresión por tamaño objetivo');
   const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
@@ -635,7 +701,7 @@ try {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, phone108MP, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, phone108MP, ocr, ocrDownloadFailure, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);

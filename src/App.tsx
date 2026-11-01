@@ -13,6 +13,7 @@ const BackgroundRemoverPage = lazy(() => import('./pages/BackgroundRemoverPage')
 const ResizePage = lazy(() => import('./pages/ResizePage'));
 const CropPage = lazy(() => import('./pages/CropPage'));
 const MetadataPage = lazy(() => import('./pages/MetadataPage'));
+const OcrPage = lazy(() => import('./pages/OcrPage'));
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/redimensionar-imagen" element={<ResizePage />} />
           <Route path="/recortar-imagen" element={<CropPage />} />
           <Route path="/quitar-metadatos" element={<MetadataPage />} />
+          <Route path="/extraer-texto" element={<OcrPage />} />
           <Route path="/privacidad" element={<PrivacyPage />} />
           <Route path="/terminos" element={<TermsPage />} />
           <Route path="/contacto" element={<ContactPage />} />
