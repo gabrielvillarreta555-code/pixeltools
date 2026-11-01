@@ -236,7 +236,7 @@ actualizaciones se detecten.
   comprimidas) y no admite más de 4 GB.
 - El fondo desenfocado se obtiene reduciendo y ampliando el original (compatible
   con Safari, donde `CanvasRenderingContext2D.filter` no está disponible).
-- Eliminador: 50 MB, 100 megapíxeles y 32.768 px por lado de entrada. Los fondos
+- Eliminador: 50 MB, 120 megapíxeles y 32.768 px por lado de entrada. Los fondos
   personalizados conservan el límite de 15 MB. Antes de
   mostrar la vista previa y cargar ONNX, lee las dimensiones y orientación del
   archivo comprimido y prepara una copia proporcional de hasta 2048 px por lado

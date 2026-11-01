@@ -235,7 +235,7 @@ export default function BackgroundRemoverPage() {
               {lowMemory && <div className="mb-4"><Notice tone="warning">Este dispositivo informa de poca memoria. Usa una fotografía pequeña y cierra otras pestañas antes de procesarla.</Notice></div>}
               {error && <div className="mb-4"><Notice tone="error">{error}</Notice></div>}
               <UploadZone
-                description="JPG, PNG o WebP · Hasta 50 MB y 100 megapíxeles · Reducción automática a 2048 px / 4 MP. En teléfonos con poca memoria, algunas imágenes pueden necesitar compresión previa."
+                description="JPG, PNG o WebP · Hasta 50 MB y 120 megapíxeles · Reducción automática a 2048 px / 4 MP. En teléfonos con poca memoria, algunas imágenes pueden necesitar reducción previa."
                 disabled={!wasmAvailable}
                 onFiles={handleFiles}
               />

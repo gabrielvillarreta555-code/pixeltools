@@ -551,6 +551,39 @@ async function heavyBackground(browser, base, fx) {
   } finally { await context.close(); }
 }
 
+async function phone108MP(browser, base) {
+  console.log('Foto de 108 megapíxeles, con peso comparable al teléfono');
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  try {
+    await page.goto(`${base}/eliminar-fondo`);
+    // JPEG real de 9000 × 12000 generado localmente; el relleno solo simula el peso.
+    const jpeg = await page.evaluate(async () => {
+      const canvas = document.createElement('canvas'); canvas.width = 9000; canvas.height = 12000;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('No se pudo generar la foto sintética');
+      ctx.fillStyle = '#78b478'; ctx.fillRect(0, 0, 9000, 12000);
+      ctx.fillStyle = '#bd3434'; ctx.beginPath(); ctx.ellipse(4500, 6000, 2400, 3800, 0, 0, Math.PI * 2); ctx.fill();
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+      canvas.width = 0; canvas.height = 0;
+      const bytes = new Uint8Array(await blob.arrayBuffer()); let binary = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(binary);
+    });
+    const original = Buffer.from(jpeg, 'base64');
+    const heavy = Buffer.concat([original, Buffer.alloc(30 * 1024 * 1024)]);
+    await page.locator('input[type=file]').first().setInputFiles({ name: 'foto-108mp.jpg', mimeType: 'image/jpeg', buffer: heavy });
+    const notice = page.getByText(/Imagen redimensionada automáticamente/);
+    await notice.waitFor({ timeout: 120_000 });
+    check((await notice.innerText()).includes('9000 × 12000 a 1536 × 2048'), 'acepta 108 MP y explica la reducción a 1536 × 2048');
+    await enabledButton(page, 'Eliminar fondo').click();
+    const button = enabledButton(page, 'Descargar PNG'); await button.waitFor({ timeout: 180_000 });
+    const file = await download(page, () => button.click());
+    const info = await inspectImage(page, file.buffer);
+    check(info.width === 1536 && info.height === 2048 && info.alphaMin < 20 && info.alphaMax > 230, 'resultado de 108 MP contiene transparencia y el tamaño reducido');
+  } finally { await context.close(); }
+}
+
 async function targetCompression(browser, base, fx) {
   console.log('Compresión por tamaño objetivo');
   const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
@@ -602,7 +635,7 @@ try {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, phone108MP, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);

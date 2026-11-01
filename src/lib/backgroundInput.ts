@@ -3,6 +3,7 @@ import { canvasToBlob, decodeImage, ImageProcessingError } from './imageProcessi
 
 /** Límite del archivo comprimido; se mantienen los límites de píxeles por seguridad. */
 export const MAX_BACKGROUND_FILE_BYTES = 50 * 1024 * 1024;
+export const MAX_BACKGROUND_PIXELS = 120_000_000;
 
 export interface ImageSize { width: number; height: number }
 export interface PreparedBackground extends ImageSize {
@@ -15,8 +16,8 @@ export interface PreparedBackground extends ImageSize {
 /** Conservador también cuando Safari no informa de la memoria disponible. */
 export function backgroundSize(width: number, height: number): ImageSize {
   if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width < 1 || height < 1 ||
-      width > 32768 || height > 32768 || width * height > 100_000_000) {
-    throw new ImageProcessingError('Dimensiones no compatibles: máximo 100 megapíxeles y 32768 px por lado.');
+      width > 32768 || height > 32768 || width * height > MAX_BACKGROUND_PIXELS) {
+    throw new ImageProcessingError('Dimensiones no compatibles: máximo 120 megapíxeles y 32768 px por lado.');
   }
   const scale = Math.min(1, 2048 / Math.max(width, height), Math.sqrt(4_000_000 / (width * height)));
   return { width: Math.max(1, Math.floor(width * scale)), height: Math.max(1, Math.floor(height * scale)) };
