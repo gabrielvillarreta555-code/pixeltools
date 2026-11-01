@@ -1,6 +1,9 @@
 import { readMetadata, detectFormat } from './metadata';
 import { canvasToBlob, decodeImage, ImageProcessingError } from './imageProcessing';
 
+/** Límite del archivo comprimido; se mantienen los límites de píxeles por seguridad. */
+export const MAX_BACKGROUND_FILE_BYTES = 50 * 1024 * 1024;
+
 export interface ImageSize { width: number; height: number }
 export interface PreparedBackground extends ImageSize {
   blob: Blob;
@@ -72,10 +75,22 @@ function checkAbort(signal?: AbortSignal) {
   if (signal?.aborted) throw new DOMException('Operación cancelada', 'AbortError');
 }
 
+/** Libera la referencia a los bytes comprimidos antes de decodificar los píxeles. */
+async function readBackgroundSize(file: Blob, signal?: AbortSignal): Promise<ImageSize> {
+  let bytes: Uint8Array;
+  try {
+    bytes = new Uint8Array(await file.arrayBuffer());
+  } catch {
+    checkAbort(signal);
+    throw new ImageProcessingError('No se pudo leer la imagen. Puede faltar memoria: cierra otras aplicaciones o comprime una copia antes de intentarlo.');
+  }
+  return readImageSize(bytes);
+}
+
 export async function prepareBackgroundImage(file: Blob, signal?: AbortSignal): Promise<PreparedBackground> {
   checkAbort(signal);
-  if (file.size > 15 * 1024 * 1024) throw new ImageProcessingError('La imagen supera el límite de 15 MB.');
-  const original = readImageSize(new Uint8Array(await file.arrayBuffer()));
+  if (file.size > MAX_BACKGROUND_FILE_BYTES) throw new ImageProcessingError('La imagen supera el límite de 50 MB. Comprime una copia antes de intentarlo.');
+  const original = await readBackgroundSize(file, signal);
   checkAbort(signal);
   const size = backgroundSize(original.width, original.height);
   const resized = size.width !== original.width || size.height !== original.height;

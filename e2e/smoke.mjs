@@ -527,6 +527,30 @@ async function largeBackground(browser, base, fx) {
   } finally { await context.close(); }
 }
 
+async function heavyBackground(browser, base, fx) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
+  const page = await context.newPage();
+  const requests = [];
+  page.on('request', (request) => requests.push({ method: request.method(), url: request.url() }));
+  try {
+    await page.goto(`${base}/eliminar-fondo`);
+    // JPEG válido con relleno tras EOI: supera 15 MB sin crear una imagen personal.
+    const heavy = Buffer.concat([fx.subject.buffer, Buffer.alloc(16 * 1024 * 1024)]);
+    await page.locator('input[type=file]').first().setInputFiles({ name: 'imagen-pesada.jpg', mimeType: 'image/jpeg', buffer: heavy });
+    const start = enabledButton(page, 'Eliminar fondo');
+    await start.waitFor({ timeout: 60_000 });
+    check(heavy.length > 15 * 1024 * 1024, 'la prueba utiliza un archivo mayor de 15 MB');
+    await start.click();
+    const downloadButton = enabledButton(page, 'Descargar PNG');
+    await downloadButton.waitFor({ timeout: 180_000 });
+    const file = await download(page, () => downloadButton.click());
+    const info = await inspectImage(page, file.buffer);
+    check(info.width === 1600 && info.height === 1200 && info.alphaMin < 20 && info.alphaMax > 230, 'archivo pesado procesado localmente con transparencia');
+    const network = requests.filter((r) => /^https?:/.test(r.url));
+    check(network.every((r) => r.method === 'GET' && new URL(r.url).origin === new URL(base).origin), 'no se envía la imagen a servicios externos');
+  } finally { await context.close(); }
+}
+
 async function targetCompression(browser, base, fx) {
   console.log('Compresión por tamaño objetivo');
   const context = await browser.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } });
@@ -578,7 +602,7 @@ try {
     if (REPEAT > 1) console.log(`\n=== Ronda ${round} de ${REPEAT} ===`);
     // E2E_ONLY=compressorCancel,mobile ejecuta solo esos escenarios.
     const only = process.env.E2E_ONLY?.split(',');
-    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
+    const scenarios = [compressorBatch, compressorCancel, backgroundRemover, newTools, mobile, largeBackground, heavyBackground, targetCompression].filter((scenario) => !only || only.includes(scenario.name));
     for (const scenario of scenarios) {
       try {
         await scenario(browser, base, fx);
