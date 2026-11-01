@@ -31,6 +31,9 @@ aplicación (PWA) que funciona sin conexión.
   número de serie), XMP, IPTC, comentarios, fragmentos de texto PNG y las
   imágenes incrustadas tras el final del JPEG, sin recomprimir. Conserva el
   perfil de color y la orientación. Analiza de nuevo la copia antes de ofrecerla.
+- **Extraer texto:** OCR local de texto impreso en español o inglés, editable,
+  copiable y descargable como TXT. El motor y el idioma se descargan desde el
+  sitio al usarse y pueden quedar en caché para uso sin conexión.
 - **Portada:** catálogo de herramientas con buscador (`src/lib/tools.ts`). Las
   herramientas sin ruta se muestran como «Próximamente».
 - **PWA:** manifest con iconos PNG y *maskable*, service worker generado en el
@@ -43,12 +46,15 @@ aplicación (PWA) que funciona sin conexión.
 - Tipografía Plus Jakarta Sans (OFL) empaquetada con la app, sin servicios externos.
 - Canvas API, Blob, Object URL y `createImageBitmap` con alternativa para Safari.
 - ONNX Runtime Web (WASM) y U²-Net pequeño para segmentación.
+- Tesseract.js y modelos de idioma para OCR local; licencias y procedencia en
+  `THIRD_PARTY_NOTICES.md`.
 - React Router para navegación.
 - Vitest para pruebas unitarias.
 - Salida estática compatible con Cloudflare Pages.
 
-No hay API, base de datos, almacenamiento de fotografías, analítica ni anuncios
-en esta versión.
+El procesamiento no usa API, base de datos ni almacenamiento de fotografías en
+servidor. En la web publicada se observó Cloudflare Web Analytics; su configuración
+y tratamiento de datos deben revisarse antes de hacer afirmaciones de privacidad.
 
 ## Estructura
 
@@ -204,6 +210,9 @@ escribe `dist/sw.js`:
   compresor funciona sin conexión desde la primera visita.
 - El modelo ONNX y el runtime WASM (~16 MB) se guardan solo la primera vez que se
   usa el eliminador, para no imponer esa descarga a quien no lo necesita.
+- El motor OCR y el idioma elegido se guardan solo tras usarlos; antes de esa
+  descarga, extraer texto necesita conexión. El texto y la imagen no se guardan
+  automáticamente en la caché de la aplicación.
 - Navegación con red primero y caché como respaldo; los nombres de caché llevan
   un hash del contenido y las versiones antiguas se borran al activar.
 - Cuando hay una versión nueva instalada, la interfaz ofrece «Actualizar ahora».
@@ -266,6 +275,10 @@ actualizaciones se detecten.
 - Equipos con poca memoria o sin WebAssembly pueden no ejecutar la segmentación.
 - Redimensionar: hasta 8.000 px por lado y 16 MP de salida. Recortar: 25 MB y
   32 MP de entrada. Quitar metadatos: 50 MB; HEIC no es compatible.
+- OCR: una imagen por vez, español o inglés por separado; no garantiza exactitud,
+  especialmente con escritura a mano, tablas o texto pequeño. Las imágenes
+  grandes se reducen a 2048 px / 4 MP y el texto pequeño puede perder legibilidad.
+  El dispositivo y navegador determinan el tiempo y la memoria necesarios.
 - Las herramientas nuevas trabajan con una imagen cada vez (el compresor y el
   convertidor admiten lotes).
 - El correo, dominio, datos legales y jurisdicción son provisionales y deben
@@ -278,9 +291,9 @@ actualizaciones se detecten.
 - Refinado manual de máscara y eliminación de fondos por lotes.
 - Lotes en redimensionar, recortar y quitar metadatos.
 - Herramientas marcadas «Próximamente»: imágenes a PDF, HEIC a JPG (revisar la
-  licencia del decodificador), marca de agua y OCR.
-- Analítica respetuosa con la privacidad y anuncios solo tras implementar el
-  consentimiento legal necesario.
+  licencia del decodificador) y marca de agua.
+- Revisar la configuración real de analítica, la política y cualquier requisito
+  legal antes de añadir publicidad u otras mediciones.
 - Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,
   licencia clara y tamaño razonable para móviles.
 

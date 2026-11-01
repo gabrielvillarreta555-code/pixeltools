@@ -54,6 +54,11 @@ const pages = [
     description: 'Descubre qué datos ocultos revela una foto (ubicación, dispositivo, fecha) y elimínalos sin perder calidad, directamente en tu navegador.',
   },
   {
+    path: '/extraer-texto',
+    title: 'Extraer texto de imágenes gratis y en privado | Vélix Blue',
+    description: 'Convierte fotos e imágenes en texto editable en español o inglés, directamente en tu navegador.',
+  },
+  {
     path: '/privacidad',
     title: 'Política de privacidad | Vélix Blue',
     description: 'Consulta cómo Vélix Blue procesa imágenes localmente y protege la privacidad de sus visitantes.',

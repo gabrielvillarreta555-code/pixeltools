@@ -30,3 +30,17 @@ await Promise.all(
 );
 
 console.log(`ONNX Runtime: ${runtimeFiles.length} archivos preparados.`);
+
+// OCR se sirve desde este sitio, sin CDN; los archivos pesados se cargan solo al usarlo.
+const ocr = join(root, 'public', 'ocr');
+const core = join(ocr, 'core');
+const lang = join(ocr, 'lang');
+await Promise.all([mkdir(core, { recursive: true }), mkdir(lang, { recursive: true })]);
+await copyFile(join(root, 'node_modules', 'tesseract.js', 'dist', 'worker.min.js'), join(ocr, 'worker.min.js'));
+for (const name of ['tesseract-core-lstm.wasm.js', 'tesseract-core-simd-lstm.wasm.js', 'tesseract-core-relaxedsimd-lstm.wasm.js']) {
+  await copyFile(join(root, 'node_modules', 'tesseract.js-core', name), join(core, name));
+}
+for (const code of ['spa', 'eng']) {
+  await copyFile(join(root, 'node_modules', '@tesseract.js-data', code, '4.0.0_best_int', `${code}.traineddata.gz`), join(lang, `${code}.traineddata.gz`));
+}
+console.log('OCR: motor y modelos de español e inglés preparados.');

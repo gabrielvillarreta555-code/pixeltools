@@ -20,11 +20,11 @@ function build(env: Record<string, string>) {
 }
 
 describe('SEO estático', () => {
-  it('genera las diez rutas indexables para la rama de producción de Cloudflare', () => {
+  it('genera las rutas indexables para la rama de producción de Cloudflare', () => {
     const read = build({ CF_PAGES: '1', CF_PAGES_BRANCH: 'main', CF_PAGES_URL: 'https://build.pixeltools.pages.dev' });
     expect(read('robots.txt')).toBe('User-agent: *\nAllow: /\nSitemap: https://velixblue.com/sitemap.xml\n');
     expect(read('_headers')).not.toMatch(/X-Robots-Tag/i);
-    const paths = ['', 'eliminar-fondo', 'comprimir-imagen', 'redimensionar-imagen', 'convertir-imagen', 'recortar-imagen', 'quitar-metadatos', 'privacidad', 'terminos', 'contacto'];
+    const paths = ['', 'eliminar-fondo', 'comprimir-imagen', 'redimensionar-imagen', 'convertir-imagen', 'recortar-imagen', 'quitar-metadatos', 'extraer-texto', 'privacidad', 'terminos', 'contacto'];
     const sitemap = read('sitemap.xml');
     expect(sitemap.match(/<loc>/g)).toHaveLength(paths.length);
     for (const path of paths) {

@@ -8,6 +8,7 @@ coverage/
 .vite/
 *.tsbuildinfo
 /public/ort/
+/public/ocr/
 
 # Variables, secretos y configuración local
 .env

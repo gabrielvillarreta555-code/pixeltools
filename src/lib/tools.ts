@@ -76,6 +76,7 @@ export const TOOLS: ToolInfo[] = [
     name: 'Extraer texto (OCR)',
     description: 'Convierte el texto de una imagen en texto editable.',
     icon: 'text',
+    path: '/extraer-texto',
     keywords: 'ocr leer copiar texto',
   },
 ];
