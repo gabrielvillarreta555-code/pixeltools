@@ -6,6 +6,7 @@ import { Notice } from '../components/Notice';
 import { Seo } from '../components/Seo';
 import { ToolIntro } from '../components/ToolIntro';
 import { UploadZone } from '../components/UploadZone';
+import { MaskEditor } from '../components/MaskEditor';
 import { downloadBlob, formatBytes, makeOutputName, validateImageFile } from '../lib/files';
 import type { BackgroundProgress, BackgroundRemovalOutput } from '../lib/backgroundRemoval';
 import { composeCutout, type BackgroundFill, type ComposeOutput } from '../lib/composition';
@@ -62,6 +63,7 @@ export default function BackgroundRemoverPage() {
   const [gradientId, setGradientId] = useState<string>(GRADIENTS[0][0]);
   const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
   const [comparePosition, setComparePosition] = useState(50);
+  const [editingMask, setEditingMask] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const inputUrl = useObjectUrl(prepared?.blob);
   const outputUrl = useObjectUrl(composed?.blob);
@@ -131,6 +133,7 @@ export default function BackgroundRemoverPage() {
       return;
     }
     setFile(nextFile);
+    setEditingMask(false);
     setResult(null);
     setError('');
     setProgress({ message: '', percent: 0 });
@@ -155,6 +158,7 @@ export default function BackgroundRemoverPage() {
     abortRef.current?.abort();
     abortRef.current = null;
     setFile(null);
+    setEditingMask(false);
     setPrepared(null);
     setPreparing(false);
     setResult(null);
@@ -186,6 +190,7 @@ export default function BackgroundRemoverPage() {
     abortRef.current?.abort();
     abortRef.current = controller;
     setProcessing(true);
+    setEditingMask(false);
     setResult(null);
     setError('');
 
@@ -319,6 +324,12 @@ export default function BackgroundRemoverPage() {
                   )}
                 </div>
               )}
+
+              {result && prepared && !editingMask && (
+                <div className="mx-auto mt-6 max-w-xl"><button className="btn btn-secondary w-full" type="button" onClick={() => setEditingMask(true)}>Corregir bordes con pincel</button><p className="mt-2 text-xs text-mist">Borra restos o recupera partes del original.</p></div>
+              )}
+
+              {result && prepared && editingMask && <MaskEditor original={prepared.blob} cutout={result.blob} onCancel={() => setEditingMask(false)} onSave={(blob, subject) => { setComposed(null); setComposing(true); setResult(current => current ? { ...current, blob, subject } : current); setEditingMask(false); }} />}
 
               {result && (
                 <fieldset className="mx-auto mt-7 max-w-xl rounded-2xl border border-line bg-panel-2 p-4 sm:p-5" disabled={processing}>
@@ -460,7 +471,7 @@ export default function BackgroundRemoverPage() {
                   <button
                     className="btn btn-primary flex-1"
                     type="button"
-                    disabled={composing || !composed}
+                    disabled={composing || !composed || editingMask}
                     onClick={() => composed && downloadBlob(composed.blob, makeOutputName(file.name, composed.mimeType, 'sin-fondo'))}
                   >
                     <Icon className="size-5" name="download" /> Descargar {effectiveType === 'image/png' ? 'PNG' : 'JPG'}
@@ -474,7 +485,7 @@ export default function BackgroundRemoverPage() {
                   <button className="btn btn-secondary" type="button" onClick={() => abortRef.current?.abort()}>Cancelar</button>
                 )}
                 {result && (
-                  <button className="btn btn-secondary" type="button" onClick={removeBackground}>Procesar de nuevo</button>
+                  <button className="btn btn-secondary" type="button" disabled={editingMask} onClick={removeBackground}>Procesar de nuevo</button>
                 )}
               </div>
             </div>

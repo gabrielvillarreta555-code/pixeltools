@@ -223,7 +223,7 @@ export function HomePage() {
               Tus archivos no se envían a ningún servidor: Canvas y WebAssembly hacen todo el trabajo en tu propio dispositivo.
             </p>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-              {['Sin cuentas', 'Sin subir tus fotos', 'Funciona sin conexión', 'Sin anuncios ni rastreo'].map((item) => (
+              {['Sin cuentas', 'Procesamiento en tu dispositivo', 'Sin conexión tras descargar recursos', 'Consulta nuestra política de privacidad'].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-slate-200">
                   <span className="grid size-6 place-items-center rounded-full bg-electric text-white"><Icon className="size-3.5" name="check" /></span>
                   {item}

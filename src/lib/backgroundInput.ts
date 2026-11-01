@@ -1,4 +1,4 @@
-import { readMetadata, detectFormat } from './metadata';
+import { readMetadata, detectFormat, parseTiff } from './metadata';
 import { canvasToBlob, decodeImage, ImageProcessingError } from './imageProcessing';
 
 /** Límite del archivo comprimido; se mantienen los límites de píxeles por seguridad. */
@@ -76,13 +76,66 @@ function checkAbort(signal?: AbortSignal) {
   if (signal?.aborted) throw new DOMException('Operación cancelada', 'AbortError');
 }
 
+/**
+ * Recorre únicamente los segmentos JPEG anteriores a la imagen comprimida.
+ * Evita copiar decenas de MB a memoria solo para leer dimensiones y EXIF.
+ */
+async function readJpegSize(file: Blob, signal?: AbortSignal): Promise<ImageSize> {
+  const read = async (offset: number, length: number) => {
+    checkAbort(signal);
+    const result = new Uint8Array(await file.slice(offset, offset + length).arrayBuffer());
+    checkAbort(signal);
+    return result;
+  };
+  const validFrame = new Set([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf]);
+  let offset = 2, width = 0, height = 0, orientation = 1, segments = 0;
+  // Impide que archivos maliciosos fuercen un número ilimitado de lecturas.
+  while (offset + 2 <= file.size && segments++ < 4096) {
+    const header = await read(offset, 4);
+    if (header.length < 2 || header[0] !== 0xff) throw new ImageProcessingError('No se pudo leer la cabecera JPEG.');
+    const marker = header[1];
+    if (marker === 0xff) { offset++; continue; }
+    if (marker === 0xda || marker === 0xd9) {
+      backgroundSize(width, height);
+      return orientation >= 5 ? { width: height, height: width } : { width, height };
+    }
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) { offset += 2; continue; }
+    if (header.length < 4) break;
+    const length = (header[2] << 8) | header[3];
+    const end = offset + 2 + length;
+    if (length < 2 || end > file.size) break;
+    if (validFrame.has(marker) && length >= 8 && width === 0) {
+      const frame = await read(offset + 4, 5);
+      if (frame.length < 5) break;
+      height = (frame[1] << 8) | frame[2];
+      width = (frame[3] << 8) | frame[4];
+      backgroundSize(width, height);
+    } else if (marker === 0xe1 && length >= 8) {
+      const signature = await read(offset + 4, 6);
+      if (signature.length === 6 && signature[0] === 69 && signature[1] === 120 && signature[2] === 105 && signature[3] === 102 && signature[4] === 0 && signature[5] === 0) {
+        const tiff = await read(offset + 10, length - 8);
+        const value = parseTiff(tiff).tags.get(0x0112);
+        orientation = typeof value === 'number' && value >= 1 && value <= 8 ? value : 1;
+      }
+    }
+    offset = end;
+  }
+  throw new ImageProcessingError('No se pudo leer la cabecera JPEG. El archivo puede estar dañado o ser demasiado complejo.');
+}
+
 /** Libera la referencia a los bytes comprimidos antes de decodificar los píxeles. */
 async function readBackgroundSize(file: Blob, signal?: AbortSignal): Promise<ImageSize> {
   let bytes: Uint8Array;
   try {
-    bytes = new Uint8Array(await file.arrayBuffer());
-  } catch {
+    // Para JPEG no se reserva un buffer del archivo completo: el coste es el
+    // de sus cabeceras y, como máximo, un segmento EXIF de 64 KiB.
+    const signature = new Uint8Array(await file.slice(0, 12).arrayBuffer());
     checkAbort(signal);
+    if (detectFormat(signature) === 'jpeg') return await readJpegSize(file, signal);
+    bytes = new Uint8Array(await file.arrayBuffer());
+  } catch (error) {
+    checkAbort(signal);
+    if (error instanceof ImageProcessingError) throw error;
     throw new ImageProcessingError('No se pudo leer la imagen. Puede faltar memoria: cierra otras aplicaciones o comprime una copia antes de intentarlo.');
   }
   return readImageSize(bytes);

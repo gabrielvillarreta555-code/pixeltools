@@ -41,6 +41,62 @@ describe('tamaño seguro para el eliminador', () => {
 });
 
 describe('preparación previa a la IA', () => {
+  it('lee solo cabeceras de un JPEG de 108 MP sin copiar sus 30 MB, respetando EXIF', async () => {
+    const exif = [69, 120, 105, 102, 0, 0, ...orientationTiff(6)];
+    const bytes = new Uint8Array([
+      255, 216, 255, 225, 0, exif.length + 2, ...exif,
+      255, 192, 0, 8, 8, 12000 >> 8, 12000 & 255, 9000 >> 8, 9000 & 255, 1,
+      255, 218, 0, 2, 255, 217,
+    ]);
+    const file = new Blob([bytes, new Uint8Array(30 * 1024 * 1024)]);
+    const fullRead = vi.spyOn(file, 'arrayBuffer');
+    const slices = vi.spyOn(file, 'slice');
+    const controller = new AbortController(), close = vi.fn();
+    vi.stubGlobal('createImageBitmap', vi.fn(async (_file, options) => {
+      expect(options.resizeWidth).toBe(2048);
+      expect(options.resizeHeight).toBe(1536);
+      controller.abort();
+      return { width: 2048, height: 1536, close };
+    }));
+    await expect(prepareBackgroundImage(file, controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+    expect(fullRead).not.toHaveBeenCalled();
+    expect(slices).toHaveBeenCalled();
+    expect(slices.mock.calls.every(([start, end]) => typeof start === 'number' && typeof end === 'number' && end - start <= 65_536)).toBe(true);
+    expect(close).toHaveBeenCalledOnce();
+  });
+  it('rechaza JPEG truncado sin pedir al navegador que lo decodifique', async () => {
+    const decode = vi.fn(); vi.stubGlobal('createImageBitmap', decode);
+    const file = new Blob([new Uint8Array([255, 216, 255, 225, 0, 12, 69])]);
+    await expect(prepareBackgroundImage(file)).rejects.toThrow('JPEG');
+    expect(decode).not.toHaveBeenCalled();
+  });
+  it('detiene la lectura si hay demasiados segmentos JPEG', async () => {
+    const markers = new Uint8Array(4096 * 2);
+    for (let index = 0; index < markers.length; index += 2) { markers[index] = 255; markers[index + 1] = 1; }
+    const file = new Blob([new Uint8Array([255, 216]), markers, new Uint8Array([255, 217])]);
+    await expect(prepareBackgroundImage(file)).rejects.toThrow('demasiado complejo');
+  });
+  it.each([1, 2, 3, 4, 5, 6, 7, 8])('preserva la orientación EXIF %i al preparar un JPEG grande', async orientation => {
+    const exif = [69, 120, 105, 102, 0, 0, ...orientationTiff(orientation)];
+    const bytes = new Uint8Array([
+      255, 216,
+      255, 226, 0, 5, 1, 2, 3,
+      255, 192, 0, 8, 8, 12000 >> 8, 12000 & 255, 9000 >> 8, 9000 & 255, 1,
+      255, 225, 0, exif.length + 2, ...exif,
+      255, 218, 0, 2, 255, 217,
+    ]);
+    const controller = new AbortController();
+    const close = vi.fn();
+    const expected = orientation >= 5 ? { width: 2048, height: 1536 } : { width: 1536, height: 2048 };
+    vi.stubGlobal('createImageBitmap', vi.fn(async (_file, options) => {
+      expect(options.resizeWidth).toBe(expected.width);
+      expect(options.resizeHeight).toBe(expected.height);
+      controller.abort();
+      return { ...expected, close };
+    }));
+    await expect(prepareBackgroundImage(new Blob([bytes]), controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+    expect(close).toHaveBeenCalledOnce();
+  });
   it('admite archivos de más de 15 MB hasta 50 MB, pero mantiene el límite', async () => {
     expect(validateImageFile({ name: 'grande.jpg', type: 'image/jpeg', size: 20 * 1024 * 1024 }, { maxBytes: MAX_BACKGROUND_FILE_BYTES })).toBeNull();
     expect(validateImageFile({ name: 'grande.jpg', type: 'image/jpeg', size: MAX_BACKGROUND_FILE_BYTES + 1 }, { maxBytes: MAX_BACKGROUND_FILE_BYTES })).toContain('50');
