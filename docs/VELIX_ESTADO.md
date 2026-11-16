@@ -1,6 +1,6 @@
 # Vélix — estado permanente
 
-Actualizado: 2026-11-16. Versión: MVP Vélix 2.0 implementado; cierre de publicación en curso.
+Actualizado: 2026-11-16. Versión: **Vélix 2.0 desplegado; cierre de aceptación PENDIENTE por pruebas de red en producción**. Cloudflare completó producción el 16/11/2026 a las 21:27:01 UTC.
 
 ## Autorización y repositorio
 
@@ -9,7 +9,7 @@ Dirección aprobó investigación e implementación y autorizó integración/des
 - Repositorio: https://github.com/gabrielvillarreta555-code/pixeltools
 - Principal: `main`. Dominio: https://velixblue.com/
 - PR documental #15 fusionado tras comprobar contenido exclusivamente documental y Cloudflare aprobado. SHA: `c390bd55d090a715f50abeed8cfb4883edf67326`.
-- Implementación: rama `feat/velix-2-juegos`. PR y SHA de integración pendientes de registrar al cerrar publicación.
+- Implementación: [PR #16](https://github.com/gabrielvillarreta555-code/pixeltools/pull/16), rama `feat/velix-2-juegos`, fusionado tras Cloudflare SUCCESS y verificación HTTP/navegador del preview. Commit de integración: `fa39de52395eea82adf9c8b98999123ef9d4714c`.
 - Despliegue existente: integración Git de Cloudflare Pages, proyecto pixeltools, build `npm run build`, salida dist y Pages Functions. No hay despliegue manual ni nuevos servicios.
 
 ## Arquitectura implementada
@@ -31,7 +31,7 @@ Solo velixblue.com indexable; preview noindex + robots bloqueante y sin sitemap.
 
 Se conservan /, /privacidad, /terminos y /contacto (doce URLs anteriores). HEIC y marca de agua no tienen ruta y siguen pendientes. Blue sigue limitado al acceso a herramientas; no es una mascota nueva editorial. No se modificaron motores de procesamiento.
 
-## Diez consultas implementadas (publicación por confirmar)
+## Diez consultas publicadas
 
 - [¿Qué hago si Roblox sigue mostrando el error 280 después de actualizar?](https://velixblue.com/juegos/roblox/error-280-despues-de-actualizar)
 - [¿Cómo activo las coordenadas en Minecraft Bedrock sin activar trucos?](https://velixblue.com/juegos/minecraft/activar-coordenadas-bedrock)
@@ -48,13 +48,15 @@ Revisión documental: 16/11/2026, fuentes oficiales en cada artículo. Prioridad
 
 ## Validación ejecutada
 
-115 pruebas/14 archivos aprobados, build TypeScript/Vite aprobado, SEO de 24 rutas y diez HTML completos aprobado. Matriz de producción/main y preview heredando SITE_URL aprobada. Chrome y Firefox: sin JS, búsqueda, navegación, 320/390/768/1440 y sin errores críticos de consola. Batería completa de ocho herramientas, OCR recorte y pincel aprobada, incluidas imágenes 6750×9000 y 108 MP, PDF, descargas, transparencia, offline y procesamiento sin subir archivos. npm audit: cero vulnerabilidades reportadas. Detalle/comandos/límites en `docs/VELIX_2_0_VALIDACION.md`; capturas en docs/capturas.
+115 pruebas/14 archivos aprobados, build TypeScript/Vite aprobado, SEO de 24 rutas y diez HTML completos aprobado. Matriz de producción/main y preview heredando SITE_URL aprobada. Chrome y Firefox: sin JS, búsqueda, navegación, 320/390/768/1440 y sin errores críticos de consola. Batería LOCAL completa de ocho herramientas, OCR recorte y pincel aprobada, incluidas imágenes 6750×9000 y 108 MP, PDF, descargas, transparencia, offline y procesamiento sin subir archivos. npm audit: cero vulnerabilidades reportadas. Detalle/comandos/límites en `docs/VELIX_2_0_VALIDACION.md`; capturas en docs/capturas.
 
 ## Publicación y próximos pasos
 
-Pendiente verificar PR/check Cloudflare, fusionar si está aprobado y confirmar HTTP y navegadores contra producción. No declarar publicado basándose en dist. Registrar aquí PR, commit de integración, fecha real de despliegue y comprobaciones públicas.
+Despliegue de producción confirmado por Cloudflare SUCCESS para `fa39de5`: `7d7fad62-7223-445b-afd3-ace879f842ed`, finalizado 2026-11-16 21:27:01 UTC. URL: https://velixblue.com/. Preview anterior aprobado: https://58409a5b.pixeltools-ebd.pages.dev.
 
-Después de publicar: seguimiento SEO en Search Console (sin acceso confirmado). Enviar https://velixblue.com/sitemap.xml, inspeccionar URLs y HTML publicado, registrar línea base y revisar a 30/45/60 días. No prometer indexación. La revisión documental de artículos debe actualizarse solo tras verificar fuentes.
+Comprobaciones HTTP reales tras despliegue: 24 URLs devuelven 200 sin redirecciones, diez artículos contienen el cuerpo completo en la respuesta, canonical absolutos y metadatos individuales, JSON-LD válido, robots Allow, sitemap con las 24 URLs y 404 real. Sin meta ni header noindex en páginas públicas. El alias de producción `7d7fad62.pixeltools-ebd.pages.dev` mantiene `X-Robots-Tag: noindex, nofollow` y robots Disallow. Se preservan COOP/COEP. Batería editorial Chromium en producción aprobada. Batería de herramientas: procesamiento aprobado, cuatro aserciones de red fallidas; ver bloqueo y VALIDACION.
+
+Próxima fase: seguimiento SEO en Search Console (sin acceso confirmado). Enviar https://velixblue.com/sitemap.xml, inspeccionar URLs y HTML publicado, registrar línea base y revisar a 30/45/60 días. No prometer indexación. La revisión documental de artículos debe actualizarse solo tras verificar fuentes.
 
 ## Límites conocidos y reversión
 
@@ -63,3 +65,14 @@ No se probaron teléfonos físicos ni Safari real; no se midieron Core Web Vital
 Reversión mediante PR que revierta el commit de integración; Cloudflare reconstruye main. Base conocida anterior: c390bd55d090a715f50abeed8cfb4883edf67326. No hay migraciones de datos. Conservar herramientas y URLs. La investigación original continúa en VELIX_2_0_INVESTIGACION.md como referencia histórica, no como descripción de implementación pendiente.
 
 WebKit Linux: intento de ejecución no completado por bibliotecas nativas ausentes en el entorno, incluso tras intentar dependencias locales. No se declara aprobado. Chrome y Firefox sí se ejecutaron; Safari/macOS/iOS queda como limitación de cobertura, no como fallo funcional observado.
+
+
+## Bloqueo detectado después del despliegue (16/11/2026)
+
+La batería completa contra https://velixblue.com terminó con **cuatro comprobaciones fallidas**. Fallan las aserciones de ausencia total de peticiones externas/POST en `largeBackground`, `heavyBackground`, `ocr` e `imagePdf`; las comprobaciones de procesamiento, dimensiones, transparencia, texto, PDF, descargas y navegación pasaron. La batería local sí pasó completa. La editorial Chromium y la auditoría HTTP de producción pasaron.
+
+Diagnóstico de red: script GET desde `https://static.cloudflareinsights.com/beacon.min.js/...` y POST del mismo origen a `/cdn-cgi/rum?`. Se inspeccionó un envío de ~826 bytes de Web Analytics con tiempos, URL de página, versión del navegador y memoria; no se observó una imagen en ese envío. Esta analítica ya figura en PrivacyPage y README de la base anterior (observación 1/11/2026); Vélix 2.0 no la añadió. No se concluye una auditoría exhaustiva de todos los datos tratados por Cloudflare.
+
+No se relajaron las aserciones ni se ocultaron solicitudes para aprobar las pruebas. No se cambió el sistema de privacidad ni se desactivó analítica sin acceso al panel. Se detienen nuevas integraciones funcionales. El despliegue de Vélix 2.0 está online, pero no se declara aprobado el cierre completo de producción.
+
+Acción pendiente: revisar la configuración existente de Cloudflare Web Analytics con acceso al panel y decidir si se desactiva o si se mantiene con una verificación de red específica que pruebe explícitamente ausencia de archivos/texto de usuario en las métricas. Reejecutar las cuatro pruebas y registrar su resultado antes de cerrar la aceptación. No revertir motores de imágenes para solucionar una configuración de alojamiento preexistente. Si Dirección decide revertir Vélix 2.0, usar el procedimiento documentado; revertir la aplicación no garantiza retirar Web Analytics.
