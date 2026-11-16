@@ -1,35 +1,25 @@
-# VÉLIX — Estado permanente
+# Vélix — estado permanente
 
-Actualizado: 16 de noviembre de 2026.
+Actualizado: 2026-11-16. Versión: MVP Vélix 2.0 implementado; cierre de publicación en curso.
 
-## Autorización vigente
+## Autorización y repositorio
 
-- Dirección autorizó **Fase 0: auditoría e investigación de Vélix 2.0**.
-- Se permite entregar dos informes en rama/PR exclusivamente documental.
-- **Desarrollo, artículos, cambios funcionales, merge y despliegue NO autorizados.**
-- Aprobar/leer este informe no autoriza automáticamente implementación ni publicación.
-- No eliminar herramientas, cambiar privacidad, comprar servicios ni mover URLs.
-
-## Fuente de verdad y base auditada
+Dirección aprobó investigación e implementación y autorizó integración/despliegue si las pruebas y comprobaciones del repositorio pasan, no hay regresiones ni bloqueos de seguridad y se verifica producción. No pedir de nuevo esa autorización. No desarrollar Viral, Memes, CMS ni nuevas herramientas.
 
 - Repositorio: https://github.com/gabrielvillarreta555-code/pixeltools
-- Dominio confirmado por Dirección y código: https://velixblue.com/
-- Rama principal: main.
-- SHA auditado: dd79661f817f24074ae6f7854f5ee5f81fc8dedb.
-- Último commit observado: merge PR #14, «Integrar pincel, OCR, PDF, rendimiento y privacidad» (1/11/2026).
-- Rama documental de esta fase: docs/velix-2-investigacion.
-- Informe detallado: [VELIX_2_0_INVESTIGACION.md](./VELIX_2_0_INVESTIGACION.md).
-- Antes de continuar: leer este archivo, el informe, CLAUDE.md y cualquier AGENTS.md que exista entonces; volver a comprobar main y cambios concurrentes. No usar el resumen de sesiones antiguas como estado actual.
+- Principal: `main`. Dominio: https://velixblue.com/
+- PR documental #15 fusionado tras comprobar contenido exclusivamente documental y Cloudflare aprobado. SHA: `c390bd55d090a715f50abeed8cfb4883edf67326`.
+- Implementación: rama `feat/velix-2-juegos`. PR y SHA de integración pendientes de registrar al cerrar publicación.
+- Despliegue existente: integración Git de Cloudflare Pages, proyecto pixeltools, build `npm run build`, salida dist y Pages Functions. No hay despliegue manual ni nuevos servicios.
 
-## Estado verificado por lectura de GitHub
+## Arquitectura implementada
 
-React 19.2, TypeScript 5.9, Vite 7.3, Tailwind 4.1 y React Router 7.18.
-Cloudflare Pages, salida dist y Pages Functions con middleware por host.
-ONNX/U²-Net, Tesseract spa/eng, pdf-lib y Canvas; archivos procesados localmente.
-PWA con Cache Storage de aplicación; fuentes locales.
-No CMS/base de datos requerida para el MVP.
+React/TypeScript/Vite/Tailwind se conservan. Markdown con frontmatter JSON en `content/juegos/` genera HTML editorial inicial en build; parser y plantillas en `scripts/editorial/`, generación en `scripts/generate-editorial.mjs`, CSS/búsqueda en `public/editorial/`. Portada, `/juegos/`, `/herramientas` y diez consultas tienen contenido completo sin JavaScript. La búsqueda necesita JS, descarga índice local y no envía consultas. Las herramientas usan React con navegación de documento hacia editorial. Catálogo compartido `src/lib/toolCatalog.json`.
 
-Ocho herramientas con ruta:
+Solo velixblue.com indexable; preview noindex + robots bloqueante y sin sitemap. Middleware protege también los alias pages.dev de producción. Se conservan aislamiento y privacidad. Sitemap automático de 24 rutas; Article y BreadcrumbList en consultas, sin FAQPage/HowTo. HTML arbitrario e imágenes Markdown deshabilitados. El SW no precarga artículos ni índice; guía offline responde 503 explicativo.
+
+## Herramientas preservadas y URLs anteriores
+
 1. /comprimir-imagen — calidad, objetivo KB, límites, lote/ZIP.
 2. /eliminar-fondo — IA local, resize previo, comparador, fondos, pincel/deshacer.
 3. /convertir-imagen — JPG/PNG/WebP y lote.
@@ -39,54 +29,37 @@ Ocho herramientas con ruta:
 7. /extraer-texto — OCR spa/eng, giro/recorte, TXT.
 8. /imagenes-a-pdf — lote limitado, reordenación, A4/carta.
 
-Conservar además /, /privacidad, /terminos y /contacto: doce URLs actuales.
-HEIC y marca de agua siguen «Próximamente», sin ruta.
-Blue YA existe en public/blue-vivo.svg, BlueHint y portada/estilos. No introducirlo como novedad ni retirarlo sin decisión.
+Se conservan /, /privacidad, /terminos y /contacto (doce URLs anteriores). HEIC y marca de agua no tienen ruta y siguen pendientes. Blue sigue limitado al acceso a herramientas; no es una mascota nueva editorial. No se modificaron motores de procesamiento.
 
-## Hallazgos que condicionan Vélix 2.0
+## Diez consultas implementadas (publicación por confirmar)
 
-- Generador actual crea metadata/canonical/sitemap por ruta, pero index.html tiene root vacío: no genera contenido principal SSR.
-- Recomendación **propuesta, no aprobada**: React/Vite existente + Markdown editorial estático en build; no migración completa a Astro. Astro editorial es alternativa tras prueba acotada si simplifica.
-- Cada ruta debe tener un único generador dueño; enlaces editorial ↔ SPA necesitan navegación correcta y 404 real.
-- SW precarga aplicación completa salvo exclusiones: no ampliar indiscriminadamente al catálogo editorial; vigilar fallback offline a portada.
-- Configuración SEO de producción/preview está incorporada en main. Solo velixblue.com indexable; middleware bloquea hosts alternativos.
-- Robots Disallow + noindex no garantiza retirar un preview ya indexado: Google debe poder leer noindex, o proteger acceso; evaluar sin desproteger pruebas.
-- Política/README registran observación previa de Cloudflare Web Analytics el 1/11. No afirmar que no existe analítica. No se comprobó nuevamente.
-- Headers de aislamiento protegen runtime; no retirarlos para widgets.
-- main reporta protected:false; no workflows en árbol y Actions devolvió cero runs. Proponer protección/CI, sin cambios ahora.
-- Posible bitmap sin cerrar si cancelación llega tras createImageBitmap: hallazgo de lectura a reproducir, no corregido.
-- Términos/privacidad pendientes de revisión jurídica y datos del responsable.
+- [¿Qué hago si Roblox sigue mostrando el error 280 después de actualizar?](https://velixblue.com/juegos/roblox/error-280-despues-de-actualizar)
+- [¿Cómo activo las coordenadas en Minecraft Bedrock sin activar trucos?](https://velixblue.com/juegos/minecraft/activar-coordenadas-bedrock)
+- [¿Cómo soluciono el error 279 de Roblox en Android?](https://velixblue.com/juegos/roblox/error-279-android)
+- [¿Mi celular puede ejecutar Free Fire o Free Fire MAX?](https://velixblue.com/juegos/free-fire/requisitos-celular-free-fire-max)
+- [¿Por qué Free Fire se cierra solo o muestra pantalla negra en Android?](https://velixblue.com/juegos/free-fire/se-cierra-pantalla-negra)
+- [¿Puedo jugar Minecraft desde Android con un amigo que usa Java en PC?](https://velixblue.com/juegos/minecraft/android-con-java-pc)
+- [¿Cómo reduzco el lag de Roblox en un celular sin instalar otras apps?](https://velixblue.com/juegos/roblox/reducir-lag-celular)
+- [¿Por qué mi código de Free Fire aparece inválido o no se puede canjear?](https://velixblue.com/juegos/free-fire/codigo-invalido-canje)
+- [¿Cómo activo la A2F de Epic Games para enviar regalos en Fortnite?](https://velixblue.com/juegos/fortnite/activar-a2f-regalos)
+- [¿Cómo veo mi región de Free Fire y puedo cambiarla?](https://velixblue.com/juegos/free-fire/ver-region-cuenta)
 
-## Investigación editorial entregada
+Revisión documental: 16/11/2026, fuentes oficiales en cada artículo. Prioridad investigada 20 (Brawl Stars) reemplazada por 03 (región de Free Fire): documentación de Brawl Stars no verificable suficientemente. Coordenadas se explica sin activar trucos; no garantiza restaurar logros. No se han probado los pasos dentro de videojuegos ni cuantificado demanda panameña.
 
-20 formulaciones editoriales basadas en preguntas/problemas documentados, con fuentes, competidores, dificultad cualitativa, aporte, frecuencia y riesgos.
-No son exportaciones de queries ni cifras de volumen. Hay señales regionales de FF/Minecraft/Roblox; demanda panameña exacta sin cuantificar. Fortnite/Brawl Stars son exploratorios.
-Prioridades, en orden: IDs 08, 14, 07, 04, 05, 13, 12, 06, 17, 20 del informe.
-Diez es tope inicial, no obligación de publicar contenido sin verificar.
-Viral/Memes quedan fuera de MVP y no deben generar páginas vacías.
-Derechos: no asumir que licencias de fan content permiten uso comercial corporativo; Epic diferencia vídeos de webs, Garena sin licencia general verificada. Assets originales/licenciados con registro.
+## Validación ejecutada
 
-## Validación de esta fase y límites
+115 pruebas/14 archivos aprobados, build TypeScript/Vite aprobado, SEO de 24 rutas y diez HTML completos aprobado. Matriz de producción/main y preview heredando SITE_URL aprobada. Chrome y Firefox: sin JS, búsqueda, navegación, 320/390/768/1440 y sin errores críticos de consola. Batería completa de ocho herramientas, OCR recorte y pincel aprobada, incluidas imágenes 6750×9000 y 108 MP, PDF, descargas, transparencia, offline y procesamiento sin subir archivos. npm audit: cero vulnerabilidades reportadas. Detalle/comandos/límites en `docs/VELIX_2_0_VALIDACION.md`; capturas en docs/capturas.
 
-- Auditados archivos y árbol mediante conector GitHub; búsquedas y aperturas web documentadas.
-- Shell no disponible: «No usable execution environment is available», pese a estado running reportado por proveedor.
-- NO ejecutados npm test, build, Playwright, Lighthouse, npm audit ni móviles reales.
-- NO verificadas respuestas HTTP actuales de producción: herramienta web no pudo abrir /, /robots.txt y /sitemap.xml. Esto no demuestra caída del sitio.
-- NO acceso a Search Console, panel Cloudflare, cifras de búsqueda ni métricas.
-- Resultados de sesiones/README anteriores NO son resultados actuales.
-- Entrega prevista: únicamente los dos Markdown; verificar compare/diff y lectura remota tras guardar.
-- No merge, no cambios de configuración, no despliegue manual. La automatización existente de terceros podría generar preview al recibir una rama.
+## Publicación y próximos pasos
 
-## Próximos pasos, en orden
+Pendiente verificar PR/check Cloudflare, fusionar si está aprobado y confirmar HTTP y navegadores contra producción. No declarar publicado basándose en dist. Registrar aquí PR, commit de integración, fecha real de despliegue y comprobaciones públicas.
 
-1. Dirección revisa informe y PR documental; puede aprobar investigación sin autorizar desarrollo.
-2. Recuperar entorno ejecutable; verificar SHA actual, estado público y acceso de propietario a Search Console/Cloudflare.
-3. Solicitar/recibir orden explícita de implementación que fije responsable editorial, alcance y presupuesto.
-4. Solo entonces: baseline y prototipo de HTML editorial, decidir generación vs Astro, PRs pequeños con pruebas y reversión.
-5. Publicar únicamente tras autorización separada y pruebas de herramientas/SEO/privacidad/derechos.
+Después de publicar: seguimiento SEO en Search Console (sin acceso confirmado). Enviar https://velixblue.com/sitemap.xml, inspeccionar URLs y HTML publicado, registrar línea base y revisar a 30/45/60 días. No prometer indexación. La revisión documental de artículos debe actualizarse solo tras verificar fuentes.
 
-## Handoff y mantenimiento
+## Límites conocidos y reversión
 
-Actualizar fecha, SHA inspeccionado, decisiones aprobadas (separadas de propuestas), pruebas realmente ejecutadas con evidencia, PRs y pendientes en cada fase.
-No registrar secretos, tokens, fotos, consultas libres de usuarios ni datos personales.
-Plan de 30 días, costos ilustrativos, criterios de aceptación y métricas a 30/45/60 días están en el informe; no equivalen a contratación ni promesa de tráfico.
+No se probaron teléfonos físicos ni Safari real; no se midieron Core Web Vitals de campo. La IA y OCR mantienen límites de dispositivo y precisión. Textos legales pendientes de revisión jurídica y datos del responsable. No se añadió analítica; puede persistir configuración Cloudflare previa, no afirmar ausencia universal. Sin CMS, pagos, contenidos Viral/Memes ni imágenes de videojuegos republicadas.
+
+Reversión mediante PR que revierta el commit de integración; Cloudflare reconstruye main. Base conocida anterior: c390bd55d090a715f50abeed8cfb4883edf67326. No hay migraciones de datos. Conservar herramientas y URLs. La investigación original continúa en VELIX_2_0_INVESTIGACION.md como referencia histórica, no como descripción de implementación pendiente.
+
+WebKit Linux: intento de ejecución no completado por bibliotecas nativas ausentes en el entorno, incluso tras intentar dependencias locales. No se declara aprobado. Chrome y Firefox sí se ejecutaron; Safari/macOS/iOS queda como limitación de cobertura, no como fallo funcional observado.

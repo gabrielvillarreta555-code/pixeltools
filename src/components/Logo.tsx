@@ -1,5 +1,4 @@
 import { useId } from 'react';
-import { Link } from 'react-router-dom';
 
 export function LogoMark({ className = 'size-9' }: { className?: string }) {
   const gradientId = useId();
@@ -21,11 +20,11 @@ export function LogoMark({ className = 'size-9' }: { className?: string }) {
 
 export function Logo() {
   return (
-    <Link className="group flex items-center gap-2.5" to="/" aria-label="Vélix Blue, inicio">
+    <a className="group flex items-center gap-2.5" href="/" aria-label="Vélix Blue, inicio">
       <LogoMark className="size-9 drop-shadow-[0_6px_16px_rgba(47,123,255,0.45)] transition-transform group-hover:-rotate-3" />
       <span className="whitespace-nowrap text-[1.15rem] font-extrabold uppercase tracking-[-0.01em] text-white">
         Vélix <span className="text-electric-light">Blue</span>
       </span>
-    </Link>
+    </a>
   );
 }

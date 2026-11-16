@@ -79,3 +79,10 @@ MIT del proyecto que publica la conversión dice:
 
 Las copias de licencia incluidas por cada paquete pueden consultarse después de
 `npm install` dentro de `node_modules/<paquete>/LICENSE*`.
+
+
+## Editorial: markdown-it
+
+`markdown-it` 15.0.3 (solo compilación), https://github.com/markdown-it/markdown-it, licencia MIT. No se carga en el navegador. Licencia íntegra: `LICENSES/markdown-it-MIT.txt`. Sus dependencias transitivas y versiones están fijadas en package-lock.json y conservan las licencias distribuidas en sus paquetes. `@types/markdown-it` se usa solo para desarrollo, licencia MIT (DefinitelyTyped).
+
+Los artículos enlazan documentación de Garena, Roblox, Minecraft/Mojang/Microsoft y Epic Games como fuentes; esos enlaces no implican afiliación. No se incorporan imágenes, vídeos ni logos de estos videojuegos. Las ilustraciones y tipografía anteriores conservan sus atribuciones.

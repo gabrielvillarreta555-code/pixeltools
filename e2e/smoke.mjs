@@ -412,8 +412,9 @@ async function newTools(browser, base, fx) {
   const page = await context.newPage();
 
   await page.goto(`${base}/`);
-  await page.getByPlaceholder('Buscar herramienta…').fill('instagram');
-  const visibleTools = await page.locator('#herramientas li').allInnerTexts();
+  await page.getByLabel('¿Qué necesitas resolver?').fill('instagram');
+  await page.locator('#search-results a').first().waitFor();
+  const visibleTools = await page.locator('#search-results a').allInnerTexts();
   check(visibleTools.length === 1 && visibleTools[0].includes('Redimensionar'), 'el buscador de herramientas filtra por palabras clave');
 
   await page.goto(`${base}/convertir-imagen`);

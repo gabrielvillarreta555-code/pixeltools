@@ -7,12 +7,15 @@
     "predev": "node scripts/copy-runtime-assets.mjs",
     "dev": "vite",
     "prebuild": "node scripts/copy-runtime-assets.mjs",
-    "build": "tsc --noEmit && vite build && node scripts/generate-static-pages.mjs && node scripts/generate-service-worker.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/generate-static-pages.mjs && node scripts/generate-editorial.mjs && node scripts/generate-service-worker.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node e2e/smoke.mjs",
-    "test:e2e:ocr-crop": "node e2e/ocr-crop.mjs"
+    "test:e2e:ocr-crop": "node e2e/ocr-crop.mjs",
+    "test:e2e:editorial": "node e2e/editorial.mjs",
+    "test:seo": "node scripts/check-editorial.mjs",
+    "test:deployment": "node scripts/check-deployment.mjs"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "5.3.0",
@@ -27,10 +30,12 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.16",
+    "@types/markdown-it": "14.2.0",
     "@types/node": "24.10.0",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@vitejs/plugin-react": "5.1.0",
+    "markdown-it": "15.0.3",
     "playwright": "1.63.0",
     "tailwindcss": "4.1.16",
     "typescript": "5.9.3",

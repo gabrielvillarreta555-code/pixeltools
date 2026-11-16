@@ -1,10 +1,9 @@
 # Vélix Blue
 
-Herramientas de imagen privadas, un producto de Blue Lab Studios (antes
+Consultas de videojuegos y herramientas de imagen privadas de Blue Lab Studios (antes
 «PixelTools»; el repositorio conserva ese nombre). Elimina fondos con IA,
 comprime, convierte, redimensiona y recorta imágenes, y quita sus metadatos.
-Todo se procesa localmente en el navegador y la web se puede instalar como
-aplicación (PWA) que funciona sin conexión.
+Los archivos de las herramientas se procesan localmente. Su PWA permite uso sin conexión tras cargar los recursos necesarios. Las guías editoriales requieren conexión y se entregan como HTML completo.
 
 > Antes de registrar dominio o marca, comprueba que «Vélix Blue» esté libre
 > (DIGERPI en Panamá, EUIPO, USPTO). El nombre se cambia fácilmente en el código.
@@ -339,3 +338,34 @@ Consulta [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). El modelo U²-Net,
 su conversión y las dependencias conservan sus propias licencias. Blue Lab
 Studios debe decidir la licencia del código específico de Vélix Blue antes de
 distribuirlo como proyecto reutilizable.
+
+
+## Vélix 2.0: edición y validación
+
+La portada de producción y `/juegos/` se generan estáticamente. Se mantiene React/Vite para las ocho herramientas; no hay Astro ni CMS. El catálogo compartido es `src/lib/toolCatalog.json`.
+
+- `content/juegos/*.md`: Markdown con frontmatter **JSON** entre líneas `---`. Copiar un artículo existente, conservar campos `id`, `slug`, `game`, `title`, `description`, `answer`, `reviewedAt`, `status`, `scope`, `sources` y `related`.
+- `status: "draft"` excluye el artículo del HTML, sitemap e índice. Los relacionados deben referenciar IDs publicados. `reviewedAt` es una revisión documental real, no la fecha de compilación. Fuentes HTTPS con `label`, `url` y `supports` son obligatorias.
+- El título genera el H1; el cuerpo empieza en H2. HTML arbitrario e imágenes Markdown están deshabilitados para evitar inyecciones y publicaciones sin licencia. El MVP no necesita imágenes de videojuegos.
+- `scripts/editorial/`: validación y plantillas. `public/editorial/`: estilos y búsqueda local sin registro de consultas. `scripts/generate-editorial.mjs`: HTML, índice, 404 y extensión del sitemap.
+- No cambiar slugs publicados sin redirección. Revisar referencias oficiales, relacionados y derechos en cada PR.
+
+```bash
+npm ci
+npm test
+SITE_URL=https://velixblue.com npm run build
+npm run test:seo
+npm run preview
+# Para navegador (instalación inicial):
+npx playwright install --with-deps chromium firefox webkit
+E2E_BROWSER=chromium npm run test:e2e:editorial
+E2E_BROWSER=firefox npm run test:e2e:editorial
+E2E_BROWSER=webkit npm run test:e2e:editorial
+npm run test:e2e
+npm run test:e2e:ocr-crop
+node e2e/mask-brush.mjs
+```
+
+`npm run dev` sirve la aplicación React; para revisar la portada editorial y los artículos usar **build + preview**. El build sin SITE_URL es deliberadamente no indexable. En Cloudflare, main configura producción y las ramas mantienen la protección de pruebas incluso si heredan SITE_URL. No modificar el middleware ni los encabezados de aislamiento.
+
+Para comprobar un despliegue, establecer `E2E_BASE_URL`; para un preview editorial, añadir `E2E_SITE_URL` con su canonical de compilación. `docs/VELIX_2_0_VALIDACION.md` registra alcance, resultados, límites, publicación y reversión. El estado vivo está en `docs/VELIX_ESTADO.md`.
