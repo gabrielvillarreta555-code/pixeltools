@@ -369,3 +369,6 @@ node e2e/mask-brush.mjs
 `npm run dev` sirve la aplicación React; para revisar la portada editorial y los artículos usar **build + preview**. El build sin SITE_URL es deliberadamente no indexable. En Cloudflare, main configura producción y las ramas mantienen la protección de pruebas incluso si heredan SITE_URL. No modificar el middleware ni los encabezados de aislamiento.
 
 Para comprobar un despliegue, establecer `E2E_BASE_URL`; para un preview editorial, añadir `E2E_SITE_URL` con su canonical de compilación. `docs/VELIX_2_0_VALIDACION.md` registra alcance, resultados, límites, publicación y reversión. El estado vivo está en `docs/VELIX_ESTADO.md`.
+
+
+Validación HTTP posterior al despliegue: `npm run test:deployment` comprueba velixblue.com por defecto. Para otra URL usar `E2E_BASE_URL` y `E2E_SITE_URL`; en entornos con proxy configurado, Node 24 admite `NODE_USE_ENV_PROXY=1`. El resultado de producción y el commit publicado están registrados en `docs/VELIX_ESTADO.md`.

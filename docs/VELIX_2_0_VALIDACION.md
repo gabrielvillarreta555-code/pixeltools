@@ -46,3 +46,30 @@ Reversión: revertir el commit de integración del PR de implementación mediant
 En la propiedad autorizada de Search Console, enviar `https://velixblue.com/sitemap.xml`. Inspeccionar cada URL listada en VELIX_ESTADO, usar «Probar URL publicada» y revisar rastreo/HTML/canonical. Solicitar indexación si procede, sin garantizar aceptación. Registrar esta publicación como línea base; a 30/45/60 días revisar cobertura, motivos de exclusión, consultas, impresiones, clics y CTR. No cambiar URLs o crear duplicados para perseguir indexación. Revisar fuentes antes de cambiar fechas de revisión; una recompilación no es revisión editorial.
 
 WebKit Linux: intento de ejecución no completado por bibliotecas nativas ausentes en el entorno, incluso tras intentar dependencias locales. No se declara aprobado. Chrome y Firefox sí se ejecutaron; Safari/macOS/iOS queda como limitación de cobertura, no como fallo funcional observado.
+
+
+## Publicación verificada
+
+- PR de implementación: https://github.com/gabrielvillarreta555-code/pixeltools/pull/16.
+- Commit de integración: `fa39de52395eea82adf9c8b98999123ef9d4714c`.
+- Cloudflare Pages: SUCCESS; despliegue `7d7fad62-7223-445b-afd3-ace879f842ed`, completado 2026-11-16 21:27:01 UTC.
+- URL pública: https://velixblue.com/. Sitemap: https://velixblue.com/sitemap.xml.
+- Preview de PR aprobado por HTTP y Chromium: https://58409a5b.pixeltools-ebd.pages.dev (24 rutas, noindex, sin sitemap, 404).
+- Producción: `npm run test:deployment` comprueba por HTTP las 24 rutas, HTML editorial completo, metadatos, canonical, robots, sitemap y 404: aprobado. El alias pages.dev de producción conserva noindex y robots bloqueante; el dominio público no.
+- En este entorno se usó `NODE_USE_ENV_PROXY=1` para que Node 24 respete el proxy de red ya configurado. No se modificó el sitio ni se omitieron verificaciones.
+
+
+## Bloqueo detectado después del despliegue (16/11/2026)
+
+La batería completa contra https://velixblue.com terminó con **cuatro comprobaciones fallidas**. Fallan las aserciones de ausencia total de peticiones externas/POST en `largeBackground`, `heavyBackground`, `ocr` e `imagePdf`; las comprobaciones de procesamiento, dimensiones, transparencia, texto, PDF, descargas y navegación pasaron. La batería local sí pasó completa. La editorial Chromium y la auditoría HTTP de producción pasaron.
+
+Diagnóstico de red: script GET desde `https://static.cloudflareinsights.com/beacon.min.js/...` y POST del mismo origen a `/cdn-cgi/rum?`. Se inspeccionó un envío de ~826 bytes de Web Analytics con tiempos, URL de página, versión del navegador y memoria; no se observó una imagen en ese envío. Esta analítica ya figura en PrivacyPage y README de la base anterior (observación 1/11/2026); Vélix 2.0 no la añadió. No se concluye una auditoría exhaustiva de todos los datos tratados por Cloudflare.
+
+No se relajaron las aserciones ni se ocultaron solicitudes para aprobar las pruebas. No se cambió el sistema de privacidad ni se desactivó analítica sin acceso al panel. Se detienen nuevas integraciones funcionales. El despliegue de Vélix 2.0 está online, pero no se declara aprobado el cierre completo de producción.
+
+Acción pendiente: revisar la configuración existente de Cloudflare Web Analytics con acceso al panel y decidir si se desactiva o si se mantiene con una verificación de red específica que pruebe explícitamente ausencia de archivos/texto de usuario en las métricas. Reejecutar las cuatro pruebas y registrar su resultado antes de cerrar la aceptación. No revertir motores de imágenes para solucionar una configuración de alojamiento preexistente. Si Dirección decide revertir Vélix 2.0, usar el procedimiento documentado; revertir la aplicación no garantiza retirar Web Analytics.
+
+
+Reproducción dirigida de los cuatro escenarios fallidos (sin cambiar sus aserciones): todos registraron únicamente las dos solicitudes adicionales anteriores. Los POST eventType=1 fueron de 829, 828, 822 y 828 bytes respectivamente; claves: startTime, pageloadId, eventType, nt, location, versions, bi, memory, firstPaint, firstContentfulPaint, timingsV2, siteToken y st. Se registraron solo método, URL, tamaño y nombres de campos; no fotos, texto OCR ni identificadores de visita. La instrumentación temporal se retiró. Los cuatro checks continúan fallando, tal como deben con su criterio actual. No se presenta la batería de producción como aprobada.
+
+Chrome/Chromium contra producción sí aprobó la batería editorial: diez artículos sin JS, navegación, doce rutas anteriores, búsqueda y 320/390/768/1440, sin errores críticos de consola. Las pruebas locales completas aprobadas y estos resultados públicos diferentes deben permanecer separados.
