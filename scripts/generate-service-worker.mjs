@@ -27,6 +27,8 @@ const files = (await listFiles(dist)).sort();
 const precache = files
   .map(toUrl)
   .filter((url) => !url.endsWith('.map'))
+  // Editorial grows independently: never precache every article/search index.
+  .filter((url) => !url.startsWith('/juegos/') && !/^\/editorial\/.*\.json$/.test(url))
   .filter((url) => !/^\/(models|ort|ocr)\//.test(url))
   .filter((url) => !['/sw.js', '/_headers', '/robots.txt', '/sitemap.xml', '/404.html', '/og-image.svg', '/og-image.png'].includes(url))
   .map((url) => (url === '/index.html' ? '/' : url.replace(/\.html$/, '')));
@@ -98,6 +100,7 @@ self.addEventListener('fetch', (event) => {
         return await fetch(request);
       } catch {
         const cache = await caches.open(SHELL_CACHE);
+        if (path.startsWith('/juegos')) return new Response('<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Sin conexión | Vélix Blue</title><h1>Esta guía necesita conexión</h1><p>Vuelve a conectarte para consultar la versión revisada.</p><a href="/comprimir-imagen">Abrir compresor sin conexión</a></html>', { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
         return (await cache.match(path)) || (await cache.match('/')) || Response.error();
       }
     })());

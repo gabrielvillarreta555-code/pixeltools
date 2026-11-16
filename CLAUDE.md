@@ -98,3 +98,8 @@ Variables documentadas en `.env.example`:
 
 En Cloudflare Pages: comando `npm run build`, salida `dist`. Antes de publicar,
 configurar el dominio/correo reales y revisar los textos legales.
+
+
+## Editorial Vélix 2.0
+
+Leer `docs/VELIX_ESTADO.md` antes de continuar. El build añade `generate-editorial.mjs` después del generador de herramientas y antes del SW. La portada, Juegos y consultas son HTML estático sin React; conservar enlaces de documento entre editorial y herramientas. Editar `content/juegos/*.md` siguiendo el esquema JSON-frontmatter del README. Ejecutar `npm run test:seo` sobre dist además de las pruebas anteriores. No cambiar motores de imagen al editar contenido. No registrar consultas de búsqueda. Los borradores no se publican ni se enlazan. El catálogo compartido vive en `src/lib/toolCatalog.json`; `src/lib/tools.ts` conserva la interfaz TypeScript.

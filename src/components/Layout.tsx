@@ -9,7 +9,8 @@ const STUDIO_URL = 'https://gabrielvillarreta555-code.github.io/';
 
 const links = [
   { to: '/', label: 'Inicio', end: true },
-  { to: '/#herramientas', label: 'Herramientas', end: false },
+  { to: '/juegos/', label: 'Juegos', end: false },
+  { to: '/herramientas', label: 'Herramientas', end: false },
   { to: '/privacidad', label: 'Privacidad', end: false },
   { to: '/contacto', label: 'Contacto', end: false },
 ];
@@ -36,8 +37,8 @@ export function Layout({ children }: { children: ReactNode }) {
           <Logo />
           <nav className="hidden items-center gap-1 md:flex" aria-label="Navegación principal">
             {links.map((link) =>
-              link.to.includes('#') ? (
-                <Link key={link.to} className="nav-link" to={link.to}>{link.label}</Link>
+              ['/', '/juegos/', '/herramientas'].includes(link.to) ? (
+                <a key={link.to} className="nav-link" href={link.to}>{link.label}</a>
               ) : (
                 <NavLink
                   key={link.to}
@@ -51,9 +52,9 @@ export function Layout({ children }: { children: ReactNode }) {
             )}
           </nav>
           <div className="flex items-center gap-2">
-            <Link className="btn btn-primary hidden sm:inline-flex" to="/#herramientas">
+            <a className="btn btn-primary hidden sm:inline-flex" href="/herramientas">
               Comenzar ahora <Icon className="size-4" name="arrow-right" />
-            </Link>
+            </a>
             <button
               className="grid size-11 place-items-center rounded-xl border border-line text-slate-200 md:hidden"
               type="button"
@@ -69,6 +70,9 @@ export function Layout({ children }: { children: ReactNode }) {
         {menuOpen && (
           <nav id="mobile-menu" className="border-t border-line bg-panel p-4 md:hidden" aria-label="Navegación móvil">
             <div className="page-container flex flex-col gap-1 px-0">
+              <a className="mobile-nav-link" href="/">Inicio</a>
+              <a className="mobile-nav-link" href="/juegos/">Juegos</a>
+              <a className="mobile-nav-link" href="/herramientas">Herramientas</a>
               {AVAILABLE_TOOLS.map((tool) => (
                 <NavLink key={tool.path} className="mobile-nav-link flex items-center gap-3" to={tool.path}>
                   <Icon className="size-4 text-electric-light" name={tool.icon} />{tool.name}
