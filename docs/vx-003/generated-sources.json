@@ -52,32 +52,6 @@
     ]
   },
   {
-    "id": "clash-royale",
-    "createdAt": "2026-11-24",
-    "provider": "OpenAI image generation",
-    "type": "original AI-generated conceptual illustration",
-    "officialAsset": false,
-    "originalFile": "exec-9398cf25-4c74-43f7-a5f6-f77d9b291df9.png",
-    "originalSha256": "0005e1194ee3718088d5e5678ced841386c08e450da1da0bc767cf61c33e11a3",
-    "variants": [
-      {
-        "path": "public/media/clash-royale-1600.webp",
-        "bytes": 254890,
-        "sha256": "b80aa8a99e94f63a48a794d8af194b37611d3257f51d01b7687317718bf211ea"
-      },
-      {
-        "path": "public/media/clash-royale-480.webp",
-        "bytes": 38382,
-        "sha256": "2478ef62f5341ee3cb84e6ee53c08fba34c63047c15ea6d20686b5e3c311d02c"
-      },
-      {
-        "path": "public/media/clash-royale-960.webp",
-        "bytes": 121300,
-        "sha256": "2fceadba58d74515c0b736ceb59a284a77f8bb1d642387546cc617ca6626364a"
-      }
-    ]
-  },
-  {
     "id": "minecraft",
     "createdAt": "2026-11-24",
     "provider": "OpenAI image generation",
@@ -204,32 +178,6 @@
         "path": "public/media/free-fire-finals-960.webp",
         "bytes": 90772,
         "sha256": "70c32e63759a603c9cf6587fbd28aef29ef430e2870a01b002c14d72782b547e"
-      }
-    ]
-  },
-  {
-    "id": "clash-tactics",
-    "createdAt": "2026-11-24",
-    "provider": "OpenAI image generation",
-    "type": "original AI-generated conceptual illustration",
-    "officialAsset": false,
-    "originalFile": "exec-b70c8cab-0152-480b-83e8-bce1fae8e8ef.png",
-    "originalSha256": "40580b4ce3af324c6b1679217094b5c67f8a97ddd1d89a287dce05dca141fa3e",
-    "variants": [
-      {
-        "path": "public/media/clash-tactics-1600.webp",
-        "bytes": 311006,
-        "sha256": "c0a6699da90989f510ca9b3d436e552cc36d96b65949ad70bc0ffffae0fe6f4e"
-      },
-      {
-        "path": "public/media/clash-tactics-480.webp",
-        "bytes": 44900,
-        "sha256": "552c5922d8e4d23aad9d06ab163e1073e9a57807d65af2b12c0990abc54a607f"
-      },
-      {
-        "path": "public/media/clash-tactics-960.webp",
-        "bytes": 148494,
-        "sha256": "a0f957fd4ad8837904d94d0ecb95c8039098e968ffc81fe9cd733ede5adc2287"
       }
     ]
   }

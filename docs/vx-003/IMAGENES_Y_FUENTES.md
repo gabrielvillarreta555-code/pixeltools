@@ -1,10 +1,10 @@
 # VX-003 — imágenes, fuentes y condiciones de uso
 
-Revisión: 24 de noviembre de 2026.
+Revisión: 24 de noviembre de 2026. Actualizado el 25 de noviembre de 2026 (VX-003-R2: Clash Royale con arte oficial).
 
 ## Procedencia visual
 
-Se crearon nueve ilustraciones originales con la herramienta de generación de imágenes de OpenAI, sin cargar fotografías ni assets de terceros como referencia. Las indicaciones pidieron composiciones sin texto, logotipos ni personajes oficiales: ciudad tropical y coche, combate en una isla, arena medieval, paisaje de bloques, ciudad futurista, mundo de avatares, música en una ciudad costera, trofeo competitivo y tablero de estrategia.
+Se crearon nueve ilustraciones originales (dos de ellas, las de Clash Royale, se sustituyeron por arte oficial el 25/11/2026) con la herramienta de generación de imágenes de OpenAI, sin cargar fotografías ni assets de terceros como referencia. Las indicaciones pidieron composiciones sin texto, logotipos ni personajes oficiales: ciudad tropical y coche, combate en una isla, arena medieval, paisaje de bloques, ciudad futurista, mundo de avatares, música en una ciudad costera, trofeo competitivo y tablero de estrategia.
 
 Las condiciones de OpenAI consultadas el 24/11/2026 (https://openai.com/policies/terms-of-use/, apartado Content) asignan al usuario los derechos del resultado entre OpenAI y el usuario en la medida permitida por la ley; advierten que los resultados pueden no ser únicos. Esto no autoriza infringir marcas ni permite garantizar exclusividad o copyright en todas las jurisdicciones. No se presenta el material como creado exclusivamente por un artista humano. No se ha adquirido una licencia oficial de los videojuegos.
 
@@ -14,15 +14,31 @@ Cada portada y cabecera tiene texto alternativo y créditos conceptuales. Los ar
 |---|---|---|
 | `gta-vi` | Cabecera GTA VI y noticia de lanzamiento | 3 WebP; SHA-256 en generated-sources.json |
 | `free-fire` | Cabecera Free Fire y noticia Storm Arena | 3 WebP; SHA-256 en generated-sources.json |
-| `clash-royale` | Cabecera Clash Royale y Crown Series | 3 WebP; SHA-256 en generated-sources.json |
+| `clash-royale` | Cabecera Clash Royale y Crown Series | **Arte oficial de Supercell** (Fan Kit); 3 WebP; ver official-sources.json |
 | `minecraft` | Cabecera Minecraft y guías | 3 WebP; SHA-256 en generated-sources.json |
 | `fortnite` | Cabecera Fortnite y guía | 3 WebP; SHA-256 en generated-sources.json |
 | `roblox` | Cabecera Roblox y guías | 3 WebP; SHA-256 en generated-sources.json |
 | `gta-album` | Noticia del álbum Deluxe | 3 WebP; SHA-256 en generated-sources.json |
 | `free-fire-finals` | Noticia FFWS | 3 WebP; SHA-256 en generated-sources.json |
-| `clash-tactics` | Noticia Merge Tactics | 3 WebP; SHA-256 en generated-sources.json |
+| `clash-tactics` | Noticia Merge Tactics | **Arte oficial de Supercell** (Fan Kit); 3 WebP; ver official-sources.json |
 
 Los PNG maestros permanecen en el entorno de generación; los WebP versionados son la entrega recuperable del repositorio. No dependen de ese entorno para compilar o servir la web. No se afirma licencia CC0/Creative Commons. Las marcas pertenecen a sus titulares y solo identifican la cobertura editorial.
+
+## Arte oficial de Clash Royale (VX-003-R2, 25/11/2026)
+
+Aprobado por el CEO de Blue Lab Studios. Sustituye las dos ilustraciones de IA de Clash Royale.
+
+| Imagen | Recurso del Fan Kit | Uso |
+|---|---|---|
+| `clash-royale` | `Key_Art_Boss_Bandit_Evo_Executioner` (16:9) | Cabecera de Clash Royale y portada de Crown Series |
+| `clash-tactics` | `MergeTactics_KeyART` (16:9) | Portada de Merge Tactics |
+
+- Fuente: [Supercell Fan Kit · Clash Royale](https://fankit.supercell.com/clashroyale), descarga pública sin cuenta. Archivos originales, hashes y variantes en `official-sources.json`.
+- Condiciones: [Supercell Fan Content Policy](https://supercell.com/en/fan-content-policy/) (última actualización 27/09/2023), que forma parte de los [Terms of Service](https://supercell.com/en/terms-of-service/). Permite contenido de fans no comercial para mostrar, identificar y comentar sus juegos, incluido el arte del Fan Kit; admite anuncios y donaciones; exige el aviso «This material is unofficial and is not endorsed by Supercell…»; prohíbe modificar los recursos, sugerir patrocinio, imitar logotipos y publicar filtraciones. Supercell puede revocar la licencia en cualquier momento.
+- Aviso: se muestra en la cabecera de Clash Royale, en las fuentes de cada artículo, en el pie de las páginas de Clash Royale y en /creditos.
+- Tratamiento: solo reescalado y WebP. El layout recorta en pantalla con `object-fit` (16:9, 16:8 o 4:3); por eso solo se eligieron obras ya apaisadas 16:9.
+- Descartados por duda de permiso: las cabeceras del blog oficial (3000 × 600) y `CR_KeyArt_Crown Series` (8000 × 8000), porque encajarlas en los formatos del sitio exigiría un reencuadre sustancial, que podría considerarse una modificación.
+- Pendiente: la política no menciona expresamente los medios de noticias. Se considera cubierto como página de fans y guías; conviene confirmarlo con Supercell antes de monetizar.
 
 ## Las seis publicaciones y sus fuentes
 

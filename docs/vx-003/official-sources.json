@@ -1,0 +1,71 @@
+[
+  {
+    "id": "clash-royale",
+    "uses": [
+      "Cabecera /juegos/clash-royale/",
+      "Portada de Crown Series (15-clash-crown)"
+    ],
+    "owner": "Supercell Oy",
+    "asset": "Key_Art_Boss_Bandit_Evo_Executioner",
+    "fanKitListing": "PNG 8000 × 4500 px, Apr 4, 2025",
+    "assetPage": "https://fankit.supercell.com/d/BmehSDJrZNff/game-assets-1 (buscar «Key_Art_Boss_Bandit_Evo_Executioner»)",
+    "file": "https://media.ffycdn.net/eu/supercell/tnkxD4xhdXJ7uvkh9fpM.png",
+    "retrievedFileSize": [
+      4096,
+      2304
+    ],
+    "retrievedSha256": "8d759ed52752aabb4c39e3e0e46f3658738404ff32436dfac33095dbeedefb56",
+    "retrievedAt": "2026-11-25",
+    "license": "Supercell Fan Content Policy (Last updated: September 27, 2023)",
+    "licenseUrl": "https://supercell.com/en/fan-content-policy/",
+    "processing": "Solo reescalado proporcional 16:9 y conversión a WebP; sin recorte, retoque ni IA.",
+    "variants": [
+      {
+        "path": "public/media/clash-royale-480.webp",
+        "sha256": "2a863a1d8f40aa36220e99c9d10c1d889545f2b1d9e865ef3a71307114923e2b"
+      },
+      {
+        "path": "public/media/clash-royale-960.webp",
+        "sha256": "a27ce5d44fa765cdc9b8468f191542c8f2f077738d9d47aca898e6cfc208c2bc"
+      },
+      {
+        "path": "public/media/clash-royale-1600.webp",
+        "sha256": "fa392ee54cb8113ecc4823807195966b276c7e0eda28f4b759fe45c4ca91deb0"
+      }
+    ]
+  },
+  {
+    "id": "clash-tactics",
+    "uses": [
+      "Portada de Merge Tactics (16-clash-merge)"
+    ],
+    "owner": "Supercell Oy",
+    "asset": "MergeTactics_KeyART",
+    "fanKitListing": "PNG 3840 × 2160 px, Jul 7, 2025",
+    "assetPage": "https://fankit.supercell.com/d/BmehSDJrZNff/game-assets-1 (buscar «MergeTactics_KeyART»)",
+    "file": "https://media.ffycdn.net/eu/supercell/HE4crLXHKwM3wXUjXvfw.png",
+    "retrievedFileSize": [
+      3840,
+      2160
+    ],
+    "retrievedSha256": "18955057fe9d6a37d4b9f0928ed90352ebf50affb71bd397ba2df22b70019ef1",
+    "retrievedAt": "2026-11-25",
+    "license": "Supercell Fan Content Policy (Last updated: September 27, 2023)",
+    "licenseUrl": "https://supercell.com/en/fan-content-policy/",
+    "processing": "Solo reescalado proporcional 16:9 y conversión a WebP; sin recorte, retoque ni IA.",
+    "variants": [
+      {
+        "path": "public/media/clash-tactics-480.webp",
+        "sha256": "905635e11ac5d0a893f39712c3a351a8d07128d848463e36d5cd52ca99d44773"
+      },
+      {
+        "path": "public/media/clash-tactics-960.webp",
+        "sha256": "8e6ce6420f957346ea124a340119cb499574c870e159d6428dcadd3979aeba86"
+      },
+      {
+        "path": "public/media/clash-tactics-1600.webp",
+        "sha256": "5452e4caa19216023eef1bb623686562e9340de3074fe569a65e06863107ca17"
+      }
+    ]
+  }
+]
