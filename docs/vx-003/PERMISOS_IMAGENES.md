@@ -1,5 +1,11 @@
 # VX-003 — estado de permisos de imágenes
 
+## Retirada temporal
+
+Por autorización de publicación, se retiraron las siete portadas indicadas en R3, incluidas sus 21 variantes y referencias públicas. El diseño temático se conserva con la tipografía, las texturas y la paleta de cada juego. Clash Royale conserva el arte de Supercell autorizado en R2 y sus avisos. La revisión R3 queda abajo como registro histórico.
+
+## Revisión inicial
+
 Revisión: 25 de noviembre de 2026. Investigación preliminar; no se han incorporado imágenes nuevas ni se ha verificado una licencia individual para las imágenes actuales. Las portadas generadas con IA permanecen en la rama pendiente de sustitución; no presentar esta versión como lista para publicar.
 
 | Juego | Fuente primaria | Estado para Vélix |
