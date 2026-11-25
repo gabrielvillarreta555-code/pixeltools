@@ -14,3 +14,20 @@ Revisión: 25 de noviembre de 2026. Investigación preliminar; no se han incorpo
 Una imagen visible en una web oficial, una licencia concedida a otra publicación o la atribución por sí solas no demuestran permiso para reutilizarla. Obtener permisos escritos o licencias específicas que cubran republicación, adaptación y el modelo de Vélix; registrar autor, URL original, licencia, condiciones y fecha. Ninguna consulta de esta nota constituye asesoramiento jurídico. No se ha contactado a terceros.
 
 El diagnóstico conocido de solicitudes de Cloudflare Web Analytics en producción continúa pendiente de resolución. No se han ejecutado nuevas pruebas ni se ha desplegado.
+
+## Verificación VX-003-R3 (25/11/2026)
+
+Objetivo: sustituir las 7 ilustraciones de IA restantes (`gta-vi`, `gta-album`, `free-fire`, `free-fire-finals`, `minecraft`, `fortnite`, `roblox`). **No se sustituyó ninguna**, porque no se pudo confirmar permiso para ninguna imagen oficial:
+
+| Juego | Resultado de la consulta |
+|---|---|
+| Free Fire | Términos de Garena leídos: licencia solo «for personal use only» (3.1); prohíben copiar, republicar o mostrar públicamente su contenido (3.3) y el uso comercial (4.2.h). Sin política de fans ni kit de prensa. **No permitido** sin autorización escrita. |
+| GTA VI | Política de Rockstar: HTTP 503 en tres intentos. Sin verificar. |
+| Minecraft | Directrices de uso de Mojang: HTTP 503 en tres intentos. Sin verificar. |
+| Fortnite | Política de Epic: redirige a inicio de sesión. Sin verificar. |
+| Roblox | Directrices de nombre y logotipo: HTTP 403. Sin verificar. |
+
+No se usaron bancos de imágenes ni copias de terceros: una imagen visible en otra web no prueba permiso. Las portadas IA siguen en la rama y **la web no cumple todavía «cero imágenes de IA»**.
+
+Siguiente paso: que una persona revise en un navegador las cuatro políticas sin verificar y, para Garena, pida autorización escrita. Alternativa sin permisos: sustituir esas portadas por diseños tipográficos sin imagen, lo que requiere un cambio de plantilla que debe aprobar el CEO.
+
