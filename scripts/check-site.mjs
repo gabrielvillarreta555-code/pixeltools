@@ -8,7 +8,7 @@ const routes=JSON.parse(await readFile('dist/editorial/routes.json','utf8'));
 const articles=await loadArticles(),robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
 const file=p=>'dist'+(p==='/'?'/index.html':p.endsWith('/')?p+'index.html':p+'.html');
 const titles=new Set(),descriptions=new Set();
-assert.equal(routes.length,35);assert.equal(articles.length,19);
+assert.equal(routes.length,46);assert.equal(articles.length,30);
 assert.equal(new Set(articles.map(a=>a.body)).size,articles.length);
 const allowedMedia = Object.keys(officialMedia).flatMap(cover => [480,960,1600].map(size => `${cover}-${size}.webp`));
 for(const route of routes){
