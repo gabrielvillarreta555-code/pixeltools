@@ -42,7 +42,7 @@ export function parseArticle(source, name = 'article') {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data.reviewedAt) || new Date(data.reviewedAt).toISOString().slice(0, 10) !== data.reviewedAt || data.reviewedAt > new Date().toISOString().slice(0, 10)) throw new Error(`${name}: fecha inválida`);
   if (!Array.isArray(data.sources) || !data.sources.length || data.sources.some(s => typeof s.label !== 'string' || !s.label.trim() || typeof s.supports !== 'string' || !s.supports.trim() || !/^https:\/\//.test(s.url) || new URL(s.url).username || new URL(s.url).password)) throw new Error(`${name}: fuentes inválidas`);
   if (!Array.isArray(data.related) || data.related.length < 1 || data.related.some(id => typeof id !== 'string' || id === data.id)) throw new Error(`${name}: relacionados inválidos`);
-  if (!['noticia','actualizacion','estrategia','guia'].includes(data.kind)) throw new Error(`${name}: tipo inválido`);
+  if (!['noticia','actualizacion','estrategia','guia','analisis'].includes(data.kind)) throw new Error(`${name}: tipo inválido`);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data.publishedAt) || new Date(data.publishedAt).toISOString().slice(0,10) !== data.publishedAt || data.publishedAt > data.reviewedAt) throw new Error(`${name}: publicación inválida`);
   if (!/^[a-z0-9-]+$/.test(data.cover)) throw new Error(`${name}: portada inválida`);
   const body = match[2].trim();

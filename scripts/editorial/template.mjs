@@ -2,7 +2,7 @@ import { officialMedia, SUPERCELL_NOTICE } from './official-media.mjs';
 import { escapeHtml as e } from './content.mjs';
 import { themes, sections } from './themes.mjs';
 export const jsonLd = value => JSON.stringify(value).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
-export const labels = { noticia:'Noticias', actualizacion:'Actualizaciones', estrategia:'Estrategias', guia:'Guías' };
+export const labels = { noticia:'Noticias', actualizacion:'Actualizaciones', estrategia:'Estrategias', guia:'Guías', analisis:'Análisis' };
 export const date = value => new Intl.DateTimeFormat('es', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' }).format(new Date(value+'T12:00:00Z'));
 export function image(cover, eager = false, sizes = '(max-width: 700px) 100vw, 50vw') {
  const media = Object.hasOwn(officialMedia, cover) ? officialMedia[cover] : undefined;
