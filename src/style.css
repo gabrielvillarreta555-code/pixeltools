@@ -37,3 +37,37 @@
 .game-hero.text-cover {
  background: radial-gradient(ellipse at 90% 0%, var(--secondary), transparent 64%);
 }
+
+.elixir-chart {
+ margin: 0 0 24px;
+ padding: 18px;
+ border: 1px solid var(--line);
+ background: var(--surface);
+}
+.elixir-chart figcaption {
+ font-weight: 700;
+}
+.elixir-chart ul {
+ list-style: none;
+ padding: 0;
+ margin: 12px 0 0;
+}
+.elixir-chart li {
+ display: grid;
+ grid-template-columns: 6.5em minmax(1em, 1fr) 6em;
+ align-items: center;
+ gap: 10px;
+ padding: 0;
+ margin: 8px 0 0;
+ font-size: .85rem;
+}
+.elixir-chart meter {
+ width: 100%;
+ accent-color: var(--accent);
+}
+.elixir-chart meter::-webkit-meter-optimum-value {
+ background: var(--accent);
+}
+.elixir-chart meter::-moz-meter-bar {
+ background: var(--accent);
+}
