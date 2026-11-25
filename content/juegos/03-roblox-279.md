@@ -19,7 +19,12 @@
   "related": [
     "01-roblox-280",
     "07-roblox-lag"
-  ]
+  ],
+  "kind": "guia",
+  "publishedAt": "2026-11-16",
+  "cover": "roblox",
+  "coverAlt": "Ilustración conceptual original del universo temático de roblox",
+  "featured": false
 }
 ---
 
@@ -43,4 +48,4 @@ Si la aplicación abre pero la imagen va a tirones, la [guía sobre lag](/juegos
 
 Antes de desinstalar, asegúrate de poder recuperar el acceso a tu cuenta. No desactives permanentemente las protecciones del router o teléfono. Si solo falla una red, comparte el diagnóstico con quien la administra; si falla en varias, consulta el soporte de Roblox con el código y el dispositivo.
 
-Evita publicar capturas con correo o información de cuenta. Puedes [recortar una captura](/recortar-imagen) para mostrar únicamente el error.
+Evita publicar capturas con correo o información de cuenta. Muestra únicamente el error y oculta los datos personales antes de compartir una captura.

@@ -1,371 +1,77 @@
-# Vélix Blue
+# Vélix Gaming — VX-003
 
-Consultas de videojuegos y herramientas de imagen privadas de Blue Lab Studios (antes
-«PixelTools»; el repositorio conserva ese nombre). Elimina fondos con IA,
-comprime, convierte, redimensiona y recorta imágenes, y quita sus metadatos.
-Los archivos de las herramientas se procesan localmente. Su PWA permite uso sin conexión tras cargar los recursos necesarios. Las guías editoriales requieren conexión y se entregan como HTML completo.
+Revista independiente de videojuegos de Blue Lab Studios. Portada editorial, seis universos visuales, noticias, actualizaciones, estrategias y guías. **Esta rama es una propuesta para revisión: no está autorizada su integración ni despliegue de producción.**
 
-> Antes de registrar dominio o marca, comprueba que «Vélix Blue» esté libre
-> (DIGERPI en Panamá, EUIPO, USPTO). El nombre se cambia fácilmente en el código.
+## Arquitectura
 
-## Funciones
+Vite + TypeScript compilan el pequeño módulo de mejora progresiva y los estilos. Markdown con frontmatter JSON se transforma en HTML completo durante build. No se ha migrado a Astro, no hay CMS, base de datos, cuentas ni servicios de pago. Tras retirar las aplicaciones de imágenes ya no hay componentes React en uso; React, Router, Tailwind, ONNX, Tesseract y PDF-lib se retiran junto a sus consumidores.
 
-- **Compresor:** hasta 30 imágenes por lote; formato original, JPG, PNG o WebP;
-  calidad ajustable; tamaño máximo por lado (preajustes o personalizado, nunca
-  amplía); resumen de peso total; descarga individual o en un ZIP generado en el
-  navegador (`src/lib/zip.ts`, sin dependencias).
-- **Eliminador de fondos:** U²-Net pequeño; comparador antes/después con
-  deslizador; fondo transparente, de color, degradado, imagen propia o
-  desenfocado a partir del original; recorte al sujeto con margen; descarga en
-  PNG o, con fondo opaco, JPG. Incluye pincel para borrar o restaurar zonas y
-  deshacer la última pincelada, con controles táctiles y de teclado.
-- **Convertir formato:** el motor del compresor con textos propios; JPG, PNG o
-  WebP, por lotes y con ZIP. Los archivos se llaman siempre «-convertida».
-- **Redimensionar:** medidas de redes sociales (`SOCIAL_PRESETS`), medidas
-  exactas con proporción bloqueable o porcentaje; si la proporción cambia,
-  rellenar recortando o ajustar con bordes de color o transparentes.
-- **Recortar:** proporciones libres o 1:1, 4:5, 3:4, 3:2, 16:9 y 9:16; giro y
-  volteo; arrastre con dedo o ratón y control con teclado. La vista previa usa
-  una copia de 1.400 px; el recorte se aplica a la resolución original.
-- **Quitar metadatos:** lee y elimina EXIF (GPS, dispositivo, fecha, autor,
-  número de serie), XMP, IPTC, comentarios, fragmentos de texto PNG y las
-  imágenes incrustadas tras el final del JPEG, sin recomprimir. Conserva el
-  perfil de color y la orientación. Analiza de nuevo la copia antes de ofrecerla.
-- **Extraer texto:** OCR local de texto impreso en español o inglés, con giro y
-  selección opcional del área que se quiere leer; el resultado es editable,
-  copiable y descargable como TXT. El motor y el idioma se descargan desde el
-  sitio al usarse y pueden quedar en caché para uso sin conexión.
-- **Imágenes a PDF:** hasta 10 fotos JPG, PNG o WebP en un documento local,
-  reordenables, con páginas A4 o carta y orientación automática. Imágenes de
-  hasta 50 MB cada una y 80 MB en total; se reducen a un máximo de 2048 px por
-  lado / 4 MP y se recomprimen a JPG sobre fondo blanco.
-- **Portada:** catálogo de herramientas con buscador (`src/lib/tools.ts`). Las
-  herramientas sin ruta se muestran como «Próximamente».
-- **PWA:** manifest con iconos PNG y *maskable*, service worker generado en el
-  build y avisos de «sin conexión» y «versión nueva disponible».
+- `content/juegos/`: 16 artículos; los diez anteriores conservan sus rutas.
+- `scripts/editorial/themes.mjs`: seis temas, paletas, arte, tipografías, tarjetas, fondos y política de entornos.
+- `scripts/editorial/content.mjs`: validación de contenido y Markdown seguro.
+- `scripts/editorial/template.mjs`: layout editorial, tarjetas, universos y artículo.
+- `scripts/generate-editorial.mjs`: 32 rutas HTML, sitemap, robots, índice y páginas retiradas.
+- `src/`: estilos y actualización del antiguo service worker.
+- `public/media/`: nueve ilustraciones originales, en WebP de 480/960/1600 px.
+- `public/editorial/search.js`: búsqueda local; no registra ni transmite consultas.
+- `functions/_middleware.ts`: respuestas HTTP 410 y protección de alias/previews.
+- `tests/`, `e2e/`: contenido, seguridad, SEO, red, navegadores y capturas.
+- `docs/vx-003/`: informe, fuentes, atribuciones, inventario y capturas.
 
-## Tecnologías
+## Ejecutar y probar
 
-- React 19, TypeScript y Vite 7.
-- Tailwind CSS 4 con un tema oscuro propio (tokens en `src/index.css`).
-- Tipografía Plus Jakarta Sans (OFL) empaquetada con la app, sin servicios externos.
-- Canvas API, Blob, Object URL y `createImageBitmap` con alternativa para Safari.
-- ONNX Runtime Web (WASM) y U²-Net pequeño para segmentación.
-- Tesseract.js y modelos de idioma para OCR local; licencias y procedencia en
-  `THIRD_PARTY_NOTICES.md`.
-- pdf-lib para generar archivos PDF en el navegador (MIT).
-- React Router para navegación.
-- Vitest para pruebas unitarias.
-- Salida estática compatible con Cloudflare Pages.
-
-El procesamiento no usa API, base de datos ni almacenamiento de fotografías en
-servidor. En la web publicada se observó Cloudflare Web Analytics; su configuración
-y tratamiento de datos deben revisarse antes de hacer afirmaciones de privacidad.
-
-## Estructura
-
-```text
-pixeltools/
-├── public/                 # Iconos, cabeceras Cloudflare, modelo ONNX y runtime
-├── scripts/                # Copia de WASM y generación SEO de rutas estáticas
-├── src/
-│   ├── components/         # Layout, carga, SEO y controles reutilizables
-│   ├── lib/                # Validación y procesamiento de imágenes
-│   └── pages/              # Portada, herramientas y páginas informativas
-├── tests/                  # Pruebas unitarias críticas
-├── THIRD_PARTY_NOTICES.md  # Licencias, procedencia y checksum del modelo
-└── vite.config.ts
-```
-
-## Requisitos
-
-- Node.js 20.19+ o 22.12+ (Node 24 también es compatible).
-- npm 10+.
-- Un navegador moderno con Canvas y WebAssembly para el eliminador de fondos.
-
-## Instalación y ejecución local
-
-```bash
-npm install
-npm run dev
-```
-
-Vite mostrará la dirección local. Los archivos WASM se copian automáticamente
-desde `onnxruntime-web` antes de iniciar el servidor.
-
-Variables opcionales (consulta `.env.example`):
-
-```bash
-SITE_URL=https://velixblue.com
-VITE_CONTACT_EMAIL=contacto@dominio-final.example
-```
-
-El contacto queda claramente desactivado si no se configura una dirección.
-
-## Compilación
-
-```bash
-SITE_URL=https://velixblue.com npm run build
-```
-
-El resultado se escribe en `dist/`. Después de Vite, el script SEO crea HTML
-estático con título, descripción, canonical y Open Graph para cada ruta, además
-de `robots.txt` y `404.html`.
-
-**Indexación:** en Cloudflare Pages, la rama `main` genera las páginas indexables
-con canonical y sitemap de `https://velixblue.com`. Las demás ramas generan
-`noindex,nofollow`, `X-Robots-Tag`, un `robots.txt` bloqueante y ningún sitemap,
-incluso si heredan la variable de producción. Fuera de Cloudflare, solo
-`SITE_URL=https://velixblue.com` (o `VITE_SITE_URL`) habilita el build de
-producción. La función `functions/_middleware.ts` bloquea los alias de prueba
-por host, incluidos los `*.pages.dev` que sirven el mismo build de producción.
-
-## Pruebas
-
-```bash
-npm test
-```
-
-Las pruebas automatizadas cubren validación de tipos y tamaños, cálculo de
-reducción, formato de bytes, nombres de descarga, redimensión proporcional,
-cálculo del recorte al sujeto y el generador ZIP (CRC-32, cabeceras y nombres
-duplicados). La compilación TypeScript y el build de producción son
-comprobaciones adicionales.
-
-### Prueba E2E en Chromium
-
-```bash
-npm run build
-npm run test:e2e                # una ronda
-npm run test:e2e:ocr-crop       # recorte y giro aplicados realmente al OCR
-node e2e/mask-brush.mjs         # pincel, transparencia y descarga
-E2E_REPEAT=5 npm run test:e2e   # varias rondas para detectar inestabilidad
-E2E_ONLY=compressorCancel,mobile npm run test:e2e
-```
-
-`e2e/smoke.mjs` arranca `vite preview` sobre `dist/`, genera las imágenes de
-prueba con Canvas y recorre lote con ZIP, rechazo de archivos, redimensión,
-cancelación y reinicio, aviso JPG, transparencia PNG (alfa 0–255), recorte, fondo
-de color y desenfocado, navegación por teclado, service worker y modo sin
-conexión, y un perfil móvil de 390 px con la CPU ralentizada ×4. Usa el paquete
-`playwright` (versión fijada); si tu equipo no tiene Chromium para esa versión,
-ejecuta `npx playwright install chromium`.
-
-La prueba E2E solo cubre Chromium. Firefox, Safari y los dispositivos reales
-siguen necesitando la lista manual.
-
-Lista manual recomendada antes de un lanzamiento:
-
-1. Comprimir un JPG fotográfico a JPG y WebP y confirmar una reducción real.
-2. Convertir un PNG transparente a PNG y comprobar el canal alfa.
-3. Convertir ese PNG a JPG y comprobar el fondo blanco y el aviso visible.
-4. Probar archivos corruptos, SVG renombrado, más de 25 MB y más de 32 MP.
-5. Cancelar y reiniciar durante ambas operaciones.
-6. Ejecutar eliminación de fondo con persona, producto, cabello y fondo similar.
-7. Probar Chrome, Firefox y Safari actuales, incluidos teléfonos.
-8. Verificar navegación directa a cada URL y la página 404.
-9. Navegar con teclado y lector de pantalla básico.
-
-## Cloudflare Pages
-
-Configuración del proyecto:
-
-- Comando de compilación: `npm run build`. Directorio de salida: `dist`.
-- Node: `.node-version` fija la versión usada en local (22.22.0).
-- Rama de producción: `main`. Confirma que `velixblue.com` esté asociado al
-  despliegue de producción de este proyecto, no a un despliegue de prueba.
-- Variables: `SITE_URL=https://velixblue.com` es opcional en producción;
-  configura `VITE_CONTACT_EMAIL` y revisa privacidad y términos. Las ramas de
-  prueba permanecen en modo `noindex` incluso si heredan `SITE_URL`.
-- Pages debe desplegar el directorio `functions/` junto con `dist/`. Un despliegue
-  puramente estático que copie solo `dist/` no protege los alias de producción.
-
-Después del despliegue, verifica con `curl -i https://velixblue.com/robots.txt`
-que aparezca `Allow: /` y el sitemap correcto, y con
-`curl -I https://velixblue.com/` que no haya `X-Robots-Tag: noindex`.
-Comprueba `https://velixblue.com/sitemap.xml` y los canonical en el HTML de cada
-ruta. En la URL de prueba `*.pages.dev`, comprueba `Disallow: /` y el encabezado
-`X-Robots-Tag: noindex, nofollow`. Si persiste contenido antiguo, revisa la
-asociación del dominio y la caché de Cloudflare antes de solicitar en Search
-Console la validación y el rastreo; la indexación no es inmediata ni automática.
-
-Atención: al pulsar **Save and Deploy**, Cloudflare despliega en el acto la rama
-de producción elegida en `<proyecto>.pages.dev`. Elige como producción la rama
-que de verdad quieras mostrar en esa dirección.
-
-Comportamiento comprobado con `wrangler pages dev` (emulador de Pages):
-cada página se genera como `ruta.html`, así `/ruta` responde 200 sin redirigir y
-coincide con el canonical y el sitemap (`/ruta/` y `/ruta.html` redirigen con 308
-a `/ruta`); las rutas inexistentes devuelven `404.html`
-con estado 404, `_headers` aplica COOP/COEP y caché inmutable a `/assets`,
-`/models` y `/ort`, y el service worker funciona con esas redirecciones.
-
-Prueba E2E contra un despliegue real o contra el emulador:
-
-```bash
-E2E_BASE_URL=https://<despliegue>.pages.dev npm run test:e2e
-```
-
-Los archivos `_headers`, las rutas prerenderizadas y `404.html` ya se copian a
-la salida. No se requiere un Worker ni funciones de servidor.
-
-## Modo sin conexión (PWA)
-
-`scripts/generate-service-worker.mjs` se ejecuta al final de `npm run build` y
-escribe `dist/sw.js`:
-
-- Precarga el HTML de cada ruta, JS, CSS, iconos y manifest, así que el
-  compresor funciona sin conexión desde la primera visita.
-- El modelo ONNX y el runtime WASM (~16 MB) se guardan solo la primera vez que se
-  usa el eliminador, para no imponer esa descarga a quien no lo necesita.
-- El motor OCR y el idioma elegido se guardan solo tras usarlos; antes de esa
-  descarga, extraer texto necesita conexión. El texto y la imagen no se guardan
-  automáticamente en la caché de la aplicación.
-- Navegación con red primero y caché como respaldo; los nombres de caché llevan
-  un hash del contenido y las versiones antiguas se borran al activar.
-- Cuando hay una versión nueva instalada, la interfaz ofrece «Actualizar ahora».
-- Solo se registra en producción (`import.meta.env.PROD`). Para probarlo en
-  local: `npm run build && npm run preview`.
-- El service worker nunca guarda fotografías: solo archivos de la aplicación.
-
-`_headers` sirve `sw.js` y el manifest con `Cache-Control: no-cache` para que las
-actualizaciones se detecten.
-
-## Privacidad y seguridad
-
-- Los bytes de la fotografía no se envían a una API.
-- El navegador descarga el JavaScript, ONNX Runtime y el modelo de 4,57 MB desde
-  el sitio; después la inferencia es local.
-- Para preparar un JPEG se leen solo las cabeceras y la orientación EXIF, sin
-  copiar todo el archivo comprimido a memoria. El navegador puede necesitar
-  memoria adicional al decodificarlo, incluso cuando se solicita reducción.
-- Los Object URL temporales se revocan y los canvas liberan sus buffers.
-- Se comprueban MIME, peso y dimensiones.
-- La salida JPEG se compone sobre blanco porque JPEG no admite transparencia.
-- Se aplican cabeceras de aislamiento y seguridad adecuadas para un sitio estático.
-
-## Límites conocidos
-
-- Safari en iOS limita cada lienzo a unos 16,7 MP. Una imagen mayor sin «Tamaño
-  máximo» puede fallar allí; la interfaz lo explica y sugiere reducirla. No se ha
-  probado en un iPhone real.
-- Compresor: 25 MB, 32 megapíxeles y 12.000 px por lado por imagen; 30 imágenes
-  por lote, procesadas una tras otra. Los resultados del lote se mantienen en
-  memoria hasta reiniciar.
-- El ZIP usa el método STORE (sin compresión adicional, las imágenes ya están
-  comprimidas) y no admite más de 4 GB.
-- El fondo desenfocado se obtiene reduciendo y ampliando el original (compatible
-  con Safari, donde `CanvasRenderingContext2D.filter` no está disponible).
-- Eliminador: 50 MB, 120 megapíxeles y 32.768 px por lado de entrada. Los fondos
-  personalizados conservan el límite de 15 MB. Antes de
-  mostrar la vista previa y cargar ONNX, lee las dimensiones y orientación del
-  archivo comprimido y prepara una copia proporcional de hasta 2048 px por lado
-  y 4 MP. Por ejemplo, 6750 × 9000 pasa a 1536 × 2048. La interfaz avisa del
-  cambio; el original permanece intacto. El redondeo puede variar menos de un
-  píxel respecto de la proporción matemática.
-- Para originales grandes se necesita `createImageBitmap` con reducción. Si no
-  existe, falla o ignora el tamaño solicitado, no se intenta una decodificación
-  completa como alternativa: se solicita una imagen menor. Los buffers de la
-  aplicación están limitados, pero el pico interno del decodificador depende del
-  navegador; no se garantiza ejecución en todos los móviles. Safari, Firefox y
-  teléfonos físicos requieren validación adicional.
-- Canvas vuelve a codificar la imagen y elimina metadatos EXIF. La orientación se
-  intenta aplicar durante la decodificación, pero debe comprobarse en Safari.
-- PNG no ofrece un control de calidad con pérdida mediante Canvas.
-- El compresor permite un objetivo de 1 a 25.600 KB por imagen, también en lotes.
-  Para JPG/WebP prueba hasta nueve calidades entre 30% y 95% y conserva la mayor
-  calidad probada que cumple el límite; no cambia las dimensiones salvo que el
-  usuario lo seleccione. Si no lo alcanza, informa y entrega el menor archivo
-  probado. Para PNG se codifica sin pérdida y se comprueba el tamaño real.
-  La búsqueda es acotada y no garantiza la mejor calidad posible: los
-  codificadores de los navegadores pueden no producir tamaños monótonos.
-- La cancelación no puede interrumpir una llamada ONNX ya iniciada; descarta el
-  resultado al finalizar.
-- U²-Net pequeño prioriza tamaño y compatibilidad. Puede producir bordes
-  imperfectos en pelo, cristal, sombras, objetos finos o escenas sin contraste.
-- El pincel permite deshacer solo la última pincelada; cancelar descarta todas
-  las modificaciones aún no aplicadas en ese editor.
-- Equipos con poca memoria o sin WebAssembly pueden no ejecutar la segmentación.
-- Redimensionar: hasta 8.000 px por lado y 16 MP de salida. Recortar: 25 MB y
-  32 MP de entrada. Quitar metadatos: 50 MB; HEIC no es compatible.
-- Imágenes a PDF: hasta 10 imágenes y 80 MB en total. El PDF contiene imágenes,
-  no texto seleccionable; la calidad disminuye al redimensionar y recomprimir.
-  El consumo de memoria depende del navegador, incluso con procesamiento secuencial.
-- OCR: una imagen por vez, español o inglés por separado; no garantiza exactitud,
-  especialmente con escritura a mano, tablas o texto pequeño. Las imágenes
-  grandes se reducen a 2048 px / 4 MP y el texto pequeño puede perder legibilidad.
-  El dispositivo y navegador determinan el tiempo y la memoria necesarios.
-- OCR, recortar y quitar metadatos trabajan con una imagen a la vez; compresor,
-  convertidor e imágenes a PDF admiten varias imágenes con límites distintos.
-- El correo, dominio, datos legales y jurisdicción son provisionales y deben
-  configurarse/revisarse antes de publicar.
-
-## Próximas mejoras
-
-- Pruebas E2E automatizadas en navegadores y dispositivos reales.
-- Procesamiento en Web Worker/OffscreenCanvas donde mejore compatibilidad.
-- Eliminación de fondos por lotes y más niveles de deshacer del pincel.
-- Lotes en redimensionar, recortar y quitar metadatos.
-- Herramientas marcadas «Próximamente»: HEIC a JPG (revisar la licencia del
-  decodificador) y marca de agua.
-- Revisar la configuración real de analítica, la política y cualquier requisito
-  legal antes de añadir publicidad u otras mediciones.
-- Sustituir o complementar U²-Net pequeño si aparece un modelo de mejor calidad,
-  licencia clara y tamaño razonable para móviles.
-
-## Memoria en teléfonos
-
-Medido en Chromium de escritorio (RSS total del navegador, una medición por caso)
-con una fotografía de 24 MP:
-
-| Operación | Pico adicional |
-| --- | --- |
-| Compresor 24 MP → WebP, sin redimensionar | ~200 MB |
-| Eliminar el fondo | ~180 MB |
-| Cambiar a fondo desenfocado | ~75 MB |
-| Arrastrar el selector de color | ~125 MB |
-
-Medidas aplicadas: el original decodificado se libera antes de codificar; el
-fondo desenfocado sale de una miniatura creada una sola vez; las composiciones se
-agrupan con una espera de 120 ms; el ZIP reutiliza los `Blob` sin copiarlos; los
-lotes se procesan de uno en uno. En teléfonos con 3–4 GB de RAM conviene usar
-«Tamaño máximo» con fotografías de más de 12 MP. Estas cifras no sustituyen una
-prueba en dispositivos reales.
-
-## Licencias
-
-Consulta [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). El modelo U²-Net,
-su conversión y las dependencias conservan sus propias licencias. Blue Lab
-Studios debe decidir la licencia del código específico de Vélix Blue antes de
-distribuirlo como proyecto reutilizable.
-
-
-## Vélix 2.0: edición y validación
-
-La portada de producción y `/juegos/` se generan estáticamente. Se mantiene React/Vite para las ocho herramientas; no hay Astro ni CMS. El catálogo compartido es `src/lib/toolCatalog.json`.
-
-- `content/juegos/*.md`: Markdown con frontmatter **JSON** entre líneas `---`. Copiar un artículo existente, conservar campos `id`, `slug`, `game`, `title`, `description`, `answer`, `reviewedAt`, `status`, `scope`, `sources` y `related`.
-- `status: "draft"` excluye el artículo del HTML, sitemap e índice. Los relacionados deben referenciar IDs publicados. `reviewedAt` es una revisión documental real, no la fecha de compilación. Fuentes HTTPS con `label`, `url` y `supports` son obligatorias.
-- El título genera el H1; el cuerpo empieza en H2. HTML arbitrario e imágenes Markdown están deshabilitados para evitar inyecciones y publicaciones sin licencia. El MVP no necesita imágenes de videojuegos.
-- `scripts/editorial/`: validación y plantillas. `public/editorial/`: estilos y búsqueda local sin registro de consultas. `scripts/generate-editorial.mjs`: HTML, índice, 404 y extensión del sitemap.
-- No cambiar slugs publicados sin redirección. Revisar referencias oficiales, relacionados y derechos en cada PR.
+Node 20.19+ (validado con Node 24). `npm ci` instala las versiones fijadas.
 
 ```bash
 npm ci
 npm test
-SITE_URL=https://velixblue.com npm run build
+npm run build
 npm run test:seo
 npm run preview
-# Para navegador (instalación inicial):
-npx playwright install --with-deps chromium firefox webkit
-E2E_BROWSER=chromium npm run test:e2e:editorial
-E2E_BROWSER=firefox npm run test:e2e:editorial
-E2E_BROWSER=webkit npm run test:e2e:editorial
-npm run test:e2e
-npm run test:e2e:ocr-crop
-node e2e/mask-brush.mjs
 ```
 
-`npm run dev` sirve la aplicación React; para revisar la portada editorial y los artículos usar **build + preview**. El build sin SITE_URL es deliberadamente no indexable. En Cloudflare, main configura producción y las ramas mantienen la protección de pruebas incluso si heredan SITE_URL. No modificar el middleware ni los encabezados de aislamiento.
+`npm run dev` genera la editorial y arranca su preview; recompilar después de editar Markdown o estilos. Sin SITE_URL el resultado es una vista previa no indexable.
 
-Para comprobar un despliegue, establecer `E2E_BASE_URL`; para un preview editorial, añadir `E2E_SITE_URL` con su canonical de compilación. `docs/VELIX_2_0_VALIDACION.md` registra alcance, resultados, límites, publicación y reversión. El estado vivo está en `docs/VELIX_ESTADO.md`.
+Para validar respuestas **410 reales**, se necesita Pages Functions, no solo `vite preview`:
+
+```bash
+npx wrangler@4.156.0 pages dev dist --port 4333
+# En otra terminal:
+npx playwright install --with-deps chromium firefox
+npm run test:e2e
+E2E_BROWSER=firefox npm run test:e2e
+```
+
+Las pruebas de navegador usan `http://localhost:4333` por defecto; `E2E_BASE_URL` permite comprobar un preview. Guardan 26 capturas de Chromium. Los 410 de un hosting que ignore Functions no están garantizados: no aprobar un despliegue limitado a copiar archivos estáticos.
+
+```bash
+# Matriz de SEO; no publica nada:
+CF_PAGES=1 CF_PAGES_BRANCH=main npm run build
+npm run test:seo
+CF_PAGES=1 CF_PAGES_BRANCH=review SITE_URL=https://velixblue.com CF_PAGES_URL=https://review.pages.dev npm run build
+npm run test:seo
+# Diagnóstico independiente del alojamiento público existente:
+npm run test:analytics
+```
+
+`test:analytics` devuelve código 1 cuando observa tráfico adicional. El fallo pendiente de Cloudflare Web Analytics **no está corregido** por VX-003 y no se convierte en una excepción permitida para obtener verde.
+
+## Añadir y actualizar contenido
+
+Copiar un Markdown existente. Campos: `id`, `game`, `slug`, `title`, `description`, `answer`, `kind`, `publishedAt`, `reviewedAt`, `status`, `scope`, `cover`, `coverAlt`, `sources`, `related`. Noticias nuevas incluyen `eventDate` para separar anuncio y revisión. `featured` selecciona las piezas de actualidad.
+
+`status: published` significa incluido en el build de la rama; **no implica publicación en producción**. `draft` queda fuera del sitio, índice y sitemap. La aprobación del CEO debe preceder a cualquier merge/despliegue. No actualizar fechas de revisión sin volver a contrastar fuentes. En particular, revisar las noticias de noviembre antes de una publicación posterior.
+
+El cuerpo usa H2, no H1. No acepta HTML arbitrario ni imágenes externas incrustadas. Las fuentes son HTTPS. Los relacionados deben existir. Conservar slugs publicados o planificar redirecciones. Para añadir un juego, definir su tema, arte propio/licenciado y contenido real; no publicar categorías vacías.
+
+## Retirada, recuperación y despliegue
+
+Las ocho herramientas y `/herramientas` devuelven 410 + noindex; no aparecen en navegación ni sitemap. Los modelos y runtimes retirados también devuelven 410. `public/sw.js` reemplaza al worker anterior, limpia únicamente cachés `velix-*`/`pixeltools-*`, toma control y se desregistra. No se cachean noticias ni se borran datos de otros productos.
+
+Recuperación: etiqueta Git `vx-003-before-gaming`, commit `fa39de52395eea82adf9c8b98999123ef9d4714c`. Usar `git worktree add ../velix-anterior vx-003-before-gaming` para recuperar íntegramente la versión previa, sin modificar esta rama. No reescribir main.
+
+Cloudflare Pages conserva build `npm run build`, salida `dist`, rama productiva main y Functions. Solo velixblue.com es indexable. No fusionar #17 ni esta propuesta sin aprobación del CEO. El push de la rama puede activar el preview automático existente; no cambia producción.
+
+## Límites
+
+Safari y teléfonos físicos no validados. No se ha auditado jurídicamente el portal. Correo de contacto: configurar `VITE_CONTACT_EMAIL` real; sin él la página informa que el canal no está habilitado. No se simula envío. Web Analytics pendiente en el alojamiento. No hay acceso a Search Console ni garantía de indexación. Las portadas son ilustraciones conceptuales creadas con IA, no capturas ni assets oficiales; consultar `docs/vx-003/IMAGENES_Y_FUENTES.md` y `THIRD_PARTY_NOTICES.md`.

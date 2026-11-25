@@ -1,43 +1,24 @@
 {
-  "name": "velix-blue",
+  "name": "velix-gaming",
+  "version": "3.0.0",
   "private": true,
-  "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "predev": "node scripts/copy-runtime-assets.mjs",
-    "dev": "vite",
-    "prebuild": "node scripts/copy-runtime-assets.mjs",
-    "build": "tsc --noEmit && vite build && node scripts/generate-static-pages.mjs && node scripts/generate-editorial.mjs && node scripts/generate-service-worker.mjs",
+    "dev": "npm run build && vite preview --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build && node scripts/generate-editorial.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "node e2e/smoke.mjs",
-    "test:e2e:ocr-crop": "node e2e/ocr-crop.mjs",
-    "test:e2e:editorial": "node e2e/editorial.mjs",
-    "test:seo": "node scripts/check-editorial.mjs",
-    "test:deployment": "node scripts/check-deployment.mjs"
+    "test:seo": "node scripts/check-site.mjs",
+    "test:e2e": "node e2e/gaming.mjs",
+    "test:analytics": "node e2e/analytics.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
-    "@tesseract.js-data/eng": "1.0.0",
-    "@tesseract.js-data/spa": "1.0.0",
-    "onnxruntime-web": "1.23.2",
-    "pdf-lib": "1.17.1",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-router-dom": "7.18.5",
-    "tesseract.js": "7.0.0"
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.1.16",
-    "@types/markdown-it": "14.2.0",
     "@types/node": "24.10.0",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
-    "@vitejs/plugin-react": "5.1.0",
     "markdown-it": "15.0.3",
     "playwright": "1.63.0",
-    "tailwindcss": "4.1.16",
     "typescript": "5.9.3",
     "vite": "7.3.7",
     "vitest": "4.1.12"

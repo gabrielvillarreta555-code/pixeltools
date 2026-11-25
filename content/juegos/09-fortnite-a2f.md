@@ -19,7 +19,12 @@
   "related": [
     "01-roblox-280",
     "10-free-fire-region"
-  ]
+  ],
+  "kind": "guia",
+  "publishedAt": "2026-11-16",
+  "cover": "fortnite",
+  "coverAlt": "Ilustración conceptual original del universo temático de fortnite",
+  "featured": false
 }
 ---
 
@@ -42,4 +47,4 @@ Que la protección esté activa no significa que cualquier regalo sea posible. S
 
 Las cuentas limitadas de menores pueden tener funciones distintas. En ese caso, revisa el proceso oficial con el tutor. Esta guía no enseña a omitir controles de edad.
 
-Si vas a explicar un error al soporte, una captura debe mostrar el mensaje, nunca el código del segundo factor. Puedes [recortarla localmente](/recortar-imagen) antes de enviarla por tu cuenta.
+Si vas a explicar un error al soporte, una captura debe mostrar el mensaje, nunca el código del segundo factor. Revisa la captura y oculta cualquier dato personal antes de enviarla por tu cuenta.

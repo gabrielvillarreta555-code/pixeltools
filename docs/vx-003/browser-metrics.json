@@ -1,0 +1,8 @@
+{
+  "environment": "Playwright, servidor local; no métricas de campo",
+  "navigation": {
+    "domContentLoadedMs": 67,
+    "transferBytes": 300,
+    "resources": 7
+  }
+}

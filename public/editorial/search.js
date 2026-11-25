@@ -14,14 +14,14 @@ if (typeof document !== 'undefined') {
       const current = ++generation;
       const query = input.value.trim();
       results.replaceChildren(); results.hidden = true;
-      if (!query) { status.textContent = 'Busca entre nuestras guías y herramientas.'; return; }
+      if (!query) { status.textContent = 'Busca entre nuestras noticias y guías.'; return; }
       status.textContent = 'Buscando…';
       try {
         request ??= fetch('/editorial/search-index.json').then(response => { if (!response.ok) throw new Error('index'); return response.json(); }).catch(error => { request = undefined; throw error; });
         const items = await request;
         if (generation !== current) return;
         const found = searchItems(items, query);
-        status.textContent = found.length ? `${found.length} resultados. Usa Tab para recorrerlos.` : 'Sin resultados. Prueba el nombre de un juego, un error o una herramienta.';
+        status.textContent = found.length ? `${found.length} resultados. Usa Tab para recorrerlos.` : 'Sin resultados. Prueba el nombre de un juego, un tema o una guía.';
         for (const item of found) {
           const link = document.createElement('a'); link.href = item.path;
           const category = document.createElement('small'); category.textContent = item.category;
