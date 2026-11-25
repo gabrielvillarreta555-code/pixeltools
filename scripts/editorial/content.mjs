@@ -10,6 +10,27 @@ markdown.disable('image');
 const originalValidateLink = markdown.validateLink;
 markdown.validateLink = url => originalValidateLink(url) && (/^https:\/\//i.test(url) || /^\/(?!\/)/.test(url) || /^#[\w-]+$/.test(url));
 
+const renderFence = markdown.renderer.rules.fence;
+markdown.renderer.rules.fence = (tokens, index, options, env, renderer) => {
+  const token = tokens[index];
+  if (token.info.trim() !== 'elixir-costes') return renderFence(tokens, index, options, env, renderer);
+
+  const rows = token.content.trim().split('\n').map(line => {
+    const match = /^([^|]+)\|\s*([1-9])$/.exec(line.trim());
+    if (!match || !match[1].trim()) throw new Error('Gráfico de elixir: se esperaba una carta y su coste base');
+    return { name: match[1].trim(), total: 2 * Number(match[2]) + 1 };
+  });
+  const scale = Math.max(...rows.map(row => row.total));
+  return `<figure class="elixir-chart">
+    <figcaption>Coste total de jugar la carta y copiarla</figcaption>
+    <ul>${rows.map(({ name, total }) => `<li>
+      <span>${escapeHtml(name)}</span>
+      <meter min="0" max="${scale}" value="${total}" aria-hidden="true"></meter>
+      <strong>${total} de elixir</strong>
+    </li>`).join('')}</ul>
+  </figure>`;
+};
+
 export function parseArticle(source, name = 'article') {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/);
   if (!match) throw new Error(`${name}: requiere frontmatter JSON y Markdown`);
