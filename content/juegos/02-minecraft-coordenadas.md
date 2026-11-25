@@ -23,7 +23,12 @@
   ],
   "related": [
     "06-minecraft-ediciones"
-  ]
+  ],
+  "kind": "guia",
+  "publishedAt": "2026-11-16",
+  "cover": "minecraft",
+  "coverAlt": "Ilustración conceptual original del universo temático de minecraft",
+  "featured": false
 }
 ---
 

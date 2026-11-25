@@ -19,7 +19,12 @@
   "related": [
     "03-roblox-279",
     "01-roblox-280"
-  ]
+  ],
+  "kind": "guia",
+  "publishedAt": "2026-11-16",
+  "cover": "roblox",
+  "coverAlt": "Ilustración conceptual original del universo temático de roblox",
+  "featured": false
 }
 ---
 

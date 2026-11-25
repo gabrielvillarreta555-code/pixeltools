@@ -19,7 +19,12 @@
   "related": [
     "08-free-fire-codigos",
     "04-free-fire-requisitos"
-  ]
+  ],
+  "kind": "guia",
+  "publishedAt": "2026-11-16",
+  "cover": "free-fire",
+  "coverAlt": "Ilustración conceptual original del universo temático de free-fire",
+  "featured": false
 }
 ---
 

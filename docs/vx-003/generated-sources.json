@@ -1,0 +1,184 @@
+[
+  {
+    "id": "gta-vi",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-e0aff8f0-6d44-4401-901c-e42eaf761dec.png",
+    "originalSha256": "67b846ec7563ff71bd88bc09d52d17c989d5749579fae46566d8f44f57e1de58",
+    "variants": [
+      {
+        "path": "public/media/gta-vi-1600.webp",
+        "bytes": 185692,
+        "sha256": "47f152e689566011f34b4acb1ab00491bfbf21aa6c9302b3944a6a6601384df7"
+      },
+      {
+        "path": "public/media/gta-vi-480.webp",
+        "bytes": 25332,
+        "sha256": "e41571f54a0992f5e4e7b44426a2f571b4e1e70d75b41b3bd361c0901f12845e"
+      },
+      {
+        "path": "public/media/gta-vi-960.webp",
+        "bytes": 84398,
+        "sha256": "c78fac41ea2e9088325fca03d5442a6d1eb2df823adb6c48080ee86be6962d56"
+      }
+    ]
+  },
+  {
+    "id": "free-fire",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-cd8a11c4-0c6c-4431-9b92-b48565c0352e.png",
+    "originalSha256": "52172a425ed5d848beafdde6c9680f68cd72bc993db036c5f15fc64d67d58353",
+    "variants": [
+      {
+        "path": "public/media/free-fire-1600.webp",
+        "bytes": 218038,
+        "sha256": "8a108c21c7e576aae01b0ce2cbad696a9e26cc6ed807f418dd9915d8dba8a618"
+      },
+      {
+        "path": "public/media/free-fire-480.webp",
+        "bytes": 32142,
+        "sha256": "a52ab21aa878904cd00dacfb5ff04848da501fc5aa8fcd014d99299d077ef33b"
+      },
+      {
+        "path": "public/media/free-fire-960.webp",
+        "bytes": 101422,
+        "sha256": "13fdb2748cf177aaa8dee45561ef60a029d4403748cc2331a5d0f409d90a6f76"
+      }
+    ]
+  },
+  {
+    "id": "minecraft",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-f9cbeba8-71df-483f-a4bc-ff0a6d1f0a17.png",
+    "originalSha256": "b4721c71fea51c69040097870bff19f97e032c8e983b8c2a87fda6386c086a64",
+    "variants": [
+      {
+        "path": "public/media/minecraft-1600.webp",
+        "bytes": 247526,
+        "sha256": "cccf8ae734b7a3814a39837ef568bbd9c6b29fc39efd47997425056e995bf95f"
+      },
+      {
+        "path": "public/media/minecraft-480.webp",
+        "bytes": 38818,
+        "sha256": "165c8fd2a9178c953d27973571dad4dad143dfd036197752950ba02f4dde23b5"
+      },
+      {
+        "path": "public/media/minecraft-960.webp",
+        "bytes": 120778,
+        "sha256": "a4feea55557158657758350cde758da13eb761693b63b05e8876dc798ac77e40"
+      }
+    ]
+  },
+  {
+    "id": "fortnite",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-aed63551-2c63-4075-934c-f07779fa0c98.png",
+    "originalSha256": "f86dee3799b81de7bf2a5e7260517da067710691b2f85b9df732b17106c2b3ca",
+    "variants": [
+      {
+        "path": "public/media/fortnite-1600.webp",
+        "bytes": 249750,
+        "sha256": "866586c3e2a75d82c3f3a30cfc01b121cc4ef5ac6294c3b72836d565bc30abef"
+      },
+      {
+        "path": "public/media/fortnite-480.webp",
+        "bytes": 35942,
+        "sha256": "380ae6b6af049f3557d1b1fd51eeeea7b855ed88b1393e578dcaffc934f22544"
+      },
+      {
+        "path": "public/media/fortnite-960.webp",
+        "bytes": 116556,
+        "sha256": "7ee06e66aa5c2045d1bd701033fe9b0d87c5b4f975db5ee54ec9f4204e7bb5b2"
+      }
+    ]
+  },
+  {
+    "id": "roblox",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-f0d8f974-5ae7-4738-98d2-d3ca81dcd418.png",
+    "originalSha256": "679e340f51020c3baf351288f67071fae6682dc1087653f895e046f8d78457f6",
+    "variants": [
+      {
+        "path": "public/media/roblox-1600.webp",
+        "bytes": 190452,
+        "sha256": "446afbeb29fae4a3b30337e1cbd61e4566d923ae0697b2782b4890a3d08ef03b"
+      },
+      {
+        "path": "public/media/roblox-480.webp",
+        "bytes": 34952,
+        "sha256": "0b3e571d66a6e44550687e3576d1f2bd2cb5ffdc07d21197847086e9e2f1c8cb"
+      },
+      {
+        "path": "public/media/roblox-960.webp",
+        "bytes": 96742,
+        "sha256": "cab59b657e0386c6f1f1bc4ef77a805c4be7f72cd1a9219ac181ce32b2f78606"
+      }
+    ]
+  },
+  {
+    "id": "gta-album",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-02b3a932-f4fb-4e8d-b595-4717c30223d8.png",
+    "originalSha256": "7f931b8a9e958c57b82017481ac0027a5eb0742de3018bbd5d220f39aac93130",
+    "variants": [
+      {
+        "path": "public/media/gta-album-1600.webp",
+        "bytes": 257020,
+        "sha256": "fc1d678f2da877148bfc123309a058bb2475ae22bd54bf48e3f6e659782b14d6"
+      },
+      {
+        "path": "public/media/gta-album-480.webp",
+        "bytes": 36950,
+        "sha256": "e6983185aa716afa3925c755956e30ab4ab3e496a61d2edb3f00a946d7b7ae36"
+      },
+      {
+        "path": "public/media/gta-album-960.webp",
+        "bytes": 119368,
+        "sha256": "985016b1ed66fe2b1215cb494efdf1b2a4cdcb82518b59601e4e18cd87f1e00b"
+      }
+    ]
+  },
+  {
+    "id": "free-fire-finals",
+    "createdAt": "2026-11-24",
+    "provider": "OpenAI image generation",
+    "type": "original AI-generated conceptual illustration",
+    "officialAsset": false,
+    "originalFile": "exec-ca73bdb4-782a-4085-9b7a-803abe528fc5.png",
+    "originalSha256": "1673b04ad42c1fe628922af1c7d8a1c48895534751f23b578572e84ebe5cb1e1",
+    "variants": [
+      {
+        "path": "public/media/free-fire-finals-1600.webp",
+        "bytes": 183874,
+        "sha256": "6a290c3bf4462aa9277fd220ffd4244e56685d27e02b0855ef8b527468b4cfe5"
+      },
+      {
+        "path": "public/media/free-fire-finals-480.webp",
+        "bytes": 31228,
+        "sha256": "a59e7a68a02c233c1f5c65d720353f63d496df38007c6e637df1a387c846c57e"
+      },
+      {
+        "path": "public/media/free-fire-finals-960.webp",
+        "bytes": 90772,
+        "sha256": "70c32e63759a603c9cf6587fbd28aef29ef430e2870a01b002c14d72782b547e"
+      }
+    ]
+  }
+]
