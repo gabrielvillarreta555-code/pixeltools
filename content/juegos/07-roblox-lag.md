@@ -24,6 +24,7 @@
   "publishedAt": "2026-11-16",
   "cover": "roblox",
   "coverAlt": "Ilustración conceptual original del universo temático de roblox",
+  "section": "rendimiento",
   "featured": false
 }
 ---

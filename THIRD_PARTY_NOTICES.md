@@ -8,7 +8,7 @@ Versiones exactas y dependencias transitivas: package-lock.json. Cada paquete co
 
 ## Ilustraciones y marcas
 
-Nueve ilustraciones generadas mediante OpenAI el 24/11/2026 a partir de indicaciones originales para este proyecto, sin imágenes de referencia externas. Se identifican como arte conceptual creado con IA, no capturas oficiales. Inventario, hashes y base de uso en docs/vx-003/IMAGENES_Y_FUENTES.md y generated-sources.json. No se concede por este documento una licencia abierta ni se garantiza exclusividad de los resultados.
+Las nueve ilustraciones generadas mediante OpenAI el 24/11/2026 para VX-003 **ya no forman parte de esta distribución**: se retiraron y, según la política vigente (VX-STR-001), Vélix no usa imágenes generadas por IA. Su inventario y hashes se conservan como registro histórico en docs/vx-003/IMAGENES_Y_FUENTES.md y generated-sources.json.
 
 Los nombres GTA VI, Free Fire, Clash Royale, Minecraft, Fortnite y Roblox identifican los temas tratados. Pertenecen a sus respectivos titulares. Vélix no está afiliado ni respaldado por ellos. No se han incorporado capturas, música, logotipos ni artes oficiales de sus editores.
 

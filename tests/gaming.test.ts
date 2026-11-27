@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { parseArticle, loadArticles, markdown } from '../scripts/editorial/content.mjs';
 import { themes, retired, siteConfig } from '../scripts/editorial/themes.mjs';
-import { jsonLd } from '../scripts/editorial/template.mjs';
+import { jsonLd, articleBody, card } from '../scripts/editorial/template.mjs';
 import { searchItems } from '../public/editorial/search.js';
 import { onRequest } from '../functions/_middleware';
 const source=readFileSync('content/juegos/01-roblox-280.md','utf8');
@@ -38,6 +38,48 @@ describe('publicación editorial',()=>{
   expect(siteConfig({CF_PAGES:'1',CF_PAGES_BRANCH:'main'}).indexable).toBe(true);
   expect(siteConfig({}).indexable).toBe(false);
   expect(()=>siteConfig({CF_PAGES_URL:'javascript:alert(1)'})).toThrow();
+ });
+});
+describe('secciones transversales VX-STR-001',()=>{
+ const [,front,body]=source.split(/^---\n|\n---\n/m);
+ const base=JSON.parse(front);
+ const make=(changes:Record<string,unknown>,drop:string[]=[])=>{const data={...base,...changes};for(const k of drop)delete data[k];return `---\n${JSON.stringify(data,null,2)}\n---\n${body}`;};
+ const price={item:'Teléfono de ejemplo 128 GB',amount:199,currency:'USD',market:'PA',retailer:'Tienda',url:'https://example.com/p',observedAt:'2026-11-10'};
+ const tech={section:'tecnologia',games:['Fortnite'],kind:'comparativa',handsOn:false,reviewedAt:'2026-11-16',publishedAt:'2026-11-16'};
+ const today={today:'2026-11-27'};
+ it('conserva todas las URLs publicadas en main al añadir secciones',async()=>{
+  const paths=(await loadArticles()).map(a=>a.path);
+  for(const file of execFileSync('git',['ls-tree','-r','--name-only','3aee488','content/juegos'],{encoding:'utf8'}).trim().split('\n')){
+   const old=JSON.parse(execFileSync('git',['show',`3aee488:${file}`],{encoding:'utf8'}).split('---')[1]);
+   expect(paths).toContain(`/juegos/${old.game}/${old.slug}`);
+  }
+ });
+ it('ubica una pieza sin juego en su sección y exige nombrar videojuegos',()=>{
+  expect(parseArticle(make(tech,['game']),'t',today).path).toBe(`/tecnologia/${base.slug}`);
+  expect(()=>parseArticle(make({...tech,games:[]},['game']),'t',today)).toThrow(/videojuego/);
+  expect(()=>parseArticle(make({section:'rendimiento'},['game']),'t',today)).toThrow(/videojuego/);
+  expect(()=>parseArticle(make({},['game']),'t',today)).toThrow(/game o section/);
+  expect(()=>parseArticle(make({section:'hardware'}),'t',today)).toThrow(/sección/);
+  expect(parseArticle(make({section:'rendimiento'}),'t',today).path).toBe(`/juegos/roblox/${base.slug}`);
+ });
+ it('obliga a declarar si hubo prueba propia',()=>{
+  expect(()=>parseArticle(make({...tech,handsOn:undefined},['game']),'t',today)).toThrow(/handsOn/);
+  expect(()=>parseArticle(make({...tech,handsOn:true},['game']),'t',today)).toThrow(/methodology/);
+  expect(()=>parseArticle(make({kind:'comparativa'}),'t',today)).toThrow(/sección/);
+ });
+ it.each([
+  ['sin mercado',{...price,market:undefined}],['mercado no ISO',{...price,market:'Panamá'}],['moneda no ISO',{...price,currency:'$'}],
+  ['importe no positivo',{...price,amount:0}],['tienda sin HTTPS',{...price,url:'http://example.com'}],['fecha inválida',{...price,observedAt:'2026-02-30'}],
+  ['posterior a la revisión',{...price,observedAt:'2026-11-20'}],['caducado',{...price,observedAt:'2026-08-01'}],
+ ])('rechaza precios %s',(_,p)=>expect(()=>parseArticle(make({...tech,kind:'compra',prices:[p]},['game']),'t',today)).toThrow(/precio/i));
+ it('una guía de compra sin precios no se publica',()=>expect(()=>parseArticle(make({...tech,kind:'compra'},['game']),'t',today)).toThrow(/precios/));
+ it('muestra la declaración, los juegos y los precios con mercado y fecha',()=>{
+  const a=parseArticle(make({...tech,kind:'compra',prices:[price]},['game']),'t',today);
+  const html=articleBody(a,[a]);
+  expect(html).toContain('No hemos probado estos dispositivos');expect(html).toContain('Fortnite');
+  expect(html).toContain('href="/tecnologia/"');expect(html).toContain('Precios observados');
+  expect(html).toMatch(/199[,.]00\s?US\$|US\$\s?199/);expect(html).toContain('data-label="Mercado">PA</td>');expect(html).toContain('datetime="2026-11-10"');
+  expect(html).not.toContain('undefined');expect(card(a)).toContain('Tecnología');
  });
 });
 describe('retirada y protección por host',()=>{

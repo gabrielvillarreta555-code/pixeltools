@@ -1,22 +1,23 @@
-# Vélix Gaming — VX-003
+# Vélix Gaming & Tecnología
 
-Revista independiente de videojuegos de Blue Lab Studios. Portada editorial, seis universos visuales, noticias, actualizaciones, estrategias y guías. **Esta rama es una propuesta para revisión: no está autorizada su integración ni despliegue de producción.**
+Plataforma independiente de videojuegos y tecnología de Blue Lab Studios: noticias, actualizaciones, estrategias y guías de seis universos, y secciones transversales de **Rendimiento** y **Tecnología** para jugar mejor y decidir qué comprar (dirección VX-STR-001; ver `docs/vx-str-001/`). **Las ramas de trabajo son propuestas para revisión: integrar o desplegar requiere aprobación del CEO.**
 
 ## Arquitectura
 
 Vite + TypeScript compilan el pequeño módulo de mejora progresiva y los estilos. Markdown con frontmatter JSON se transforma en HTML completo durante build. No se ha migrado a Astro, no hay CMS, base de datos, cuentas ni servicios de pago. Tras retirar las aplicaciones de imágenes ya no hay componentes React en uso; React, Router, Tailwind, ONNX, Tesseract y PDF-lib se retiran junto a sus consumidores.
 
-- `content/juegos/`: 16 artículos; los diez anteriores conservan sus rutas.
+- `content/juegos/`: 30 artículos; todas las rutas publicadas se conservan (las pruebas lo comprueban contra `fa39de5` y `3aee488`).
 - `scripts/editorial/themes.mjs`: seis temas, paletas, arte, tipografías, tarjetas, fondos y política de entornos.
-- `scripts/editorial/content.mjs`: validación de contenido y Markdown seguro.
+- `scripts/editorial/content.mjs`: validación de contenido, secciones transversales, precios y declaración de pruebas, y Markdown seguro.
 - `scripts/editorial/template.mjs`: layout editorial, tarjetas, universos y artículo.
-- `scripts/generate-editorial.mjs`: 32 rutas HTML, sitemap, robots, índice y páginas retiradas.
+- `scripts/generate-editorial.mjs`: 47 rutas HTML, sitemap, robots, índice y páginas retiradas. Las secciones `/rendimiento/` y `/tecnologia/` solo se generan si tienen artículos.
 - `src/`: estilos y actualización del antiguo service worker.
-- `public/media/`: nueve ilustraciones originales, en WebP de 480/960/1600 px.
+- `public/media/`: dos obras oficiales de Clash Royale (Supercell Fan Kit), en WebP de 480/960/1600 px.
 - `public/editorial/search.js`: búsqueda local; no registra ni transmite consultas.
 - `functions/_middleware.ts`: respuestas HTTP 410 y protección de alias/previews.
 - `tests/`, `e2e/`: contenido, seguridad, SEO, red, navegadores y capturas.
-- `docs/vx-003/`: informe, fuentes, atribuciones, inventario y capturas.
+- `docs/vx-003/`: fuentes, atribuciones, permisos, inventario y capturas de VX-003.
+- `docs/vx-str-001/`: informe estratégico, resolución, plan de entregas y capturas.
 
 ## Ejecutar y probar
 
@@ -42,7 +43,7 @@ npm run test:e2e
 E2E_BROWSER=firefox npm run test:e2e
 ```
 
-Las pruebas de navegador usan `http://localhost:4333` por defecto; `E2E_BASE_URL` permite comprobar un preview. Guardan 26 capturas de Chromium. Los 410 de un hosting que ignore Functions no están garantizados: no aprobar un despliegue limitado a copiar archivos estáticos.
+Las pruebas de navegador usan `http://localhost:4333` por defecto; `E2E_BASE_URL` permite comprobar un preview. Guardan las capturas de Chromium en `docs/vx-003/` salvo que `E2E_CAPTURE_DIR` indique otra carpeta (por ejemplo `E2E_CAPTURE_DIR=docs/vx-str-001`), para no sobrescribir la evidencia de entregas anteriores. Los 410 de un hosting que ignore Functions no están garantizados: no aprobar un despliegue limitado a copiar archivos estáticos.
 
 ```bash
 # Matriz de SEO; no publica nada:
@@ -60,6 +61,14 @@ npm run test:analytics
 
 Copiar un Markdown existente. Campos: `id`, `game`, `slug`, `title`, `description`, `answer`, `kind`, `publishedAt`, `reviewedAt`, `status`, `scope`, `cover`, `coverAlt`, `sources`, `related`. Noticias nuevas incluyen `eventDate` para separar anuncio y revisión. `featured` selecciona las piezas de actualidad.
 
+Campos de VX-STR-001:
+
+- `section`: `rendimiento` o `tecnologia`. Añade la pieza a esa sección sin cambiar su URL. Sin `game`, la pieza vive en `/{sección}/{slug}`.
+- `games`: videojuegos relacionados. Obligatorio sin `game` y en toda pieza de `tecnologia`.
+- `kind`: además de los anteriores, `comparativa` y `compra` (requieren `section`).
+- `handsOn`: obligatorio en `comparativa`, `compra` y `tecnologia`. `false` muestra «No hemos probado estos dispositivos»; `true` exige `methodology`. Nunca declarar pruebas no realizadas.
+- `prices`: obligatorio en `compra`. Cada entrada declara `item`, `amount`, `currency` (ISO 4217), `market` (ISO 3166-1 alfa-2), `retailer`, `url` y `observedAt`. El build rechaza precios posteriores a `reviewedAt` o con más de 90 días.
+
 `status: published` significa incluido en el build de la rama; **no implica publicación en producción**. `draft` queda fuera del sitio, índice y sitemap. La aprobación del CEO debe preceder a cualquier merge/despliegue. No actualizar fechas de revisión sin volver a contrastar fuentes. En particular, revisar las noticias de noviembre antes de una publicación posterior.
 
 El cuerpo usa H2, no H1. No acepta HTML arbitrario ni imágenes externas incrustadas. Las fuentes son HTTPS. Los relacionados deben existir. Conservar slugs publicados o planificar redirecciones. Para añadir un juego, definir su tema, arte propio/licenciado y contenido real; no publicar categorías vacías.
@@ -74,4 +83,4 @@ Cloudflare Pages conserva build `npm run build`, salida `dist`, rama productiva 
 
 ## Límites
 
-Safari y teléfonos físicos no validados. No se ha auditado jurídicamente el portal. Correo de contacto: configurar `VITE_CONTACT_EMAIL` real; sin él la página informa que el canal no está habilitado. No se simula envío. Web Analytics pendiente en el alojamiento. No hay acceso a Search Console ni garantía de indexación. Las portadas son ilustraciones conceptuales creadas con IA, no capturas ni assets oficiales; consultar `docs/vx-003/IMAGENES_Y_FUENTES.md` y `THIRD_PARTY_NOTICES.md`.
+Safari y teléfonos físicos no validados. No se ha auditado jurídicamente el portal. Correo de contacto: configurar `VITE_CONTACT_EMAIL` real; sin él la página informa que el canal no está habilitado. No se simula envío. Web Analytics pendiente en el alojamiento. No hay acceso a Search Console ni garantía de indexación. Política de imágenes: únicamente fotografías reales, recursos oficiales o materiales con derechos de uso documentados; **no se usan imágenes generadas por IA** (las portadas IA de VX-003 están retiradas). Las piezas sin imagen autorizada usan portada de texto. Registro en `scripts/editorial/official-media.mjs`, `docs/vx-003/PERMISOS_IMAGENES.md` y `THIRD_PARTY_NOTICES.md`.

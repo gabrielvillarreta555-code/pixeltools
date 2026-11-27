@@ -8,7 +8,7 @@ const routes=JSON.parse(await readFile('dist/editorial/routes.json','utf8'));
 const articles=await loadArticles(),robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
 const file=p=>'dist'+(p==='/'?'/index.html':p.endsWith('/')?p+'index.html':p+'.html');
 const titles=new Set(),descriptions=new Set();
-assert.equal(routes.length,46);assert.equal(articles.length,30);
+assert.equal(routes.length,47);assert.equal(articles.length,30);
 assert.equal(new Set(articles.map(a=>a.body)).size,articles.length);
 const allowedMedia = Object.keys(officialMedia).flatMap(cover => [480,960,1600].map(size => `${cover}-${size}.webp`));
 for(const route of routes){
@@ -37,6 +37,10 @@ for(const route of routes){
 if(prod){const xml=await readFile('dist/sitemap.xml','utf8');assert.deepEqual([...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1]).sort(),routes.map(r=>'https://velixblue.com'+r.path).sort());assert.ok(!(await readFile('dist/_headers','utf8')).includes('X-Robots-Tag'));}else{await assert.rejects(access('dist/sitemap.xml'));assert.match(await readFile('dist/_headers','utf8'),/X-Robots-Tag: noindex/);}
 for(const path of retired)assert.match(await readFile(file(path),'utf8'),/name="robots" content="noindex/);
 for(const dir of ['models','ort','ocr'])await assert.rejects(access('dist/'+dir));
+// VX-STR-001: una sección solo existe si tiene artículos; nunca se reabre /herramientas.
+const hubRoutes=routes.filter(r=>['/rendimiento/','/tecnologia/'].includes(r.path)).map(r=>r.path);
+for(const hub of ['rendimiento','tecnologia']){const items=articles.filter(a=>a.section===hub);if(items.length){assert.ok(hubRoutes.includes(`/${hub}/`));const html=await readFile(file(`/${hub}/`),'utf8');for(const a of items)assert.ok(html.includes(`href="${a.path}"`),`${hub}: ${a.path}`);assert.match(await readFile('dist/index.html','utf8'),new RegExp(`href="/${hub}/"`));}else{await assert.rejects(access(file(`/${hub}/`)));assert.doesNotMatch(await readFile('dist/index.html','utf8'),new RegExp(`href="/${hub}/"`));}}
+assert.ok(!routes.some(r=>r.path.startsWith('/herramientas')));
 const sw=await readFile('dist/sw.js','utf8');assert.ok(sw.includes('registration.unregister()'));assert.ok(!sw.includes('fetch('));
 const media=await readdir('dist/media');assert.deepEqual(media.sort(),allowedMedia.sort());
 for(const name of media)assert.ok((await stat('dist/media/'+name)).size<400000,`image budget ${name}`);

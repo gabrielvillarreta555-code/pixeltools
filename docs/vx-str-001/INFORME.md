@@ -2,6 +2,8 @@
 
 Blue Lab Studios · Revisión del 27 de noviembre de 2026 · Rama `ccr-5f89ba93-g9yb0j`.
 
+> **27/11/2026:** el CEO aprobó este informe con modificaciones: se crea también `/tecnologia/` y se permiten artículos editoriales de comparación y compra. Lo decidido prevalece sobre este texto; ver [RESOLUCION.md](RESOLUCION.md).
+
 **Estado: propuesta para revisión.** Este informe no cambia el sitio, artículos, URLs, la producción ni la configuración de Cloudflare. Todo lo que propone requiere aprobación del CEO antes de implementarse.
 
 ---

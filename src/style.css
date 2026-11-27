@@ -71,3 +71,18 @@
 .elixir-chart meter::-moz-meter-bar {
  background: var(--accent);
 }
+
+/* VX-STR-001 · secciones transversales, declaración de pruebas y precios.
+   Reutilizan los tokens existentes; no introducen una estética nueva. */
+.hub-note{border-left:4px solid var(--accent);background:var(--surface);padding:14px 18px;font-size:.85rem;margin-top:18px}
+.disclosure{border:1px solid var(--line);border-left:4px solid var(--accent);padding:16px 20px;margin:0 0 28px;font-size:.9rem}
+.disclosure p{margin:0}
+.disclosure p+p{margin-top:8px}
+.related-games{color:var(--muted)}
+.prices{margin-top:45px}
+.table-scroll{overflow-x:auto;margin-top:16px}
+.prices table{width:100%;border-collapse:collapse;font-size:.85rem}
+.prices th,.prices td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.prices th{color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:700px){.main-nav .nav-home{display:none}}
+@media(max-width:700px){.prices thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prices tr{display:block;border-bottom:1px solid var(--line);padding:10px 0}.prices td{display:flex;justify-content:space-between;gap:16px;border:0;padding:4px 0;white-space:normal;text-align:right}.prices td::before{content:attr(data-label);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;text-align:left}}
