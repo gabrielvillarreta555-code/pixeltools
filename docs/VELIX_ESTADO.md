@@ -1,5 +1,7 @@
 # Vélix — estado permanente
 
+> **Nota 2026-11-27 (VX-STR-001):** este documento describe Vélix 2.0 y no refleja VX-003 (herramientas retiradas) ni VX-ED-002/003 (30 artículos). La propuesta vigente de la línea Gaming & Tecnología, pendiente de aprobación, está en `docs/vx-str-001/INFORME.md`. VX-RD-001 no está en el repositorio.
+
 Actualizado: 2026-11-16. Versión: MVP Vélix 2.0 implementado; cierre de publicación en curso.
 
 ## Autorización y repositorio
