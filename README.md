@@ -71,6 +71,10 @@ Campos de VX-STR-001:
 
 `status: published` significa incluido en el build de la rama; **no implica publicación en producción**. `draft` queda fuera del sitio, índice y sitemap. La aprobación del CEO debe preceder a cualquier merge/despliegue. No actualizar fechas de revisión sin volver a contrastar fuentes. En particular, revisar las noticias de noviembre antes de una publicación posterior.
 
+Para revisar borradores en una vista previa: `INCLUDE_DRAFTS=1 npm run build` (y `INCLUDE_DRAFTS=1 npm run test:seo`). Muestran un aviso de borrador; el build falla si se combina con un sitio indexable.
+
+Diagramas de pasos sin imágenes ni JavaScript: un bloque de código con la etiqueta `flujo`, la primera línea `# Título` y después una línea `Paso | explicación` por paso (mínimo dos).
+
 El cuerpo usa H2, no H1. No acepta HTML arbitrario ni imágenes externas incrustadas. Las fuentes son HTTPS. Los relacionados deben existir. Conservar slugs publicados o planificar redirecciones. Para añadir un juego, definir su tema, arte propio/licenciado y contenido real; no publicar categorías vacías.
 
 ## Retirada, recuperación y despliegue

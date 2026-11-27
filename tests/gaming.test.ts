@@ -82,6 +82,24 @@ describe('secciones transversales VX-STR-001',()=>{
   expect(html).not.toContain('undefined');expect(card(a)).toContain('Tecnología');
  });
 });
+describe('borradores y diagramas VX-ED-003 (Tecnología)',()=>{
+ it('los borradores quedan fuera salvo que se pidan explícitamente',async()=>{
+  const published=await loadArticles();const all=await loadArticles(undefined,{includeDrafts:true});
+  expect(published.every(a=>a.status==='published')).toBe(true);
+  expect(all.length).toBeGreaterThan(published.length);
+  for(const a of all.filter(a=>a.status==='draft')){expect(a.section).toBeDefined();expect(a.games?.length).toBeGreaterThan(0);}
+ });
+ it('los borradores de tecnología declaran que no hubo prueba propia',async()=>{
+  for(const a of (await loadArticles(undefined,{includeDrafts:true})).filter(a=>a.section==='tecnologia'))expect(a.handsOn).toBe(false);
+ });
+ it('renderiza un diagrama de pasos accesible y escapa su contenido',()=>{
+  const html=markdown.render('```flujo\n# Ciclo <térmico>\nCalor | El chip <b>sube</b>\nLímite | Baja la frecuencia\n```');
+  expect(html).toContain('<figure class="flow-chart"><figcaption>Ciclo &lt;térmico&gt;</figcaption><ol>');
+  expect(html.match(/<li>/g)).toHaveLength(2);expect(html).not.toContain('<b>');
+  expect(()=>markdown.render('```flujo\nsin título\nA | b\n```')).toThrow(/Diagrama/);
+  expect(()=>markdown.render('```flujo\n# T\nsolo un paso | x\n```')).toThrow(/Diagrama/);
+ });
+});
 describe('retirada y protección por host',()=>{
  const ctx=(url:string)=>({request:new Request(url),next:async()=>new Response('normal'),env:{ASSETS:{fetch:async()=>new Response('<h1>Retirado</h1>',{headers:{'Content-Type':'text/html'}})}}});
  it.each(retired)('devuelve 410 sin redirección para %s',async(path)=>{

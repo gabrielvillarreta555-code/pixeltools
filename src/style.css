@@ -86,3 +86,14 @@
 .prices th{color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
 @media(max-width:700px){.main-nav .nav-home{display:none}}
 @media(max-width:700px){.prices thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prices tr{display:block;border-bottom:1px solid var(--line);padding:10px 0}.prices td{display:flex;justify-content:space-between;gap:16px;border:0;padding:4px 0;white-space:normal;text-align:right}.prices td::before{content:attr(data-label);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;text-align:left}}
+/* VX-ED-003 (Tecnología): borradores en vista previa y diagramas de pasos sin JS. */
+.draft-banner{border:1px dashed var(--accent);padding:12px 16px;font-size:.85rem;margin:0 0 24px}
+.flow-chart{margin:32px 0;border:1px solid var(--line);padding:20px}
+.flow-chart figcaption{font-weight:700;margin-bottom:14px}
+.flow-chart ol{list-style:none;margin:0;padding:0;counter-reset:flow}
+.flow-chart li{counter-increment:flow;display:grid;grid-template-columns:2.2rem 1fr;gap:4px 12px;padding:10px 0;position:relative}
+.flow-chart li::before{content:counter(flow);grid-row:span 2;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:800;display:grid;place-items:center}
+.flow-chart li+li::after{content:'';position:absolute;left:calc(1rem - 1px);top:-10px;height:20px;border-left:2px solid var(--accent)}
+.flow-chart span{color:var(--muted);font-size:.9rem}
+/* Con Rendimiento y Tecnología el menú móvil tiene 7 entradas: filas de 3, 2 y 2 en vez de dejar una sola. */
+@media(max-width:700px){.main-nav:has(a[href="/tecnologia/"]){grid-template-columns:repeat(6,minmax(0,1fr))}.main-nav:has(a[href="/tecnologia/"]) a{grid-column:span 2}.main-nav:has(a[href="/tecnologia/"]) a:nth-last-child(-n+4){grid-column:span 3}}

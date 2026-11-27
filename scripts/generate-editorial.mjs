@@ -9,7 +9,10 @@ const css='/assets/'+assets.find(n=>n.endsWith('.css'));
 const js='/assets/'+assets.find(n=>/^index-.*\.js$/.test(n));
 const font='/assets/'+assets.find(n=>/^plus-jakarta-sans-latin-wght.*woff2$/.test(n));
 if([css,js,font].some(s=>s.endsWith('undefined')))throw new Error('Missing Vite assets');
-const articles=await loadArticles(),news=articles.filter(a=>a.featured);
+// INCLUDE_DRAFTS=1 permite revisar borradores en una vista previa; nunca en el sitio indexable.
+const includeDrafts=process.env.INCLUDE_DRAFTS==='1';
+if(includeDrafts&&config.indexable)throw new Error('INCLUDE_DRAFTS no se permite en un build indexable');
+const articles=await loadArticles(undefined,{includeDrafts}),news=articles.filter(a=>a.featured);
 for(const cover of Object.keys(officialMedia)) for(const size of [480,960,1600])await access(new URL(`media/${cover}-${size}.webp`,dist));
 const routes=[];
 // Secciones transversales: solo se publican (y aparecen en el menú) si tienen artículos.

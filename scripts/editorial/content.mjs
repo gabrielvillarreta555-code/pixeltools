@@ -13,6 +13,7 @@ markdown.validateLink = url => originalValidateLink(url) && (/^https:\/\//i.test
 const renderFence = markdown.renderer.rules.fence;
 markdown.renderer.rules.fence = (tokens, index, options, env, renderer) => {
   const token = tokens[index];
+  if (token.info.trim() === 'flujo') return renderFlow(token.content);
   if (token.info.trim() !== 'elixir-costes') return renderFence(tokens, index, options, env, renderer);
 
   const rows = token.content.trim().split('\n').map(line => {
@@ -40,6 +41,19 @@ const isoDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test
 const text = value => typeof value === 'string' && value.trim().length > 0;
 const httpsUrl = value => typeof value === 'string' && /^https:\/\//.test(value) && !new URL(value).username && !new URL(value).password;
 export const PRICE_MAX_AGE_DAYS = 90;
+
+// Diagrama de pasos accesible y sin JavaScript: primera línea «# Título», después «Paso | explicación».
+const renderFlow = content => {
+  const [head, ...lines] = content.trim().split('\n');
+  const caption = /^#\s+(.+)$/.exec(head.trim());
+  if (!caption || lines.length < 2) throw new Error('Diagrama: se esperaba «# Título» y al menos dos pasos');
+  const steps = lines.map(line => {
+    const match = /^([^|]+)\|\s*(.+)$/.exec(line.trim());
+    if (!match) throw new Error('Diagrama: cada paso usa «Paso | explicación»');
+    return { step: match[1].trim(), detail: match[2].trim() };
+  });
+  return `<figure class="flow-chart"><figcaption>${escapeHtml(caption[1])}</figcaption><ol>${steps.map(({ step, detail }) => `<li><strong>${escapeHtml(step)}</strong><span>${escapeHtml(detail)}</span></li>`).join('')}</ol></figure>`;
+};
 
 export function parseArticle(source, name = 'article', { today = new Date().toISOString().slice(0, 10) } = {}) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/);
@@ -85,11 +99,12 @@ export function parseArticle(source, name = 'article', { today = new Date().toIS
   return { ...data, body, html: markdown.render(body), path: data.game ? `/juegos/${data.game}/${data.slug}` : `/${data.section}/${data.slug}` };
 }
 
-export async function loadArticles(directory = new URL('../../content/juegos/', import.meta.url)) {
+// includeDrafts solo se usa en vistas previas no indexables para revisar borradores.
+export async function loadArticles(directory = new URL('../../content/juegos/', import.meta.url), { includeDrafts = false } = {}) {
   const names = (await readdir(directory)).filter(n => n.endsWith('.md')).sort();
   const all = await Promise.all(names.map(async name => parseArticle(await readFile(new URL(name, directory), 'utf8'), name)));
   for (const key of ['id', 'path', 'title', 'description']) if (new Set(all.map(a => a[key])).size !== all.length) throw new Error(`Contenido duplicado: ${key}`);
-  const articles = all.filter(a => a.status === 'published').sort((a,b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
+  const articles = all.filter(a => a.status === 'published' || (includeDrafts && a.status === 'draft')).sort((a,b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
   for (const a of articles) for (const id of a.related) if (!articles.some(other => other.id === id)) throw new Error(`${a.id}: relacionado no publicado ${id}`);
   return articles;
 }

@@ -5,10 +5,14 @@ import { loadArticles,escapeHtml } from './editorial/content.mjs';
 import { officialMedia } from './editorial/official-media.mjs';
 import { themes,retired } from './editorial/themes.mjs';
 const routes=JSON.parse(await readFile('dist/editorial/routes.json','utf8'));
-const articles=await loadArticles(),robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
+const drafts=process.env.INCLUDE_DRAFTS==='1';const articles=await loadArticles(undefined,{includeDrafts:drafts}),robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
 const file=p=>'dist'+(p==='/'?'/index.html':p.endsWith('/')?p+'index.html':p+'.html');
 const titles=new Set(),descriptions=new Set();
-assert.equal(routes.length,47);assert.equal(articles.length,30);
+// Rutas: portada, /juegos/, 6 universos, 4 listados, 4 páginas legales, secciones con contenido y artículos.
+const liveHubs=['rendimiento','tecnologia'].filter(h=>articles.some(a=>a.section===h));
+assert.equal(routes.length,16+liveHubs.length+articles.length);
+if(!drafts){assert.equal(articles.length,30);assert.equal(routes.length,47);}
+if(prod)assert.ok(!drafts&&!articles.some(a=>a.status!=='published'),'borradores en producción');
 assert.equal(new Set(articles.map(a=>a.body)).size,articles.length);
 const allowedMedia = Object.keys(officialMedia).flatMap(cover => [480,960,1600].map(size => `${cover}-${size}.webp`));
 for(const route of routes){

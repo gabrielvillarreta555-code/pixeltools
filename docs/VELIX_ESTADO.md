@@ -29,6 +29,15 @@ Validación de E1 ejecutada en este entorno: `npm test` (37), build y `test:seo`
 
 Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que se puedan leer en directo las fuentes oficiales (epicgames.com, roblox.com, garena.com, minecraft.net, supercell.com). La red del entorno actual no alcanza esos dominios.
 
+**VX-ED-003 (Tecnología) · rama `vx-ed-003-tecnologia`** (sobre E1, sin fusionar):
+
+- 10 artículos en **borrador** (31–40) para `/rendimiento/` y `/tecnologia/`.
+- Banco de 150 preguntas, registro de fuentes, 20 prioridades, 7 metodologías de experimento y un informe de diferenciación y limitaciones en `docs/vx-ed-003-tecnologia/`.
+- Vista previa de borradores (`INCLUDE_DRAFTS=1`) y diagramas `flujo`.
+- Los borradores no se pueden publicar hasta leer directamente 32 fuentes conocidas solo por extractos de buscador. La red del entorno no alcanza esos dominios y el servicio rechazó la propuesta de un entorno con acceso.
+- Sin guías por presupuesto hasta tener precios observados.
+- El código «VX-ED-003» coincide con el del PR #20; está pendiente de confirmar.
+
 ## Políticas vigentes
 
 - Imágenes: únicamente fotografías reales, recursos oficiales o materiales con derechos de uso adecuados y documentados. Sin imágenes generadas por IA.
