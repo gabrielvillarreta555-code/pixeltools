@@ -1,4 +1,4 @@
-# Banco de preguntas · VX-ED-003 (Tecnología)
+# Banco de preguntas · VX-ED-004
 
 27 de noviembre de 2026. 150 preguntas nuevas, más las 10 de ejemplo del encargo (E1–E10).
 

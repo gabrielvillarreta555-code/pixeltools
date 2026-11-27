@@ -1,4 +1,4 @@
-# Selección de 20 prioridades · VX-ED-003 (Tecnología)
+# Selección de 20 prioridades · VX-ED-004
 
 27 de noviembre de 2026. Selección a partir del [banco de preguntas](PREGUNTAS.md).
 

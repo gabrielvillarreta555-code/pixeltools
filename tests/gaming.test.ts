@@ -82,7 +82,7 @@ describe('secciones transversales VX-STR-001',()=>{
   expect(html).not.toContain('undefined');expect(card(a)).toContain('Tecnología');
  });
 });
-describe('borradores y diagramas VX-ED-003 (Tecnología)',()=>{
+describe('borradores y diagramas VX-ED-004',()=>{
  it('los borradores quedan fuera salvo que se pidan explícitamente',async()=>{
   const published=await loadArticles();const all=await loadArticles(undefined,{includeDrafts:true});
   expect(published.every(a=>a.status==='published')).toBe(true);

@@ -29,14 +29,14 @@ Validación de E1 ejecutada en este entorno: `npm test` (37), build y `test:seo`
 
 Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que se puedan leer en directo las fuentes oficiales (epicgames.com, roblox.com, garena.com, minecraft.net, supercell.com). La red del entorno actual no alcanza esos dominios.
 
-**VX-ED-003 (Tecnología) · rama `vx-ed-003-tecnologia`** (sobre E1, sin fusionar):
+**VX-ED-004 · rama `vx-ed-004`** (antes `vx-ed-003-tecnologia`; sobre E1, sin fusionar). Renumeración aprobada el 27/11/2026:
 
-- 10 artículos en **borrador** (31–40) para `/rendimiento/` y `/tecnologia/`.
-- Banco de 150 preguntas, registro de fuentes, 20 prioridades, 7 metodologías de experimento y un informe de diferenciación y limitaciones en `docs/vx-ed-003-tecnologia/`.
-- Vista previa de borradores (`INCLUDE_DRAFTS=1`) y diagramas `flujo`.
-- Los borradores no se pueden publicar hasta leer directamente 32 fuentes conocidas solo por extractos de buscador. La red del entorno no alcanza esos dominios y el servicio rechazó la propuesta de un entorno con acceso.
-- Sin guías por presupuesto hasta tener precios observados.
-- El código «VX-ED-003» coincide con el del PR #20; está pendiente de confirmar.
+- 10 artículos en **borrador** (31–40) para `/rendimiento/` y `/tecnologia/`. Se conservan; no se crean artículos nuevos por ahora.
+- Banco de 150 preguntas, registro de fuentes, 20 prioridades, metodologías de experimento e informe en `docs/vx-ed-004/`.
+- **Verificación pendiente:** 32 fuentes y 9 afirmaciones sin fuente, listadas en `docs/vx-ed-004/VERIFICACION.md` (y `verificacion.csv`) para verificarlas con el equipo. Solo se pueden leer directamente `developer.android.com` y `developer.apple.com` desde este entorno.
+- Con las fuentes ya verificadas se pueden completar el 33 y el 39 (este último reescribiendo una sección), y el 36 y el 40 con recortes. Los otros seis dependen de la verificación.
+- Recomendaciones de compra pendientes hasta tener precios verificables. Experimentos físicos y herramientas nuevas, pospuestos.
+- Vista previa de borradores con `INCLUDE_DRAFTS=1`; diagramas con bloques `flujo`.
 
 ## Políticas vigentes
 

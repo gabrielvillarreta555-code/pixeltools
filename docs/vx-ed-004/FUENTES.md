@@ -1,4 +1,4 @@
-# Registro de fuentes · VX-ED-003 (Tecnología)
+# Registro de fuentes · VX-ED-004
 
 Generado el 27/11/2026 a partir del frontmatter de los borradores 31–40 (`content/juegos/3*.md`, `40-*.md`). 40 fuentes únicas.
 

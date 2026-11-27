@@ -1,8 +1,8 @@
-# VX-ED-003 (Tecnología) · Informe de la primera entrega editorial
+# VX-ED-004 · Informe de la primera entrega editorial de tecnología
 
-Blue Lab Studios · 27 de noviembre de 2026 · Rama `vx-ed-003-tecnologia`, basada en `vx-str-001-entrega-1`. **No fusionado ni publicado.**
+Blue Lab Studios · 27 de noviembre de 2026 · Rama `vx-ed-004` (antes `vx-ed-003-tecnologia`), basada en `vx-str-001-entrega-1`. **No fusionado ni publicado.**
 
-> **Nota sobre el código:** «VX-ED-003» ya identifica la ampliación a 30 artículos (`docs/VX-ED-003.md`, PR #20). Para no mezclar registros, esta entrega se guarda en `docs/vx-ed-003-tecnologia/`. Si dirección prefiere renumerarla (por ejemplo, VX-ED-004), basta con renombrar la carpeta.
+> **Código:** dirección aprobó el 27/11/2026 renumerar esta entrega como **VX-ED-004** (el código VX-ED-003 corresponde a la ampliación a 30 artículos, PR #20). Esa misma resolución pide conservar los diez borradores, no crear artículos nuevos, mantener pendientes las guías de compra y los experimentos, y preparar el [listado de fuentes pendientes](VERIFICACION.md).
 
 ## 1. Entregables
 
@@ -99,8 +99,7 @@ Para cada artículo:
 
 ## 6. Decisiones solicitadas
 
-1. Confirmar el código de esta entrega (VX-ED-003 Tecnología o renumeración).
-2. Acceso de red o verificación manual para las 32 fuentes pendientes.
-3. Mercados de referencia y procedimiento para observar precios (necesario para las guías de 100, 150, 200 y 300 USD).
-4. Aprobación, por separado, de un piloto de herramientas de medición y de los experimentos X2 y X1.
-5. Acceso a Search Console para validar el banco de preguntas.
+1. Verificación de las 32 fuentes pendientes y de las 9 afirmaciones sin fuente: ver [VERIFICACION.md](VERIFICACION.md).
+2. Mercados de referencia y procedimiento para observar precios (necesario para las guías de 100, 150, 200 y 300 USD).
+3. Aprobación, por separado, de un piloto de herramientas de medición y de los experimentos X2 y X1.
+4. Acceso a Search Console para validar el banco de preguntas.

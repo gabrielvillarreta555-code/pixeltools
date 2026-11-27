@@ -1,4 +1,4 @@
-# Propuestas de experimentos · VX-ED-003 (Tecnología)
+# Propuestas de experimentos · VX-ED-004
 
 27 de noviembre de 2026. **Ninguno de estos experimentos se ha realizado.** Son metodologías propuestas; su ejecución requiere aprobación independiente, equipos y tiempo. Ningún artículo de Vélix puede citar resultados de estas pruebas hasta que se hayan realizado y documentado.
 
