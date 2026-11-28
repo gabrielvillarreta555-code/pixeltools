@@ -11,7 +11,7 @@
   "publishedAt": "2026-11-27",
   "status": "draft",
   "kind": "guia",
-  "scope": "La documentación de Android se leyó directamente el 27/11/2026. Las páginas de Samsung y Xiaomi se consultaron mediante extractos de buscador y deben leerse directamente antes de publicar. Los menús varían por modelo, versión y región.",
+  "scope": "La documentación de Android se leyó directamente el 27/11/2026. Las páginas de Samsung y Xiaomi se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT) y están pendientes de revisión humana. Los menús varían por modelo, versión y región.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -28,12 +28,12 @@
     {
       "label": "Samsung: uso de la app Game Booster",
       "url": "https://www.samsung.com/au/support/apps-services/use-game-booster/",
-      "supports": "Equilibra batería, rendimiento y temperatura según los hábitos de juego y bloquea distracciones."
+      "supports": "Game Booster busca equilibrar rendimiento, temperatura y consumo de batería según los patrones de juego del usuario. Página actualizada el 20/10/2026. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "Xiaomi: introducción a Game Turbo",
       "url": "https://www.mi.com/global/support/article/KA-03436/",
-      "supports": "Función de Xiaomi para juegos accesible desde la app Seguridad."
+      "supports": "Game Turbo incluye optimizaciones de conectividad WLAN, respuesta táctil, sonido, gestión de recursos y configuración térmica. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     }
   ],
   "related": ["34-redmi-sin-game-turbo", "36-juego-pierde-fps", "07-roblox-lag"],
@@ -76,6 +76,17 @@ El modo batería de un juego es independiente del ahorro de batería del sistema
 Android permite que el fabricante aplique **intervenciones** a juegos que no se actualizan, como cambiar la resolución de renderizado. La documentación advierte que el fabricante puede hacerlo sin consultar al estudio. Si el juego declara su propia compatibilidad, el sistema anula esas intervenciones.
 
 En la práctica: el mismo botón puede tener efectos distintos según el juego y la marca del teléfono.
+
+## Qué añaden Samsung y Xiaomi
+
+Las herramientas de los fabricantes van más allá de las tres preferencias de Android, y cada marca describe la suya de forma distinta:
+
+| Herramienta | Qué dice el fabricante |
+|---|---|
+| **Game Booster** (Samsung) | Busca equilibrar rendimiento, temperatura y consumo de batería según tus patrones de juego |
+| **Game Turbo** (Xiaomi) | Ajusta la conectividad WLAN, la respuesta táctil, el sonido, la gestión de recursos y la configuración térmica |
+
+Ninguno de los dos publica cuánto cambian los FPS o la temperatura en un juego concreto. Son descripciones del fabricante, no mediciones.
 
 ## Lo que el modo juego no puede hacer
 

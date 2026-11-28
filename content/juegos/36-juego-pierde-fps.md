@@ -33,7 +33,7 @@
     {
       "label": "UL Benchmarks: resultados de las pruebas de estrés",
       "url": "https://support.benchmarks.ul.com/support/solutions/articles/44002134931-stress-test-result-screen",
-      "supports": "La estabilidad compara el peor ciclo con el mejor; el umbral de aprobado es 97 %."
+      "supports": "La estabilidad es el FPS medio del peor ciclo dividido entre el del mejor, multiplicado por 100. El umbral del 97 % corresponde a la prueba de estrés de PC y no se usa aquí. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "Notebookcheck: Snapdragon 8 Gen 1 en Xiaomi 12 Pro y OnePlus 10 Pro",
@@ -63,7 +63,7 @@ No es un defecto en sí mismo: es una protección. Lo que cambia de un modelo a 
 
 ## ¿Cuánto puede caer?
 
-Las pruebas de estrés de prensa repiten la misma carga gráfica muchas veces para verlo. Notebookcheck midió que un OnePlus 10 Pro perdió alrededor del 37 % de su rendimiento a lo largo de la prueba. Es una prueba sintética, no un juego concreto, pero muestra el orden de magnitud posible. UL, creadora de 3DMark, considera estable un resultado cuando el peor ciclo conserva al menos el 97 % del mejor.
+Las pruebas de estrés de prensa repiten la misma carga gráfica muchas veces para verlo. Notebookcheck midió que un OnePlus 10 Pro perdió alrededor del 37 % de su rendimiento a lo largo de la prueba. Es una prueba sintética, no un juego concreto, pero muestra el orden de magnitud posible. UL, creadora de 3DMark, mide la estabilidad comparando los FPS del peor ciclo con los del mejor; cuanto más cerca del 100 %, menos cae el rendimiento.
 
 ## Qué recomienda un desarrollador de juegos
 

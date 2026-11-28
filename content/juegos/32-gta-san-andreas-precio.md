@@ -5,26 +5,26 @@
   "games": ["GTA: San Andreas", "GTA: The Trilogy – The Definitive Edition"],
   "slug": "gta-san-andreas-precio-google-play",
   "title": "¿Por qué GTA San Andreas cuesta dinero en Google Play?",
-  "description": "Las dos versiones oficiales de San Andreas para móviles, qué pasó con el acceso por Netflix y cómo reconocer copias gratuitas que no son de Rockstar.",
-  "answer": "Porque la versión de Rockstar Games en Google Play es un juego de pago: se compra una vez y no se financia con anuncios. Existe además la edición Definitive, que llegó a los suscriptores de Netflix en diciembre de 2023; según la prensa especializada, San Andreas dejó ese catálogo en diciembre de 2025. Una ficha gratuita con un nombre parecido no es el juego oficial.",
+  "description": "La versión de Rockstar en Google Play es de pago desde su lanzamiento en 2013. Qué ofrece la ficha oficial, qué pasó con la edición de Netflix y cómo reconocer copias.",
+  "answer": "Porque la versión de Rockstar Games en Google Play se vende como juego de pago desde su llegada a Android en diciembre de 2013; su ficha indica además compras dentro de la aplicación. Rockstar no explica en sus fuentes públicas por qué eligió ese modelo. Existió también una edición Definitive incluida en Netflix, que según la prensa especializada dejó ese catálogo en diciembre de 2025. Una ficha gratuita con un nombre parecido no es el juego oficial.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
   "status": "draft",
   "kind": "analisis",
   "handsOn": false,
-  "scope": "No citamos un precio porque varía por país y fecha y no lo hemos observado directamente en la tienda. Las fichas y artículos se consultaron mediante extractos de buscador; requieren lectura directa antes de publicar.",
+  "scope": "No citamos el precio actual: la consulta del 27/11/2026 no identifica el país de la tienda, y el importe cambia según mercado y fecha. La ficha de Google Play y el artículo de 2013 se revisaron mediante consulta asistida (ChatGPT), pendiente de revisión humana; las fuentes sobre Netflix y copias se conocen por extractos de buscador y requieren lectura directa antes de publicar.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
     {
-      "label": "Apptopia: ficha de com.rockstargames.gtasa en Google Play",
-      "url": "https://apptopia.com/google-play/app/com.rockstargames.gtasa/about",
-      "supports": "Identifica la ficha de Rockstar Games como juego de pago sin anuncios."
+      "label": "Google Play: Grand Theft Auto: San Andreas (Rockstar Games)",
+      "url": "https://play.google.com/store/apps/details?id=com.rockstargames.gtasa",
+      "supports": "Ficha oficial: desarrollador Rockstar Games, juego de pago, compras dentro de la aplicación, gráficos adaptados a móviles, controles táctiles personalizables e historia de más de 70 horas. Consulta asistida (ChatGPT) del 27/11/2026, sin país de la tienda identificado; pendiente de revisión humana."
     },
     {
-      "label": "Android Authority: análisis de San Andreas para Android (2013)",
+      "label": "Android Authority: San Andreas llega a Android (21/12/2013)",
       "url": "https://www.androidauthority.com/grand-theft-auto-san-andreas-android-review-326766/",
-      "supports": "Lanzamiento de la adaptación móvil de Rockstar a finales de 2013."
+      "supports": "Publicación del 21/12/2013 sobre la llegada a Android, con un precio de lanzamiento de 6,99 USD. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "GameSpot: la trilogía llega a Netflix",
@@ -58,18 +58,20 @@ En móviles conviven dos productos oficiales distintos:
 
 | Versión | Quién la distribuye | Cómo se obtiene |
 |---|---|---|
-| **Grand Theft Auto: San Andreas** (adaptación de 2013) | Rockstar Games, ficha propia en Google Play y App Store | Compra única. El precio cambia según el país |
+| **Grand Theft Auto: San Andreas** (adaptación de 2013) | Rockstar Games, ficha propia en Google Play | Juego de pago. La ficha indica además compras dentro de la aplicación. El precio cambia según el país |
 | **GTA: San Andreas – Definitive Edition** | Netflix Games, dentro de la trilogía Definitive | Incluida en la suscripción de Netflix desde diciembre de 2023 |
 
-La primera nunca fue gratuita: Rockstar la vende como juego completo, sin anuncios. Lo que mucha gente recuerda como «San Andreas gratis» corresponde a la edición de Netflix, que se pagaba indirectamente con la suscripción.
+La versión de Rockstar se vende como juego de pago desde su llegada a Android: Android Authority informó el 21 de diciembre de 2013 de un precio de lanzamiento de 6,99 USD. Su ficha oficial describe gráficos adaptados a móviles, controles táctiles personalizables y una historia de más de 70 horas, e indica compras dentro de la aplicación.
+
+Lo que mucha gente recuerda como «San Andreas gratis» corresponde a la edición de Netflix, que se pagaba indirectamente con la suscripción.
 
 ## ¿Sigue en Netflix?
 
 Según Gameranx, San Andreas iba a salir del catálogo de Netflix el 12 de diciembre de 2025. No hemos confirmado si volvió después ni en qué países. Antes de suscribirte solo por este juego, búscalo dentro de la propia app de Netflix en tu región.
 
-## Por qué no la ponen gratis con anuncios
+## ¿Por qué ese modelo de pago?
 
-Rockstar no ha explicado públicamente su política de precios para esta versión, así que esto es interpretación nuestra: es un juego de mundo abierto diseñado como producto completo, sin la economía de microtransacciones de un juego gratuito. Venderlo una vez encaja con ese diseño; pasarlo a anuncios exigiría rediseñar partes del juego.
+Rockstar no explica en sus fuentes públicas por qué eligió vender esta versión en lugar de hacerla gratuita. No vamos a atribuirle motivos. Lo verificable es que se vende como juego de pago desde 2013 y que la ficha actual indica compras dentro de la aplicación.
 
 ## Cómo reconocer una copia
 
@@ -81,4 +83,4 @@ En 2026 apareció en Play Store un juego gratuito, con anuncios y de otro desarr
 
 ## Antes de pagar
 
-La versión de 2013 es un juego antiguo adaptado, y la tienda solo te deja comprarlo si tu dispositivo es compatible. Si la ficha dice que tu teléfono no es compatible, no lo fuerces. Después de comprarlo, si no funciona bien, revisa la política de reembolsos de Google Play de tu país.
+Es una adaptación de 2013. Antes de comprar, revisa en la ficha de tu país el precio, si tu dispositivo aparece como compatible y la información sobre compras dentro de la aplicación. Si la tienda indica que tu teléfono no es compatible, no lo fuerces con un APK.

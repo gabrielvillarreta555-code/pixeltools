@@ -12,14 +12,14 @@
   "status": "draft",
   "kind": "analisis",
   "handsOn": false,
-  "scope": "Análisis documental. No hemos ejecutado AnTuTu ni juegos en teléfonos para este artículo. Las fuentes de terceros se leyeron mediante extractos de buscador; requieren lectura directa antes de publicar.",
+  "scope": "Análisis documental. No hemos ejecutado AnTuTu ni juegos en teléfonos para este artículo. La nota oficial de AnTuTu y la página de UL se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT), pendiente de revisión humana; el resto de fuentes de terceros se conoce por extractos de buscador y requiere lectura directa antes de publicar.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
     {
       "label": "AnTuTu: nota de la versión V10 (25/05/2023)",
       "url": "https://www.antutu.com/en/doc/129591.htm",
-      "supports": "La V10 cambió la prueba de CPU y, en general, un mismo dispositivo puntúa más que en la V9."
+      "supports": "La V10 evalúa CPU, GPU, MEM y UX; usa escenas creadas con Unreal Engine y la API Vulkan; reconoce que la latencia de memoria puede afectar a la fluidez de los juegos; las puntuaciones de V9 y V10 no son directamente comparables y la V10 suele dar más puntos al mismo teléfono. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "Notebookcheck: beta pública de AnTuTu V12",
@@ -39,7 +39,7 @@
     {
       "label": "UL Benchmarks: pantalla de resultados de las pruebas de estrés",
       "url": "https://support.benchmarks.ul.com/support/solutions/articles/44002134931-stress-test-result-screen",
-      "supports": "Define la estabilidad como el promedio del peor ciclo dividido por el del mejor, y fija el aprobado en el 97 %."
+      "supports": "Define la estabilidad como el FPS medio del peor ciclo dividido entre el del mejor, multiplicado por 100. El umbral de aprobado del 97 % que publica corresponde a la prueba de estrés de PC descrita en esa página. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "Tom's Guide: Geekbench retira al OnePlus 9 de su tabla",
@@ -59,7 +59,16 @@
 
 ## Qué mide realmente AnTuTu
 
-AnTuTu ejecuta varias pruebas y suma cuatro bloques: **CPU**, **GPU**, **MEM** (memoria y almacenamiento) y **UX** (fluidez de la interfaz). El resultado es una sola cifra que resume potencia en tareas muy distintas. Para un juego, el bloque que más se parece a su carga es el gráfico, pero queda mezclado con la velocidad del almacenamiento o de la interfaz.
+Según su documentación oficial de la versión 10, AnTuTu evalúa cuatro áreas:
+
+| Bloque | Qué evalúa |
+|---|---|
+| **CPU** | Procesamiento y ejecución de algoritmos |
+| **GPU** | Rendimiento gráfico con escenas 3D creadas con Unreal Engine sobre la API Vulkan |
+| **MEM** | Memoria y almacenamiento: ancho de banda y latencia |
+| **UX** | Experiencia de uso y procesamiento multimedia |
+
+El resultado se presenta como una sola cifra que resume tareas muy distintas. Para un juego, el bloque que más se parece a su carga es el gráfico, aunque AnTuTu también reconoce que la latencia de la memoria puede afectar a la fluidez de los juegos.
 
 Por eso dos teléfonos con la misma puntuación total pueden tener reparto distinto: uno más fuerte en GPU y otro en almacenamiento. Para jugar, mira el desglose y no solo el total.
 
@@ -67,13 +76,13 @@ Por eso dos teléfonos con la misma puntuación total pueden tener reparto disti
 
 **1. Es una medición corta.** Una pasada de benchmark dura poco. Una partida de Fortnite o Free Fire dura muchos minutos y el teléfono se calienta. La documentación de Android explica que las frecuencias de CPU y GPU cambian según la carga y la temperatura; por eso Google recomienda fijarlas para medir con fiabilidad. Un pico de potencia no informa de cuánto se mantiene.
 
-**2. Cada versión es una escala distinta.** AnTuTu reconoció que la V10 da más puntos que la V9 al mismo dispositivo, y la V12 cambió las cuatro áreas de prueba. Comparar un «1,5 millones» de una versión con un «1,2 millones» de otra no tiene sentido.
+**2. Cada versión es una escala distinta.** El propio desarrollador advierte que las puntuaciones de la V9 y la V10 no son directamente comparables: la V10 suele dar más puntos al mismo teléfono por los cambios en sus pruebas. La prensa especializada informa de cambios parecidos en la V12. Comparar un «1,5 millones» de una versión con un «1,2 millones» de otra no tiene sentido.
 
 **3. Los fabricantes saben cuándo se mide.** En 2021 y 2022 Geekbench retiró de su tabla modelos de OnePlus y de Samsung porque el sistema limitaba aplicaciones comunes, incluidos juegos en el caso de Samsung, pero dejaba las apps de benchmark a máxima potencia. Una puntuación de laboratorio puede no reflejar lo que recibe tu juego.
 
 ## Qué mirar si lo que quieres es jugar
 
-- **Estabilidad, no solo pico.** Las pruebas de estrés repiten el mismo escenario muchas veces. UL (3DMark) calcula la estabilidad dividiendo el peor ciclo entre el mejor; por debajo del 97 % considera que el rendimiento cae durante la prueba.
+- **Estabilidad, no solo pico.** Las pruebas de estrés repiten el mismo escenario muchas veces. UL (3DMark) calcula la estabilidad dividiendo los FPS del peor ciclo entre los del mejor. Cuanto más cerca del 100 %, menos cae el rendimiento durante la prueba. UL publica un umbral de aprobado para su prueba de PC; no lo aplicamos a teléfonos.
 - **Misma versión del test.** Si comparas puntuaciones, que sean de la misma versión y, si es posible, del mismo medio.
 - **Mediciones del juego que te interesa,** con método publicado: duración de la sesión, ajustes gráficos, temperatura ambiente.
 - **Requisitos oficiales del juego.** Cumplirlos indica que el juego puede ejecutarse; no garantiza una cifra de FPS.

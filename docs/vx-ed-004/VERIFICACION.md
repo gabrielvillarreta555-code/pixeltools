@@ -1,6 +1,6 @@
 # VX-ED-004 · Fuentes pendientes de verificación
 
-27 de noviembre de 2026. Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
+27 de noviembre de 2026 (actualizado el 28/11/2026 con la ronda 1, §6). Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
 
 ## 0. Cómo registrar una verificación
 
@@ -81,9 +81,9 @@ Revisando los borradores aparecen frases que no están respaldadas por ninguna f
 
 | ID | Art. | Frase del borrador | Propuesta |
 |---|---|---|---|
-| S01 | 32 | «La tienda solo te deja comprarlo si tu dispositivo es compatible.» | Buscar la ayuda de Google Play sobre compatibilidad o eliminar |
-| S02 | 34 | «En algunas versiones también hay acceso desde Ajustes → Funciones especiales.» Procede de una guía de terceros no citada | Citar una FAQ de mi.com que lo indique o eliminar |
-| S03 | 34 | «Si el juego no aparece en la lista, añádelo con el botón para agregar apps.» | Confirmar en F15 o en una FAQ de mi.com |
+| S01 | 32 | «La tienda solo te deja comprarlo si tu dispositivo es compatible.» | **Resuelto 28/11:** reformulado como consejo de revisar la ficha |
+| S02 | 34 | «En algunas versiones también hay acceso desde Ajustes → Funciones especiales.» Procede de una guía de terceros no citada | **Resuelto 28/11:** eliminado |
+| S03 | 34 | «Si el juego no aparece en la lista, añádelo con el botón para agregar apps.» | **Resuelto 28/11:** sustituido por la ruta confirmada en F15 |
 | S04 | 36 | «Revisa el brillo. La pantalla también consume energía y genera calor.» | Buscar fuente (p. ej., documentación de Android sobre consumo de pantalla) o eliminar |
 | S05 | 37 | «Hay variantes con nombres casi iguales y potencias diferentes.» | Sustituir por un ejemplo concreto con fichas oficiales o eliminar |
 | S06 | 38 | «Una estructura porosa devuelve el líquido hacia el chip.» | Confirmar en F26, F27 o en el desmontaje de iFixit |
@@ -97,18 +97,18 @@ Criterio: el artículo conserva su tesis, sus datos principales y su utilidad pr
 
 | Art. | ¿Se puede completar? | Qué se conserva | Qué habría que retirar o cambiar | Pérdida de calidad |
 |---|---|---|---|---|
-| **33** Modo juego | **Sí** | Todo el mecanismo de Game Mode, la tabla de estados, el diagrama, las intervenciones de fabricantes, el ejemplo del 25 % y Game Dashboard | La descripción concreta de Game Booster y Game Turbo (F13, F14): decir «cada fabricante ofrece su propia herramienta», como indica la documentación de Game Dashboard. Quitar el enlace al 34 si no se publica | Baja |
+| **33** Modo juego | **Sí · actualizado 28/11** con F13 y F14 (consulta asistida). Listo para revisión editorial | Todo el mecanismo de Game Mode, la tabla de estados, el diagrama, las intervenciones de fabricantes, el ejemplo del 25 % y Game Dashboard | La descripción concreta de Game Booster y Game Turbo (F13, F14): decir «cada fabricante ofrece su propia herramienta», como indica la documentación de Game Dashboard. Quitar el enlace al 34 si no se publica | Baja |
 | **39** iPhone y Android | **Sí, reescribiendo una sección** | Tabla oficial de Vulkan, papel de Vulkan, Unity y Unreal; diversidad de formatos de textura con datos de Android (ASTC > 80 %, ETC2 > 95 %); Metal según Apple | Testimonios de desarrolladores (F29), afirmación de Arm (F30), «perfiles gráficos conservadores», «una sola API» (S07) y lista de marcas (S08) | Media: pierde la voz de los desarrolladores, pero gana una fuente oficial reciente |
 | **36** Pérdida de FPS | **Sí, con recorte** | Explicación térmica oficial, diagrama y recomendaciones respaldadas por la Thermal API (reducir FPS o calidad para volver a un nivel sostenible) | Recomendaciones de Garena (F21), el 37 % (F22), la estabilidad de 3DMark (F04) y el brillo (S04) | Media: pierde la recomendación de un desarrollador de juegos y el orden de magnitud |
 | **40** Elegir teléfono | **Condicional** | Comprobaciones 2, 3, 4, 6 y 8 con fuentes de Android | Enlaces a borradores no publicados (31, 35, 37); ejemplo de Supercell (F32); la recomendación de Garena sobre la carga (F21); requisitos de Garena (F31) solo si se acepta la revisión del 16/11 del artículo 04 | Media-alta: pierde la conexión con el resto del paquete, que es parte de su valor |
 | 35 RAM virtual | **No** | La parte de Android | Su tesis es la contradicción con Samsung y Xiaomi (F18, F19). Sin ellas queda una explicación de zRAM | Alta |
 | 31 AnTuTu | **No** | Solo el modo de rendimiento fijo | Versiones de AnTuTu, casos de Geekbench y estabilidad de 3DMark | Alta |
 | 32 GTA San Andreas | **No** | Nada | Todas sus fuentes están pendientes | Total |
-| 34 Redmi sin Game Turbo | **No** | Solo la referencia a Game Dashboard | Todas las rutas de Xiaomi | Total |
+| **34** Redmi sin Game Turbo | **Sí · reescrito 28/11** con F14–F17 y las páginas N01–N03 (consulta asistida). Listo para revisión editorial | Compatibilidad oficial (REDMI 12 y 12C no compatibles), ruta y funciones de Game Turbo | Eliminadas S02 y S03 | — |
 | 37 Mismo procesador | **No** | La tabla de factores con la Thermal API | Todas las mediciones independientes, que son su evidencia | Alta |
 | 38 Cámara de vapor | **No** | La relación con la Thermal API | Apple, IEEE Spectrum y la patente | Alta |
 
-**Resumen:** 33 y 39 pueden cerrarse ya con fuentes verificadas; 36 y 40, con recortes que reducen su valor. Los otros seis dependen de la verificación del apartado 2.
+**Resumen (28/11):** 33 y 34 están listos para revisión editorial, con las fuentes de Samsung y Xiaomi pendientes de revisión humana. 39 puede cerrarse reescribiendo una sección; 36 y 40, con recortes. 31 y 32 avanzaron en la ronda 1, pero siguen dependiendo de fuentes pendientes.
 
 **Requisito técnico al publicar por partes:** el validador exige que los artículos relacionados (`related`) estén publicados, y `test:seo` rechaza enlaces internos a páginas inexistentes. Al publicar solo una parte, hay que ajustar `related` y los enlaces del cuerpo.
 
@@ -125,3 +125,62 @@ Orden propuesto, por número de afirmaciones desbloqueadas y artículos afectado
 7. **F07–F12** → desbloquean el 32. Atención: F10 y F11 dependen del país y de la fecha.
 8. **F31, F32** → completan el 40.
 9. **F20, F24, F29, F30** → baja prioridad: pueden eliminarse sin dañar los artículos.
+
+## 6. Ronda 1 · consulta asistida mediante ChatGPT (27/11/2026)
+
+Resultados aportados por dirección e incorporados el 28/11/2026. **Método: consulta asistida mediante ChatGPT, sin revisión humana de las páginas.** Solo los casos del REDMI 12 y 12C traen cita literal. El resto cuenta como lectura asistida hasta que una persona confirme cada pasaje con el protocolo del apartado 0.
+
+| ID | Resultado | Detalle recibido | Cambio aplicado |
+|---|---|---|---|
+| F01 | Confirmado | La V10 evalúa CPU, GPU, MEM y UX; escenas con Unreal Engine y Vulkan; la latencia de memoria puede afectar a la fluidez; V9 y V10 no son directamente comparables | 31: tabla de bloques según AnTuTu y advertencia de comparabilidad atribuida al desarrollador |
+| F02 | Pendiente | Página inaccesible | — |
+| F03 | Parcial | Desglose exacto sin revisar | 31: el desglose se apoya ahora en F01 |
+| F04 | **Parcial con corrección** | Fórmula confirmada; el umbral del 97 % corresponde a la prueba de estrés de **PC** | 31 y 36: eliminado el 97 % como referencia para teléfonos |
+| F05 | Pendiente | Página accesible; pasaje sin revisar | — |
+| F06 | Pendiente | Página inaccesible | — |
+| F07 | **Sustituida** | La ficha oficial de Google Play (N05) confirma juego de pago de Rockstar Games y **compras dentro de la aplicación**; la ausencia de anuncios no se confirma | 32: eliminado «sin anuncios»; añadidas las compras integradas; N05 como fuente principal en lugar de Apptopia |
+| F08 | Confirmado | Publicación del 21/12/2013 con precio de lanzamiento de 6,99 USD | 32: fecha y precio de lanzamiento atribuidos a Android Authority |
+| F09 | Pendiente | Página inaccesible | — |
+| F10 | Parcial | El medio informa de la salida prevista de Netflix el 12/12/2025 | Sin cambios: el artículo ya lo atribuye al medio |
+| F11 | Pendiente | Sin consultar | — |
+| F12 | Pendiente | Sin consultar | — |
+| F13 | Confirmado | Game Booster busca equilibrar rendimiento, temperatura y batería según los patrones de juego; página actualizada el 20/10/2026 | 33: nueva tabla «Qué añaden Samsung y Xiaomi» |
+| F14 | Confirmado | Game Turbo: WLAN, respuesta táctil, sonido, gestión de recursos y configuración térmica | 33 y 34 |
+| F15 | Confirmado | Ruta de activación documentada | 34 |
+| F16 | Confirmado | Compatibilidad documentada (REDMI Pad SE 8.7) | 34 |
+| F17 | Confirmado (medio no oficial) | Publicación del 22/04/2025 | 34: atribuido como medio no oficial |
+| F18–F32 | Pendientes | No incluidas en esta ronda | — |
+
+### Fuentes nuevas aportadas
+
+| ID | Fuente | Afirmación | Uso |
+|---|---|---|---|
+| N01 | https://www.mi.com/global/support/article/KA-710923/ | «The REDMI 12 doesn't support Game Turbo.» | 34 |
+| N02 | https://www.mi.com/global/support/article/KA-710924/ | «The REDMI 12C doesn't support Game Turbo.» | 34 |
+| N03 | https://www.mi.com/global/support/faq/details/KA-529999/ | El Redmi Note 14 es compatible con Game Turbo | 34 |
+| N04 | https://www.mi.com/es/support/faq/details/KA-1143796/ | Funciones de la barra lateral de Game Turbo | No usada: no se aportó el contenido concreto |
+| N05 | https://play.google.com/store/apps/details?id=com.rockstargames.gtasa | Ficha oficial de San Andreas (sustituye a F07) | 32 |
+
+Los enlaces se registran sin el parámetro `utm_source` que añade ChatGPT.
+
+### Datos recibidos que no se incorporan
+
+| Dato | Motivo |
+|---|---|
+| Precio actual de 6,99 USD en Google Play | La consulta no identifica el país de la tienda. La política exige mercado y fecha. Para usarlo, hay que repetir la consulta indicando el país |
+| Redmi 15 y Redmi Note 14 Pro «compatibles» | Llegaron sin URL de la página oficial |
+| «El Redmi Note 14 no admite el modo de alta frecuencia de fotogramas» | Sin cita ni URL que indique de qué página procede. Pendiente de confirmar en N03 |
+| Imágenes de Game Turbo, Game Booster y una cuenta de X | Sin derechos de uso documentados. La política de imágenes las excluye |
+| Diagrama conceptual del modo gamer | El artículo 33 ya tiene un diagrama basado en la documentación de Android |
+
+### Estado de los artículos tras la ronda 1
+
+| Art. | Estado | Lo que falta para la revisión editorial |
+|---|---|---|
+| 33 | **Listo para revisión editorial** | Revisión humana de F13 y F14. Para publicarlo solo, quitar o publicar a la vez sus enlaces a 34 y 36 |
+| 34 | **Listo para revisión editorial** | Revisión humana de N01–N03 y F14–F16 (citas literales de N03, F14, F15 y F16). Enlaza a 33 y 36 |
+| 31 | Avanza | F02, F05 y F06 (versiones posteriores y casos de Geekbench) |
+| 32 | Avanza | F09, F11, F12; confirmar F10; repetir la consulta del precio con el país si se quiere citar |
+| 36 | Corregido (97 %) | F21 y F22 |
+
+Los cuatro siguen con `status: draft`: no se ha publicado nada.

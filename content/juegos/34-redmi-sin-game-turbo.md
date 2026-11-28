@@ -4,36 +4,51 @@
   "section": "rendimiento",
   "games": ["Free Fire", "Roblox", "Minecraft", "Fortnite"],
   "slug": "redmi-sin-modo-juego-game-turbo",
-  "title": "¿Por qué mi Redmi no tiene modo juego? Dónde buscar Game Turbo",
-  "description": "Game Turbo vive dentro de la app Seguridad de Xiaomi: rutas para encontrarlo, causas habituales de que no aparezca y qué no conviene hacer.",
-  "answer": "En la mayoría de los casos el modo juego sí existe, pero no está en Ajustes: Game Turbo forma parte de la app Seguridad de Xiaomi. Ábrela y busca Game Turbo; si no aparece, actualiza la app Seguridad desde la tienda del teléfono y añade el juego manualmente. Xiaomi no publica una lista de modelos sin Game Turbo, así que no podemos asegurar que esté en todos.",
+  "title": "¿Por qué mi Redmi no tiene modo juego? Compatibilidad de Game Turbo",
+  "description": "Xiaomi confirma que algunos Redmi, como el REDMI 12 y el 12C, no admiten Game Turbo. Cómo comprobar tu modelo y dónde está la función si es compatible.",
+  "answer": "Puede que tu modelo no lo admita: Xiaomi indica oficialmente que el REDMI 12 y el REDMI 12C no son compatibles con Game Turbo. En los modelos compatibles, la función no está en Ajustes sino en la app Seguridad. Busca la página de soporte de tu modelo exacto en mi.com antes de dar por hecho que hay un fallo.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
   "status": "draft",
   "kind": "guia",
-  "scope": "Guía basada en páginas de soporte de Xiaomi consultadas mediante extractos de buscador; requieren lectura directa antes de publicar. Los nombres de menú cambian entre MIUI, HyperOS, modelos y regiones. No hemos probado los pasos en un Redmi.",
+  "scope": "Basado en páginas de soporte de Xiaomi revisadas el 27/11/2026 mediante consulta asistida (ChatGPT), pendientes de revisión humana. Solo citamos modelos con página oficial enlazada; los menús cambian entre MIUI, HyperOS, modelos y regiones. No hemos probado los pasos en un Redmi.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
     {
-      "label": "Xiaomi: cómo activar Game Turbo en el Xiaomi 14T Pro",
-      "url": "https://www.mi.com/global/support/faq/details/KA-515623/",
-      "supports": "Ruta oficial: app Seguridad → Game Turbo → icono de ajustes."
+      "label": "Xiaomi: el REDMI 12 y Game Turbo",
+      "url": "https://www.mi.com/global/support/article/KA-710923/",
+      "supports": "«The REDMI 12 doesn't support Game Turbo.» Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
+    },
+    {
+      "label": "Xiaomi: el REDMI 12C y Game Turbo",
+      "url": "https://www.mi.com/global/support/article/KA-710924/",
+      "supports": "«The REDMI 12C doesn't support Game Turbo.» Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
+    },
+    {
+      "label": "Xiaomi: Redmi Note 14 y Game Turbo",
+      "url": "https://www.mi.com/global/support/faq/details/KA-529999/",
+      "supports": "El Redmi Note 14 figura como compatible con Game Turbo. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "Xiaomi: cómo usar Game Turbo en REDMI Pad SE 8.7",
       "url": "https://www.mi.com/global/support/faq/details/KA-492711/",
-      "supports": "Xiaomi documenta Game Turbo también en dispositivos de la marca REDMI."
+      "supports": "Xiaomi documenta Game Turbo en la REDMI Pad SE 8.7. Consulta asistida (ChatGPT) del 27/11/2026."
+    },
+    {
+      "label": "Xiaomi: cómo activar Game Turbo en el Xiaomi 14T Pro",
+      "url": "https://www.mi.com/global/support/faq/details/KA-515623/",
+      "supports": "Ruta oficial: app Seguridad → Game Turbo → icono de ajustes. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "Xiaomi: introducción a Game Turbo",
       "url": "https://www.mi.com/global/support/article/KA-03436/",
-      "supports": "Descripción oficial de la función."
+      "supports": "Game Turbo incluye optimizaciones de conectividad WLAN, respuesta táctil, sonido, gestión de recursos y configuración térmica. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "Xiaomitime: Game Turbo dentro de la app Seguridad en HyperOS",
       "url": "https://ximitime.com/hyperos-2-game-turbo-april-update-is-out-40197/",
-      "supports": "Medio no oficial: en HyperOS, Game Turbo se actualiza junto con la app Seguridad."
+      "supports": "Medio no oficial, 22/04/2025: en HyperOS, Game Turbo se actualiza junto con la app Seguridad. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
       "label": "Android Developers: Game Dashboard",
@@ -46,39 +61,49 @@
 }
 ---
 
-## Dónde está Game Turbo
+## Primero: ¿tu modelo es compatible?
 
-Xiaomi no coloca su modo juego en el lugar donde muchos lo buscan. En sus páginas de soporte la ruta es:
+Xiaomi publica páginas de soporte por modelo, y en algunas lo dice sin rodeos:
+
+| Modelo | Game Turbo según Xiaomi |
+|---|---|
+| REDMI 12 | **No compatible** («The REDMI 12 doesn't support Game Turbo») |
+| REDMI 12C | **No compatible** («The REDMI 12C doesn't support Game Turbo») |
+| Redmi Note 14 | Compatible |
+| REDMI Pad SE 8.7 | Compatible |
+| Xiaomi 14T Pro | Compatible |
+
+Si tienes un REDMI 12 o un 12C, que no aparezca Game Turbo **no es un fallo**: el fabricante no incluye la función en esos modelos.
+
+Esta tabla recoge solo los modelos con página oficial enlazada en las fuentes. Xiaomi no publica una lista única de compatibilidad, así que no podemos decir nada de los demás modelos sin consultar su página. Busca en el soporte de mi.com el nombre exacto de tu teléfono junto con «Game Turbo».
+
+## Dónde está Game Turbo en un modelo compatible
+
+Xiaomi no coloca su modo juego en Ajustes. En sus páginas de soporte la ruta es:
 
 1. Abre la app **Seguridad** de Xiaomi.
-2. Desplázate hasta **Game Turbo**.
-3. Si el juego no aparece en la lista, añádelo con el botón para agregar apps.
-4. Abre el juego **desde Game Turbo** la primera vez para comprobar que el panel lateral aparece.
+2. Entra en **Game Turbo**.
+3. Usa el **icono de ajustes** para configurarlo.
 
-En algunas versiones también hay acceso desde **Ajustes → Funciones especiales**. Si tu menú dice otra cosa, sigue la página de soporte de tu modelo exacto en mi.com.
+Según Xiaomi, Game Turbo ajusta la **conectividad WLAN**, la **respuesta táctil**, el **sonido**, la **gestión de recursos** y la **configuración térmica** mientras juegas. Si tu menú tiene otros nombres, sigue la página de soporte de tu modelo exacto.
 
-## Por qué puede no aparecer
+## Si tu modelo es compatible y aun así no aparece
 
-| Causa | Cómo comprobarlo |
+| Causa posible | Qué hacer |
 |---|---|
-| La función está en otra app | Busca dentro de **Seguridad**, no en Ajustes |
-| App Seguridad desactualizada | En HyperOS, Game Turbo se actualiza junto con esa app. Revisa actualizaciones en la tienda del teléfono |
-| El juego no está añadido | Game Turbo solo muestra los juegos de su lista |
-| Diferencias de versión o región | Xiaomi documenta la función modelo por modelo. No hemos encontrado una lista oficial de exclusiones |
-
-**Lo que no podemos afirmar:** que todos los Redmi incluyan Game Turbo, ni qué modelos concretos carecen de él. Xiaomi no publica esa lista y no vamos a deducirla de comentarios de usuarios.
+| Lo buscas en Ajustes | Ábrelo desde la app **Seguridad** |
+| App Seguridad desactualizada | Un medio especializado no oficial informa de que, en HyperOS, Game Turbo se actualiza junto con esa app. Revisa si hay actualizaciones del sistema y de sus apps |
+| Funciones distintas por modelo | Aunque el modelo sea compatible, no todos ofrecen las mismas opciones. Consulta la página de soporte de tu modelo |
 
 ## Lo que no conviene hacer
 
-- **No instales APK de Game Turbo** descargados de webs externas. La función forma parte de una app del sistema; una versión ajena puede no corresponder a tu modelo o incluir software malicioso.
-- **No uses aplicaciones de «aceleración»** que prometen más FPS. No pueden aumentar la potencia del procesador.
+- **No instales APK de Game Turbo** descargados de webs externas para un modelo que Xiaomi declara incompatible. Una versión ajena puede no corresponder a tu teléfono o incluir software malicioso.
+- **Desconfía de las apps de «aceleración»** que prometen más FPS. Ninguna app cambia el procesador ni la refrigeración del teléfono.
 
-## Si no lo encuentras
+## Sin Game Turbo también puedes jugar mejor
 
-Game Turbo no es imprescindible para jugar. Sin él puedes:
-
-- Activar **No molestar** antes de la partida.
-- Bajar los **gráficos o el límite de FPS** dentro del propio juego. En sesiones largas suele dar más estabilidad que cualquier perfil del sistema.
-- Cerrar apps que descargan o sincronizan en segundo plano.
+- Activa **No molestar** antes de la partida.
+- Baja la **calidad gráfica** o el **límite de FPS** dentro del juego. La documentación de Android para desarrolladores recomienda precisamente reducir FPS o calidad cuando el teléfono se calienta, para mantener un nivel sostenible. Lo explicamos en [por qué un juego pierde FPS después de varios minutos](/rendimiento/juego-pierde-fps-despues-de-minutos).
+- Cierra apps que descargan o sincronizan en segundo plano.
 
 Si quieres saber qué puede y qué no puede hacer un modo juego, lo explicamos en [qué hace realmente el modo juego de Android](/rendimiento/modo-juego-android-como-funciona).
