@@ -47,9 +47,9 @@
       "supports": "Ejemplo de requisitos oficiales separados por edición, con mínimos y recomendados."
     },
     {
-      "label": "Garena Free Fire: cómo evitar el sobrecalentamiento",
-      "url": "https://ffsupport.garena.com/hc/en-us/articles/4412913797146-How-to-Avoid-Device-Overheating",
-      "supports": "Garena recomienda no jugar mientras el dispositivo se carga."
+      "label": "Garena Free Fire (Singapur): cómo evitar el sobrecalentamiento",
+      "url": "https://ffsupportsg.garena.com/hc/en-us/articles/4411731947674-How-to-Avoid-Device-Overheating",
+      "supports": "Artículo del 23/11/2021: evitar jugar mientras el dispositivo se carga. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "Supercell: fin de soporte de iOS 12, iOS 13, Android 5 y Android 6 en Clash Royale",

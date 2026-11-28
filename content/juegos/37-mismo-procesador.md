@@ -9,10 +9,10 @@
   "answer": "Porque el procesador es solo una pieza. Cada fabricante decide cuánto calor puede acumular el teléfono, cuánta energía deja consumir al chip, qué resolución y tasa de refresco usa la pantalla y cómo trata a cada app. Las pruebas de estrés independientes muestran que el mismo chip puede mantener niveles distintos según el modelo. Para jugar importa el rendimiento sostenido, no el pico.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "comparativa",
   "handsOn": false,
-  "scope": "Comparativa documental. Reunimos mediciones publicadas por otros medios con métodos distintos; no son comparables entre sí cifra a cifra. Las fuentes de prensa se consultaron mediante extractos de buscador y requieren lectura directa antes de publicar.",
+  "scope": "Comparativa documental. La documentación de Android se leyó directamente el 27/11/2026; la medición de Notebookcheck se revisó mediante consulta asistida (ChatGPT), pendiente de revisión humana. Los resultados de benchmark no equivalen a FPS de juegos.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -22,27 +22,22 @@
       "supports": "Estado térmico, frecuencias variables y tipos de núcleo hacen el rendimiento móvil más dinámico que en consolas o PC. Leído directamente el 27/11/2026."
     },
     {
+      "label": "Android Developers: Game Mode API",
+      "url": "https://developer.android.com/games/gamemode/gamemode-api",
+      "supports": "Los fabricantes pueden aplicar intervenciones de Game Mode a los juegos sin consultar al estudio. Leído directamente el 27/11/2026."
+    },
+    {
       "label": "Android Developers: Thermal API",
       "url": "https://developer.android.com/games/optimize/adpf/thermal",
       "supports": "El rendimiento sostenible depende del diseño térmico del dispositivo."
     },
     {
-      "label": "Android Authority: pruebas del Galaxy S26 Ultra",
-      "url": "https://www.androidauthority.com/samsung-galaxy-s26-ultra-benchmarks-3652232/",
-      "supports": "Tres modelos con Snapdragon 8 Elite Gen 5 convergen tras unos cuatro minutos de carga gráfica; diferencias de calentamiento entre modelos."
-    },
-    {
-      "label": "Notebookcheck: Snapdragon 8 Gen 1 en Xiaomi 12 Pro y OnePlus 10 Pro",
+      "label": "Notebookcheck (con pruebas de TechTablets): Snapdragon 8 Gen 1 en Xiaomi 12 Pro y OnePlus 10 Pro",
       "url": "https://www.notebookcheck.net/Xiaomi-12-Pro-OnePlus-10-Pro-and-their-Snapdragon-8-Gen-1-SoCs-fail-to-impress-in-performance-tests.596914.0.html",
-      "supports": "Mismo chip, comportamiento distinto bajo carga sostenida; el OnePlus 10 Pro perdió cerca del 37 %."
-    },
-    {
-      "label": "Android Authority: Geekbench retira modelos Galaxy por GOS",
-      "url": "https://www.androidauthority.com/geekbench-delists-samsung-flagships-3129230/",
-      "supports": "El software del fabricante limitaba apps y juegos de forma distinta a los benchmarks."
+      "supports": "Publicado el 02/02/2022 con pruebas de TechTablets: con el mismo Snapdragon 8 Gen 1, el Xiaomi 12 Pro cerró la prueba de estrés hacia los 17 minutos y el OnePlus 10 Pro redujo su rendimiento alrededor de un 37 %. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     }
   ],
-  "related": ["36-juego-pierde-fps", "38-camara-de-vapor", "31-antutu-videojuegos"],
+  "related": ["36-juego-pierde-fps", "39-juegos-mejor-iphone", "35-ram-virtual-juegos"],
   "featured": false
 }
 ---
@@ -64,9 +59,16 @@ La documentación de Android para desarrolladores reconoce esta variabilidad: el
 
 ## Lo que muestran las pruebas independientes
 
-- **Snapdragon 8 Elite Gen 5:** Android Authority comparó tres modelos con este chip. Tras unos cuatro minutos de carga gráfica intensa, los tres se estabilizaron en un nivel parecido, aunque se calentaron a ritmos distintos.
-- **Snapdragon 8 Gen 1:** Notebookcheck midió que el OnePlus 10 Pro perdió alrededor del 37 % de su rendimiento durante la prueba de estrés.
-- **Software:** en 2022, Samsung limitaba miles de apps, incluidos juegos, con su Game Optimizing Service, pero no las apps de benchmark. Geekbench retiró esos modelos de su tabla.
+El caso mejor documentado entre nuestras fuentes es el del **Snapdragon 8 Gen 1**. En febrero de 2022, Notebookcheck publicó pruebas de estrés de TechTablets con dos teléfonos que usan exactamente ese chip:
+
+| Teléfono | Procesador | Resultado en la prueba de estrés |
+|---|---|---|
+| Xiaomi 12 Pro | Snapdragon 8 Gen 1 | La prueba se cerró hacia los 17 minutos |
+| OnePlus 10 Pro | Snapdragon 8 Gen 1 | Redujo su rendimiento alrededor de un 37 % |
+
+Mismo chip, dos comportamientos distintos bajo carga sostenida. Son resultados de un benchmark sintético, no FPS de un juego, y corresponden a una prueba y una temperatura ambiente concretas. Sirven para mostrar que el procesador por sí solo no predice el resultado.
+
+**El software también cuenta.** La documentación de Android reconoce que los fabricantes pueden aplicar ajustes propios a los juegos («intervenciones» de Game Mode) sin consultar al estudio. Por eso el mismo juego puede recibir un trato distinto según la marca del teléfono.
 
 Cada medio usa su propio método, duración y temperatura ambiente. Por eso no comparamos cifras de distintas fuentes como si fueran una sola tabla.
 

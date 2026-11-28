@@ -96,7 +96,7 @@ Ninguno de los dos publica cuánto cambian los FPS o la temperatura en un juego 
 ## Lo que el modo juego no puede hacer
 
 - No aumenta la potencia máxima del procesador ni la RAM física.
-- No evita el calentamiento. Android explica que un teléfono solo mantiene su máximo rendimiento durante un tiempo limitado antes de reducir la potencia por temperatura. Si eliges «Rendimiento», el calor puede llegar antes.
+- No evita el calentamiento. Android explica que un teléfono solo mantiene su máximo rendimiento durante un tiempo limitado antes de reducir la potencia por temperatura. Si eliges «Rendimiento», el calor puede llegar antes. Lo explicamos en [por qué un juego pierde FPS después de varios minutos](/rendimiento/juego-pierde-fps-despues-de-minutos).
 - No mejora la conexión: el lag por red tiene otras causas. Lo tratamos en [cómo reducir el lag de Roblox](/juegos/roblox/reducir-lag-celular).
 
 ## Qué te recomendamos

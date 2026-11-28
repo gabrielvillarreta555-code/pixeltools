@@ -35,7 +35,7 @@ Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que s
 - Banco de 150 preguntas, registro de fuentes, 20 prioridades, metodologías de experimento e informe en `docs/vx-ed-004/`.
 - **Verificación pendiente:** 32 fuentes y 9 afirmaciones sin fuente, listadas en `docs/vx-ed-004/VERIFICACION.md` (y `verificacion.csv`) para verificarlas con el equipo. Solo se pueden leer directamente `developer.android.com` y `developer.apple.com` desde este entorno.
 - **Ronda 1 de verificación (consulta asistida mediante ChatGPT, 27/11/2026; incorporada el 28/11):** 33 y 34 quedan listos para revisión editorial; 31, 32 y 36 corregidos. Registro en `docs/vx-ed-004/VERIFICACION.md` §6. Toda consulta asistida está pendiente de revisión humana.
-- **28/11:** 33, 34 y 39 marcados como publicados en la rama (51 rutas; fusionar equivale a publicarlos). 33 y 34 requieren antes la revisión humana de sus fuentes asistidas. 39 se reescribió solo con fuentes leídas directamente. Los otros siete siguen en borrador. Fuentes de la ronda 2 en `docs/vx-ed-004/VERIFICACION.md` §7. La portada muestra el bloque «Rendimiento y tecnología».
+- **28/11 (ronda 2):** 33, 34, 35, 36, 37 y 39 preparados (`published` en la rama: 36 artículos y 54 rutas; fusionar equivale a publicarlos). Antes de fusionar, hace falta la revisión humana de sus fuentes asistidas (VERIFICACION.md §7 y §8). 31, 32, 38 y 40 siguen en borrador; sus fuentes pendientes están en §8. La portada muestra el bloque «Rendimiento y tecnología».
 - Recomendaciones de compra pendientes hasta tener precios verificables. Experimentos físicos y herramientas nuevas, pospuestos.
 - Vista previa de borradores con `INCLUDE_DRAFTS=1`; diagramas con bloques `flujo`.
 

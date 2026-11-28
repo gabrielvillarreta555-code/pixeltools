@@ -1,6 +1,6 @@
 # VX-ED-004 · Fuentes pendientes de verificación
 
-27 de noviembre de 2026 (actualizado el 28/11/2026 con la ronda 1, §6, y el estado de publicación, §7). Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
+27 de noviembre de 2026 (actualizado el 28/11/2026 con la ronda 1, §6, el estado de publicación, §7, y la ronda 2, §8). Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
 
 ## 0. Cómo registrar una verificación
 
@@ -257,3 +257,55 @@ El artículo 40 enlaza además a 31, 35 y 37: solo puede publicarse cuando estos
 | 38 Cámara de vapor | Borrador | F25, F26, F27 (y S06) |
 | 32 GTA San Andreas | Borrador | F09, F10, F11, F12 (y país del precio, opcional) |
 | 40 Elegir teléfono | Borrador | F21, F31, F32, y la publicación de 31, 35 y 37 |
+
+## 8. Ronda 2 · consulta asistida mediante ChatGPT (27/11/2026), incorporada el 28/11/2026
+
+**Método:** consulta asistida mediante ChatGPT, sin revisión humana de las páginas. No se aportaron citas literales.
+
+| ID | Resultado | Detalle recibido | Cambio aplicado |
+|---|---|---|---|
+| F18 | Confirmado | Página actualizada el 03/11/2026: la memoria virtual usa almacenamiento interno, es más lenta que la RAM física y no garantiza mayor rendimiento | 35: lista de fabricantes y nueva tabla «8 GB + 8 GB no son 16 GB» |
+| F19 | **Parcial** | Xiaomi describe la extensión de memoria mediante el almacenamiento disponible. **No se confirma la cita «sin ralentizarse»** | 35: retirada la cita y la comparación «Samsung más prudente que Xiaomi», que dependía de ella |
+| F21 | **Sustituida por F21b** | https://ffsupportsg.garena.com/hc/en-us/articles/4411731947674-How-to-Avoid-Device-Overheating (23/11/2021): reducir gráficos, no jugar mientras se carga, evitar el sol directo. **«No sobrecargar el dispositivo» no se confirma** | 36: retirada esa recomendación; F21b en 36 y 40 |
+| F22 | Confirmado | Publicación del 02/02/2022 con pruebas de TechTablets: Xiaomi 12 Pro, cierre de la prueba hacia los 17 minutos; OnePlus 10 Pro, reducción de cerca del 37 %. Ambos con Snapdragon 8 Gen 1 | 36: atribución a TechTablets vía Notebookcheck y aviso de que no son FPS de juegos. 37: tabla con ambos teléfonos |
+
+**Otros cambios de esta entrega:**
+- **35, 36 y 37** pasan a `status: published` en la rama.
+- **37:** se completó con F22 y con la documentación verificada de Game Mode (los fabricantes pueden aplicar intervenciones sin consultar al estudio). Se retiraron de él los ejemplos de F06 (GOS de Samsung) y F23 (Snapdragon 8 Elite Gen 5), que siguen sin verificar. Pueden volver como ampliación si se verifican.
+- **32:** retirado el precio actual de 6,99 USD hasta identificar el mercado. Se mantiene el precio de lanzamiento de 2013, atribuido y fechado.
+- **33 y 34** vuelven a enlazar al 36, que ya está preparado.
+- **Tablas de los artículos:** antes no tenían estilo y la del 37 desbordaba a 390 px. Ahora tienen estilo y en móvil se muestran como fichas con la etiqueta de cada columna.
+- **`/creditos`** desbordaba a 320 px por una URL sin cortes; el problema era anterior a esta entrega y está corregido.
+
+### Estado de los diez artículos (28/11/2026)
+
+| Art. | Estado en la rama | Pendiente antes de fusionar | Pendiente para completarlo |
+|---|---|---|---|
+| 33 Modo juego | **Preparado** | Revisión humana de F13 y F14 | — |
+| 34 Redmi y Game Turbo | **Preparado** | Revisión humana de F14–F16 y N01–N03 | — |
+| 35 RAM virtual | **Preparado** | Revisión humana de F18 y F19 | — |
+| 36 Pérdida de FPS | **Preparado** | Revisión humana de F21b y F22 | — |
+| 37 Mismo procesador | **Preparado** | Revisión humana de F22 | Opcional: F06 y F23 para recuperar los ejemplos retirados |
+| 39 iPhone y Android | **Preparado** | — (solo fuentes leídas directamente) | — |
+| 31 AnTuTu | Borrador | — | **F05, F06** |
+| 38 Cámara de vapor | Borrador | — | **F25, F26, F27** |
+| 32 GTA San Andreas | Borrador | — | **F09, F11, F12**, cita literal de F10 |
+| 40 Elegir teléfono | Borrador | — | **F31, F32** y la publicación del 31 |
+
+### Fuentes estrictamente necesarias para terminar los cuatro restantes
+
+| Artículo | ID | URL | Qué confirmar |
+|---|---|---|---|
+| 31 | F05 | https://www.tomsguide.com/news/oneplus-9-just-got-delisted-from-geekbench-and-oneplus-responds | En 2021 Geekbench retiró el OnePlus 9 y el 9 Pro porque el sistema limitaba apps populares pero no los benchmarks |
+| 31 | F06 | https://www.androidauthority.com/geekbench-delists-samsung-flagships-3129230/ | En 2022 Geekbench retiró los Galaxy S10, S20, S21 y S22 porque GOS limitaba apps y juegos pero no los benchmarks |
+| 38 | F25 | https://www.apple.com/ca/newsroom/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/ | Agua desionizada sellada en una cámara de vapor soldada por láser al chasis; «hasta un 40 %» más de rendimiento sostenido |
+| 38 | F26 | https://spectrum.ieee.org/iphone-17-pro-vapor-chamber | Evaporación y condensación; el grosor reduce la ventaja frente al cobre; Samsung y Google ya usaban cámaras de vapor; estructura que devuelve el líquido (S06) |
+| 38 | F27 | https://patents.google.com/patent/US9310139 | Cámara de vapor como sistema pasivo cerrado de dos fases que usa el calor latente |
+| 32 | F09 | https://gamespot.com/articles/gta-3-vice-city-and-san-andreas-now-available-free-through-netflix/1100-6519956/ | La trilogía Definitive llegó a Netflix en diciembre de 2023 sin coste adicional, en iOS y Android |
+| 32 | F10 | https://gameranx.com/updates/id/558698/article/grand-theft-auto-san-andreas-set-to-leave-netflix-on-mobile/ | Cita literal de la salida prevista el 12/12/2025 |
+| 32 | F11 | https://apps.apple.com/us/app/id6450280702 | Ficha propia de la edición de Netflix; desarrollador Netflix, Inc. |
+| 32 | F12 | https://propakistani.pk/2026/09/11/someone-just-put-2-gta-games-on-play-store-for-free/ | Copia gratuita con anuncios, de otro desarrollador, en Play Store (septiembre de 2026) |
+| 40 | F31 | https://ffsoporte.garena.com/hc/es-419/articles/360035195832-Requerimientos-t%C3%A9cnicos-Free-Fire-Free-Fire-MAX | Requisitos separados para Free Fire y MAX, con mínimos y recomendados |
+| 40 | F32 | https://supercell.com/en/games/clashroyale/blog/news/end-of-support-ios-12-ios-13-android-5-and-android-6/ | Retirada del soporte para iOS 12 y 13 y Android 5 y 6 |
+
+Opcional para el 32: repetir la consulta de la ficha de Google Play indicando el país de la tienda, si se quiere citar el precio actual.

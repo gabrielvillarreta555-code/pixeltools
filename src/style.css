@@ -99,3 +99,10 @@
 @media(max-width:700px){.main-nav:has(a[href="/tecnologia/"]){grid-template-columns:repeat(6,minmax(0,1fr))}.main-nav:has(a[href="/tecnologia/"]) a{grid-column:span 2}.main-nav:has(a[href="/tecnologia/"]) a:nth-last-child(-n+4){grid-column:span 3}}
 .hub-more{margin-top:18px;font-size:.85rem;font-weight:700}
 .hub-more a{color:var(--accent)}
+/* Tablas dentro de los artículos: mismos tokens que la tabla de precios; desplazamiento interno si no caben. */
+.prose table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-size:.88rem;line-height:1.55;margin:24px 0}
+.prose th,.prose td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+.prose th{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+@media(max-width:700px){.prose th,.prose td{padding:8px}}
+.legal,.fan-notice{overflow-wrap:break-word}
+@media(max-width:700px){.prose table.stack{display:block;overflow:visible}.prose table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prose table.stack tbody,.prose table.stack tr{display:block}.prose table.stack tr{border-bottom:1px solid var(--line);padding:10px 0}.prose table.stack td{display:grid;grid-template-columns:minmax(6.5rem,38%) 1fr;gap:12px;border:0;padding:4px 0}.prose table.stack td::before{content:attr(data-label);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;font-weight:700}.prose table.stack td[data-label=""]{display:block}.prose table.stack td[data-label=""]::before{content:none}}

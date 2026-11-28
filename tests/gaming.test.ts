@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { parseArticle, loadArticles, markdown } from '../scripts/editorial/content.mjs';
+import { parseArticle, loadArticles, markdown, labelTables } from '../scripts/editorial/content.mjs';
 import { themes, retired, siteConfig } from '../scripts/editorial/themes.mjs';
 import { jsonLd, articleBody, card } from '../scripts/editorial/template.mjs';
 import { searchItems } from '../public/editorial/search.js';
@@ -9,7 +9,7 @@ import { onRequest } from '../functions/_middleware';
 const source=readFileSync('content/juegos/01-roblox-280.md','utf8');
 describe('publicación editorial',()=>{
  it('conserva las diez URLs originales y distribuye las lecturas destacadas entre los seis juegos',async()=>{
-  const all=await loadArticles(); expect(all).toHaveLength(33);
+  const all=await loadArticles(); expect(all).toHaveLength(36);
   for(const file of execFileSync('git',['ls-tree','-r','--name-only','fa39de5','content/juegos'],{encoding:'utf8'}).trim().split('\n')){
    const old=JSON.parse(execFileSync('git',['show',`fa39de5:${file}`],{encoding:'utf8'}).split('---')[1]);
    expect(all.some(a=>a.path===`/juegos/${old.game}/${old.slug}`)).toBe(true);
@@ -91,6 +91,10 @@ describe('borradores y diagramas VX-ED-004',()=>{
  });
  it('los borradores de tecnología declaran que no hubo prueba propia',async()=>{
   for(const a of (await loadArticles(undefined,{includeDrafts:true})).filter(a=>a.section==='tecnologia'))expect(a.handsOn).toBe(false);
+ });
+ it('etiqueta las celdas de las tablas para mostrarlas como fichas en móvil',()=>{
+  const html=labelTables(markdown.render('| Modelo | Juego <b> |\n|---|---|\n| A | **sí** |'));
+  expect(html).toContain('<table class="stack">');expect(html).toContain('<td data-label="Modelo">A</td>');expect(html).toContain('data-label="Juego &lt;b&gt;"');expect(html).not.toContain('<b>');
  });
  it('renderiza un diagrama de pasos accesible y escapa su contenido',()=>{
   const html=markdown.render('```flujo\n# Ciclo <térmico>\nCalor | El chip <b>sube</b>\nLímite | Baja la frecuencia\n```');

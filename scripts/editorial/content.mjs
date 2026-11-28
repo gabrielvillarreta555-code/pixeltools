@@ -55,6 +55,14 @@ const renderFlow = content => {
   return `<figure class="flow-chart"><figcaption>${escapeHtml(caption[1])}</figcaption><ol>${steps.map(({ step, detail }) => `<li><strong>${escapeHtml(step)}</strong><span>${escapeHtml(detail)}</span></li>`).join('')}</ol></figure>`;
 };
 
+// En móvil las tablas se muestran como fichas: cada celda lleva la etiqueta de su columna.
+export const labelTables = html => html.replace(/<table>([\s\S]*?)<\/table>/g, (table, inner) => {
+  const heads = [...(inner.match(/<thead>[\s\S]*?<\/thead>/)?.[0] ?? '').matchAll(/<th[^>]*>([\s\S]*?)<\/th>/g)].map(m => m[1].replace(/<[^>]+>/g, '').trim());
+  if (!heads.length) return table;
+  const body = inner.replace(/<tr>([\s\S]*?)<\/tr>/g, (row, cells) => { let i = 0; return `<tr>${cells.replace(/<td([^>]*)>/g, (m, attrs) => `<td${attrs} data-label="${heads[i++] ?? ''}">`)}</tr>`; });
+  return `<table class="stack">${body}</table>`;
+});
+
 export function parseArticle(source, name = 'article', { today = new Date().toISOString().slice(0, 10) } = {}) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/);
   if (!match) throw new Error(`${name}: requiere frontmatter JSON y Markdown`);
@@ -96,7 +104,7 @@ export function parseArticle(source, name = 'article', { today = new Date().toIS
   const body = match[2].trim();
   const tokens = markdown.parse(body, {});
   if (tokens.some(t => t.type === 'heading_open' && t.tag === 'h1') || !tokens.some(t => t.type === 'heading_open' && t.tag === 'h2')) throw new Error(`${name}: usar secciones H2, no H1`);
-  return { ...data, body, html: markdown.render(body), path: data.game ? `/juegos/${data.game}/${data.slug}` : `/${data.section}/${data.slug}` };
+  return { ...data, body, html: labelTables(markdown.render(body)), path: data.game ? `/juegos/${data.game}/${data.slug}` : `/${data.section}/${data.slug}` };
 }
 
 // includeDrafts solo se usa en vistas previas no indexables para revisar borradores.

@@ -6,12 +6,12 @@
   "slug": "ram-virtual-mejora-juegos",
   "title": "¿La RAM virtual mejora el rendimiento en los juegos?",
   "description": "Qué son RAM Plus, la extensión de memoria y zRAM, por qué Android y algunos fabricantes describen el almacenamiento de forma distinta y qué esperar al jugar.",
-  "answer": "No aumenta la potencia ni los FPS. La «RAM virtual» de algunos fabricantes reserva almacenamiento para conservar en segundo plano más apps; el almacenamiento es más lento que la RAM, y la propia Samsung advierte que no es RAM física. Puede ayudar a no perder apps abiertas, pero un juego exigente necesita memoria física. Los requisitos oficiales se refieren a la RAM del dispositivo, no a la ampliada.",
+  "answer": "No aumenta la potencia ni los FPS. La «RAM virtual» de algunos fabricantes reserva almacenamiento para conservar en segundo plano más apps; el almacenamiento es más lento que la RAM, y la propia Samsung advierte que no es RAM física. Puede ayudar a no perder apps abiertas, pero un juego exigente necesita memoria física. Los requisitos oficiales que hemos revisado hablan de la RAM del dispositivo sin mencionar la ampliada.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "analisis",
-  "scope": "La documentación de Android se leyó directamente el 27/11/2026. Las páginas de Samsung y Xiaomi se consultaron mediante extractos de buscador y requieren lectura directa antes de publicar. No hemos medido el efecto en juegos.",
+  "scope": "La documentación de Android se leyó directamente el 27/11/2026. Las páginas de Samsung y Xiaomi se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT), pendiente de revisión humana. No hemos medido el efecto en juegos.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -23,15 +23,15 @@
     {
       "label": "Samsung: RAM Plus en Galaxy",
       "url": "https://www.samsung.com/ca/support/mobile-devices/use-ram-plus-on-your-samsung-galaxy/",
-      "supports": "RAM Plus no añade RAM física; la memoria virtual es más lenta que la física y reserva almacenamiento."
+      "supports": "Página actualizada el 03/11/2026: la memoria virtual usa almacenamiento interno, es más lenta que la RAM física y no garantiza mayor rendimiento. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "Xiaomi: ¿el Xiaomi 15 admite extensión de memoria?",
       "url": "https://www.mi.com/global/support/faq/details/KA-541717/",
-      "supports": "Xiaomi describe la función como RAM adicional creada con espacio de almacenamiento."
+      "supports": "Xiaomi describe la extensión de memoria como memoria adicional creada con el almacenamiento disponible. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     }
   ],
-  "related": ["36-juego-pierde-fps", "40-elegir-telefono-jugar", "04-free-fire-requisitos"],
+  "related": ["36-juego-pierde-fps", "33-modo-juego-android", "04-free-fire-requisitos"],
   "featured": false
 }
 ---
@@ -54,10 +54,23 @@ La documentación oficial de Android afirma que, a diferencia de otros sistemas 
 
 Sin embargo, varios fabricantes ofrecen una función que hace precisamente eso:
 
-- **Samsung (RAM Plus)** explica que usa almacenamiento como memoria virtual, que **no añade RAM física**, que es más lenta y que reserva espacio que ya no tendrás para otros archivos.
-- **Xiaomi (extensión de memoria)** la describe como «RAM adicional» creada con almacenamiento para manejar más tareas «sin ralentizarse».
+- **Samsung (RAM Plus)** explica que la memoria virtual usa almacenamiento interno, que **es más lenta que la RAM física** y que **no garantiza un mayor rendimiento**.
+- **Xiaomi (extensión de memoria)** la describe como memoria adicional creada con el **almacenamiento disponible**.
 
-Las dos cosas pueden ser ciertas a la vez: Android describe el comportamiento base de la plataforma, y los fabricantes la modifican en sus propias versiones del sistema. Lo que no encaja es presentar esa ampliación como si fuera RAM equivalente. La descripción de Samsung es más prudente que la de Xiaomi.
+Las dos cosas pueden ser ciertas a la vez: Android describe el comportamiento base de la plataforma, y cada fabricante la modifica en su propia versión del sistema. Lo que no encaja es presentar esa ampliación como si fuera RAM equivalente, y la propia Samsung no lo hace.
+
+## «8 GB + 8 GB» no son 16 GB de RAM
+
+Algunos anuncios suman la RAM física y la extensión virtual en una sola cifra. No son equivalentes:
+
+| | 16 GB de RAM física | 8 GB de RAM física + 8 GB de extensión |
+|---|---|---|
+| Dónde están los datos | En la memoria rápida | 8 GB en memoria rápida y el resto en el almacenamiento |
+| Velocidad | La de la RAM | La parte virtual es más lenta que la RAM física, según Samsung |
+| Coste en almacenamiento | Ninguno | Reserva parte del almacenamiento interno |
+| Rendimiento | — | Samsung advierte que no garantiza un mayor rendimiento |
+
+La extensión puede servir para conservar más apps en segundo plano, pero un juego que necesita memoria rápida no la obtiene del almacenamiento.
 
 ## Qué significa al jugar
 

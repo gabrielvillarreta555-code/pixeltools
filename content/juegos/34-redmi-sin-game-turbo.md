@@ -108,7 +108,7 @@ Según Xiaomi, Game Turbo ajusta la **conectividad WLAN**, la **respuesta tácti
 ## Sin Game Turbo también puedes jugar mejor
 
 - Activa **No molestar** antes de la partida.
-- Baja la **calidad gráfica** o el **límite de FPS** dentro del juego. La documentación de Android para desarrolladores recomienda precisamente reducir FPS o calidad cuando el teléfono se acerca a su límite térmico, para mantener un nivel sostenible.
+- Baja la **calidad gráfica** o el **límite de FPS** dentro del juego. La documentación de Android para desarrolladores recomienda precisamente reducir FPS o calidad cuando el teléfono se acerca a su límite térmico, para mantener un nivel sostenible. Lo explicamos en [por qué un juego pierde FPS después de varios minutos](/rendimiento/juego-pierde-fps-despues-de-minutos).
 - Cierra apps que descargan o sincronizan en segundo plano.
 
 Si quieres saber qué puede y qué no puede hacer un modo juego, lo explicamos en [qué hace realmente el modo juego de Android](/rendimiento/modo-juego-android-como-funciona).
