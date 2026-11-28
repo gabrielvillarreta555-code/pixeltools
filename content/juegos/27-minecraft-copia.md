@@ -17,7 +17,7 @@
   "reviewedAt": "2026-11-25",
   "byline": "Redacción Vélix",
   "cover": "art-27-minecraft-copia-mundo",
-  "coverAlt": "Teléfono con una copia de seguridad de un mundo en curso junto a un portátil con un paisaje de bloques",
+  "coverAlt": "Portátil con el explorador de archivos abierto en una carpeta de copias de seguridad de Minecraft y un disco externo conectado",
   "featured": false,
   "sources": [
     {

@@ -23,7 +23,7 @@
   "kind": "guia",
   "publishedAt": "2026-11-16",
   "cover": "art-01-roblox-error-280",
-  "coverAlt": "Mano sosteniendo un teléfono con la pantalla de actualización de software y un mando al fondo",
+  "coverAlt": "Mano sosteniendo un teléfono con el aviso «Actualización de la app necesaria» de Roblox y el botón Actualizar",
   "featured": false
 }
 ---

@@ -14,7 +14,7 @@
   "handsOn": false,
   "scope": "Explicación técnica basada en documentación oficial de Apple y Android leída directamente el 28/11/2026. Apple describe sus propias GPU; no extrapolamos sus cifras a otros fabricantes.",
   "cover": "art-42-gpu-telefono",
-  "coverAlt": "Teléfono abierto sobre una mesa con la placa, el procesador, la cámara y la batería a la vista",
+  "coverAlt": "Primer plano de la placa de un teléfono con el procesador en el centro, la cámara y la batería",
   "sources": [
     {
       "label": "Apple Developer: GPU de Apple y renderizado diferido por mosaicos",

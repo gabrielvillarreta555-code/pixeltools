@@ -35,3 +35,16 @@ Cinco imágenes generadas con IA, recibidas e integradas por decisión expresa d
 | `5ce23939-image.png` | 01 · Error 280 (IMG-16) | Muestra una actualización del sistema; el artículo trata la actualización de la app |
 | `6e7b62e0-image.png` | 27 · Copia de un mundo de Minecraft (IMG-15) | Recrea un Creeper y el bloque de hierba de Mojang; muestra una copia en la nube desde el teléfono, no en un PC con Java |
 | `df95b403-image.png` | 43 · Vulkan y OpenGL ES (IMG-19) | Puede sugerir que Vulkan «se ve mejor»; encajaría también en el 51 (escalado) |
+
+## Lote 3 · VX-MEDIA-003 (28/11/2026)
+
+Sustituciones aportadas por dirección para cuatro imágenes del lote 2. Huellas SHA-256 en `scripts/editorial/official-media.mjs`.
+
+| Archivo | Sustituye en | Contenido |
+|---|---|---|
+| `6b4a08ae-image.png` | 01 · Error 280 | Aviso «Actualización de la app necesaria» de Roblox |
+| `81ca38f3-image.png` | 41 · 120 Hz y 30 FPS | Ajuste de frecuencia de pantalla (120, 90 y 60 Hz) |
+| `f41c5061-image.png` | 42 · GPU | Placa de un teléfono con el procesador sin marca |
+| `fd2b75ac-image.png` | 27 · Copia de un mundo | Carpeta de copias de Minecraft en el explorador de Windows, con disco externo |
+
+Las imágenes del lote 2 para estos artículos quedan sustituidas; sus observaciones dejan de aplicarse.
