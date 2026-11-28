@@ -4,6 +4,8 @@ Blue Lab Studios · 27 de noviembre de 2026 · Rama `vx-ed-004` (antes `vx-ed-00
 
 > **Código:** dirección aprobó el 27/11/2026 renumerar esta entrega como **VX-ED-004** (el código VX-ED-003 corresponde a la ampliación a 30 artículos, PR #20). Esa misma resolución pide conservar los diez borradores, no crear artículos nuevos, mantener pendientes las guías de compra y los experimentos, y preparar el [listado de fuentes pendientes](VERIFICACION.md).
 
+> **Estado al 28/11/2026:** 33, 34 y 39 están publicados en la rama (no en producción); los otros siete siguen en borrador. El estado y las fuentes de la ronda 2 están en [VERIFICACION.md](VERIFICACION.md) §7, que prevalece sobre las tablas de estado de este informe.
+
 ## 1. Entregables
 
 | Entregable | Dónde | Estado |

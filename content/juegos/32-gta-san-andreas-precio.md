@@ -5,14 +5,14 @@
   "games": ["GTA: San Andreas", "GTA: The Trilogy – The Definitive Edition"],
   "slug": "gta-san-andreas-precio-google-play",
   "title": "¿Por qué GTA San Andreas cuesta dinero en Google Play?",
-  "description": "La versión de Rockstar en Google Play es de pago desde su lanzamiento en 2013. Qué ofrece la ficha oficial, qué pasó con la edición de Netflix y cómo reconocer copias.",
+  "description": "La versión de Rockstar en Google Play es de pago desde 2013. Qué ofrece la ficha oficial, qué pasó con la edición de Netflix y cómo reconocer copias.",
   "answer": "Porque la versión de Rockstar Games en Google Play se vende como juego de pago desde su llegada a Android en diciembre de 2013; su ficha indica además compras dentro de la aplicación. Rockstar no explica en sus fuentes públicas por qué eligió ese modelo. Existió también una edición Definitive incluida en Netflix, que según la prensa especializada dejó ese catálogo en diciembre de 2025. Una ficha gratuita con un nombre parecido no es el juego oficial.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
   "status": "draft",
   "kind": "analisis",
   "handsOn": false,
-  "scope": "No citamos el precio actual: la consulta del 27/11/2026 no identifica el país de la tienda, y el importe cambia según mercado y fecha. La ficha de Google Play y el artículo de 2013 se revisaron mediante consulta asistida (ChatGPT), pendiente de revisión humana; las fuentes sobre Netflix y copias se conocen por extractos de buscador y requieren lectura directa antes de publicar.",
+  "scope": "El precio de 6,99 USD se observó el 27/11/2026 sin registrar el país de la tienda; cambia según mercado y fecha. La ficha de Google Play y el artículo de 2013 se revisaron mediante consulta asistida (ChatGPT), pendiente de revisión humana; las fuentes sobre Netflix y copias se conocen por extractos de buscador y requieren lectura directa antes de publicar.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -62,6 +62,8 @@ En móviles conviven dos productos oficiales distintos:
 | **GTA: San Andreas – Definitive Edition** | Netflix Games, dentro de la trilogía Definitive | Incluida en la suscripción de Netflix desde diciembre de 2023 |
 
 La versión de Rockstar se vende como juego de pago desde su llegada a Android: Android Authority informó el 21 de diciembre de 2013 de un precio de lanzamiento de 6,99 USD. Su ficha oficial describe gráficos adaptados a móviles, controles táctiles personalizables y una historia de más de 70 horas, e indica compras dentro de la aplicación.
+
+En la consulta del 27 de noviembre de 2026, la ficha de Google Play mostraba un precio de **6,99 USD**. La consulta no registró el país de la tienda, así que en el tuyo el precio y la moneda pueden ser distintos: compruébalo en tu propia ficha.
 
 Lo que mucha gente recuerda como «San Andreas gratis» corresponde a la edición de Netflix, que se pagaba indirectamente con la suscripción.
 

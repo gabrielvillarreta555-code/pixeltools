@@ -4,54 +4,55 @@
   "section": "tecnologia",
   "games": ["Fortnite", "Roblox", "Minecraft", "Free Fire"],
   "slug": "por-que-juegos-funcionan-mejor-iphone",
-  "title": "¿Por qué algunos juegos funcionan mejor en iPhone que en Android?",
-  "description": "Diversidad de dispositivos, APIs gráficas y controladores: los datos de Google sobre Vulkan en Android, lo que dicen los desarrolladores y dónde termina la explicación.",
-  "answer": "No porque el iPhone sea siempre más potente, sino porque es más fácil de optimizar. Un estudio programa para pocos modelos con chips del mismo fabricante y una sola API gráfica, Metal. En Android conviven miles de modelos, varios fabricantes de GPU, controladores distintos y versiones de Vulkan desiguales; según Google, más del 7 % de los teléfonos Android activos no admite Vulkan. Un Android de gama alta puede igualar o superar a un iPhone en un juego concreto.",
+  "title": "¿Por qué algunos juegos van mejor en iPhone que en Android?",
+  "description": "Diversidad de GPU, versiones de Vulkan y formatos de textura: los datos oficiales de Google y Apple que explican la diferencia, y dónde termina esa explicación.",
+  "answer": "No porque el iPhone sea siempre más potente, sino porque es más fácil de optimizar: un estudio programa para GPU diseñadas por Apple con una misma API, Metal. En Android conviven GPU de varios fabricantes, versiones de Vulkan desiguales y distintos formatos de textura; según Google, el 7,37 % de los teléfonos Android activos no admite Vulkan. Un Android de gama alta puede igualar o superar a un iPhone en un juego concreto.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "comparativa",
   "handsOn": false,
-  "scope": "Comparativa documental. Los datos de Android proceden de Google y se leyeron directamente el 27/11/2026. Los testimonios de desarrolladores son antiguos y se consultaron mediante extractos de buscador. No hemos medido juegos en ambas plataformas.",
+  "scope": "Comparativa documental basada en documentación oficial de Google y Apple leída directamente el 27/11/2026. No hemos medido juegos en ambas plataformas.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
     {
       "label": "Android Developers: paneles de distribución (Vulkan y OpenGL ES)",
       "url": "https://developer.android.com/about/dashboards",
-      "supports": "Teléfonos y otros dispositivos de mano activos en Google Play, 28 días hasta el 24/11/2025: sin Vulkan 7,37 %, Vulkan 1.0.3 3,86 %, 1.1 62,09 %, 1.3 26,01 %, 1.4 0,67 %."
+      "supports": "Teléfonos y otros dispositivos de mano activos en Google Play, 28 días hasta el 24/11/2025: sin Vulkan 7,37 %, Vulkan 1.0.3 3,86 %, 1.1 62,09 %, 1.3 26,01 %, 1.4 0,67 %. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: Vulkan para juegos",
       "url": "https://developer.android.com/games/develop/vulkan/overview",
-      "supports": "Vulkan es la API gráfica principal de Android; los dispositivos de 64 bits con Android 10 o superior admiten Vulkan 1.1; Unity y Unreal lo usan por defecto en dispositivos compatibles. Actualizada el 08/10/2026."
+      "supports": "Vulkan es la API gráfica principal de Android y sustituye a OpenGL ES, que ya no recibe nuevas funciones; los dispositivos de 64 bits con Android 10 o superior admiten Vulkan 1.1; Unity y Unreal lo usan por defecto en dispositivos compatibles. Actualizada el 08/10/2026; leído directamente el 27/11/2026."
     },
     {
-      "label": "Android Developers Blog: texturas comprimidas por hardware (2015)",
-      "url": "https://android-developers.googleblog.com/2015/01/efficient-game-textures-with-hardware.html",
-      "supports": "La diversidad de GPU obligaba a distribuir varios formatos de textura (ETC2, ASTC) según el dispositivo."
+      "label": "Android Developers: formatos de compresión de texturas",
+      "url": "https://developer.android.com/guide/playcore/asset-delivery/texture-compression",
+      "supports": "Cada GPU admite un conjunto de formatos de textura; ASTC en más del 80 % y ETC2 en más del 95 % de los dispositivos de Google Play; ETC1 y PVRTC son formatos antiguos no recomendados; los App Bundles permiten entregar el formato adecuado a cada dispositivo. Actualizada el 13/11/2026; leído directamente el 27/11/2026."
     },
     {
-      "label": "GamesBeat: desarrolladores de iOS explican por qué evitan la fragmentación de Android",
-      "url": "https://gamesbeat.com/ios-game-developers-tell-why-they-favor-iphone-exclusives-over-fragmented-android",
-      "supports": "Testimonios de estudios sobre la complejidad de dar soporte a muchos dispositivos Android."
-    },
-    {
-      "label": "Arm Community: qué frena el rendimiento de los juegos en Android",
-      "url": "https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/what-s-holding-back-android-gaming-performance",
-      "supports": "Los desarrolladores pueden elegir formatos antiguos por compatibilidad, lo que perjudica el rendimiento en hardware nuevo."
+      "label": "Apple Developer: Metal",
+      "url": "https://developer.apple.com/metal/",
+      "supports": "Metal da acceso a las capacidades de las GPU diseñadas por Apple en iPhone, iPad, Mac, Apple TV y Apple Vision Pro. Leído directamente el 27/11/2026."
     }
   ],
-  "related": ["37-mismo-procesador", "40-elegir-telefono-jugar", "31-antutu-videojuegos"],
+  "related": ["33-modo-juego-android", "07-roblox-lag"],
   "featured": false
 }
 ---
 
-## La diferencia empieza en el número de dispositivos
+## Dos puntos de partida muy distintos
 
-Un estudio que publica un juego en iPhone prueba un número limitado de modelos con chips diseñados por la misma empresa y una sola API gráfica, **Metal**. En Android, el mismo juego tiene que funcionar en teléfonos con GPU de varios fabricantes (Adreno, Mali, Immortalis, Xclipse, PowerVR…), con controladores distintos y versiones de Android diferentes.
+Un estudio que publica un juego en iPhone trabaja con **GPU diseñadas por Apple** y con **Metal**, la tecnología gráfica con la que Apple da acceso a esas GPU en iPhone, iPad y Mac. Hay muchos modelos de iPhone, pero sus GPU salen del mismo diseñador.
 
-Los datos de Google lo muestran. En los teléfonos y otros dispositivos de mano activos en Google Play (28 días hasta el 24 de noviembre de 2025):
+En Android, el mismo juego tiene que funcionar en teléfonos con GPU de **varios fabricantes**, con controladores distintos, versiones de Android diferentes y capacidades gráficas desiguales. La documentación de Google lo muestra con dos datos.
+
+## Dato 1: no todos los Android admiten la misma API gráfica
+
+Google considera **Vulkan** la API gráfica principal de Android: sustituye a OpenGL ES, que se sigue admitiendo pero ya no recibe nuevas funciones. Unity y Unreal usan Vulkan por defecto en los dispositivos compatibles. Pero no todos lo son, ni en la misma versión.
+
+Teléfonos y otros dispositivos de mano activos en Google Play (28 días hasta el 24 de noviembre de 2025):
 
 | Versión de Vulkan admitida | Porcentaje de dispositivos |
 |---|---|
@@ -61,22 +62,37 @@ Los datos de Google lo muestran. En los teléfonos y otros dispositivos de mano 
 | Vulkan 1.3 | 26,01 % |
 | Vulkan 1.4 | 0,67 % |
 
-Google define Vulkan como la API gráfica principal de Android y la recomienda frente a OpenGL ES. Aun así, un juego que quiera llegar a casi todos los teléfonos debe seguir funcionando en los que no la admiten o solo admiten versiones antiguas.
+Un juego que quiera llegar a casi todos los teléfonos tiene que funcionar también en el 7,37 % que no admite Vulkan y en el grupo mayoritario que se queda en la versión 1.1.
 
-## Optimizar para el mínimo común
+## Dato 2: tampoco leen las mismas texturas
 
-Cuando un estudio no puede ajustar el juego a cada modelo, suele elegir opciones que funcionen en todos:
+Las texturas son las imágenes que recubren personajes y escenarios. Cada GPU admite un conjunto propio de **formatos de compresión de texturas**, que ocupan menos memoria y se cargan más rápido. Según Google:
 
-- **Formatos de textura compatibles.** Google explicó en 2015 que la variedad de GPU obligaba a distribuir varios formatos de textura según el dispositivo. Arm advirtió que elegir formatos antiguos por compatibilidad penaliza a los teléfonos nuevos.
-- **Perfiles gráficos conservadores.** Si el juego no reconoce bien tu modelo, puede asignarle una calidad más baja de la que podría mover.
-- **Menos pruebas por modelo.** Los desarrolladores citados por GamesBeat describen el soporte de dispositivos Android como mucho más complejo que en iOS.
+| Formato | Dispositivos de Google Play compatibles | Estado |
+|---|---|---|
+| **ASTC** | Más del 80 % | Formato reciente pensado para sustituir a los anteriores |
+| **ETC2** | Más del 95 % | Admitido por los dispositivos con OpenGL ES 3.0 o superior |
+| ETC1, PVRTC | — | Antiguos, ya no recomendados |
 
-Ninguno de estos factores mide la potencia del chip. Explican por qué un Android potente puede rendir por debajo de lo esperado en un juego concreto.
+Por eso Google ofrece a los desarrolladores una forma de entregar a cada teléfono el formato que su GPU entiende. Si un estudio no lo aprovecha, tiene que elegir un formato que funcione en todos, aunque no sea el mejor para los teléfonos más nuevos.
 
-## Lo que esta explicación no dice
+```flujo
+# Qué decide un estudio al llevar un juego a Android (esquema de Vélix)
+Lista de dispositivos | Miles de modelos con GPU de varios fabricantes.
+API gráfica | Vulkan donde esté disponible y una alternativa para el resto.
+Texturas | Un formato por grupo de GPU o uno común para todos.
+Ajustes de calidad | Opciones gráficas que adapten el juego a teléfonos de distinta potencia.
+Pruebas | Cada combinación añade trabajo de pruebas y correcciones.
+```
+
+## Lo que esto explica y lo que no
+
+**Interpretación de Vélix:** con más combinaciones de hardware que cubrir, es más difícil ajustar un juego al máximo en cada teléfono Android que en una plataforma con un solo diseñador de GPU. Por eso un Android potente puede rendir por debajo de lo esperado en un juego concreto.
+
+Pero conviene no sacar conclusiones de más:
 
 - **No significa que el iPhone sea siempre mejor.** Hay juegos que en un Android de gama alta funcionan igual o mejor, y depende mucho de cómo el estudio haya adaptado cada versión.
-- **Los testimonios de desarrolladores son de hace años.** Desde entonces Vulkan se ha extendido y los motores Unity y Unreal lo usan por defecto en Android. La brecha puede ser menor hoy, pero no hemos encontrado una medición reciente y comparable que la cuantifique.
+- **La brecha puede estar cambiando.** Vulkan se ha extendido y los motores Unity y Unreal lo usan por defecto, pero no hemos encontrado una medición reciente y comparable que la cuantifique.
 - **El precio cuenta.** Comparar un iPhone de gama alta con un Android económico no explica nada sobre las plataformas.
 
 ## Qué hacer con esta información
@@ -84,5 +100,4 @@ Ninguno de estos factores mide la potencia del chip. Explican por qué un Androi
 - Si juegas sobre todo a un título, busca pruebas **de ese juego** en tu modelo, no comparaciones generales entre sistemas.
 - En Android, comprueba si tu teléfono admite **Vulkan** y qué versión, en la ficha oficial de tu modelo o en la documentación de su procesador. No todos los fabricantes lo indican.
 - Mantén el sistema y el juego actualizados: los controladores gráficos llegan con las actualizaciones del fabricante.
-
-Vélix ha propuesto un experimento para comparar el mismo juego en dispositivos de precio similar con un método publicado. Todavía no se ha realizado.
+- Si tu teléfono se calienta y pierde fluidez, revisa también [qué hace realmente el modo juego de Android](/rendimiento/modo-juego-android-como-funciona).

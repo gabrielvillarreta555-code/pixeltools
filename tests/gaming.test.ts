@@ -9,7 +9,7 @@ import { onRequest } from '../functions/_middleware';
 const source=readFileSync('content/juegos/01-roblox-280.md','utf8');
 describe('publicación editorial',()=>{
  it('conserva las diez URLs originales y distribuye las lecturas destacadas entre los seis juegos',async()=>{
-  const all=await loadArticles(); expect(all).toHaveLength(30);
+  const all=await loadArticles(); expect(all).toHaveLength(33);
   for(const file of execFileSync('git',['ls-tree','-r','--name-only','fa39de5','content/juegos'],{encoding:'utf8'}).trim().split('\n')){
    const old=JSON.parse(execFileSync('git',['show',`fa39de5:${file}`],{encoding:'utf8'}).split('---')[1]);
    expect(all.some(a=>a.path===`/juegos/${old.game}/${old.slug}`)).toBe(true);

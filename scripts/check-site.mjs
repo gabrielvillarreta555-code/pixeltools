@@ -11,7 +11,7 @@ const titles=new Set(),descriptions=new Set();
 // Rutas: portada, /juegos/, 6 universos, 4 listados, 4 páginas legales, secciones con contenido y artículos.
 const liveHubs=['rendimiento','tecnologia'].filter(h=>articles.some(a=>a.section===h));
 assert.equal(routes.length,16+liveHubs.length+articles.length);
-if(!drafts){assert.equal(articles.length,30);assert.equal(routes.length,47);}
+if(!drafts){assert.equal(articles.length,33);assert.equal(routes.length,51);}
 if(prod)assert.ok(!drafts&&!articles.some(a=>a.status!=='published'),'borradores en producción');
 assert.equal(new Set(articles.map(a=>a.body)).size,articles.length);
 const allowedMedia = Object.keys(officialMedia).flatMap(cover => [480,960,1600].map(size => `${cover}-${size}.webp`));

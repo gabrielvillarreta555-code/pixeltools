@@ -80,8 +80,7 @@ Garena publica en su centro de ayuda de Free Fire una guía para evitar el sobre
 2. **Baja la calidad gráfica** un nivel antes que la resolución, si el juego lo permite.
 3. **No cargues** mientras juegas. La carga también genera calor.
 4. **Quita la funda** en sesiones largas si notas que el teléfono se calienta. Es una recomendación de sentido común, no de Garena.
-5. **Haz pausas.** Si el teléfono está caliente al tacto, el sistema ya está limitando la potencia.
-6. **Revisa el brillo.** La pantalla también consume energía y genera calor.
+5. **Haz pausas.** Si el teléfono está caliente al tacto, es probable que el sistema ya esté limitando la potencia.
 
 ## Cuándo no es el calor
 

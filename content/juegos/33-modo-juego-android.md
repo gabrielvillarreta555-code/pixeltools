@@ -9,12 +9,17 @@
   "answer": "El modo juego no añade potencia. Android ofrece al juego tres preferencias (estándar, rendimiento o batería) y el juego decide cómo adaptarse, por ejemplo bajando FPS o resolución. Las capas de los fabricantes añaden bloqueo de notificaciones, contadores y perfiles propios. Si el juego no admite Game Mode, la opción puede no hacer nada o depender de ajustes que aplica el fabricante.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "guia",
   "scope": "La documentación de Android se leyó directamente el 27/11/2026. Las páginas de Samsung y Xiaomi se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT) y están pendientes de revisión humana. Los menús varían por modelo, versión y región.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
+    {
+      "label": "Android Developers: Thermal API",
+      "url": "https://developer.android.com/games/optimize/adpf/thermal",
+      "supports": "Los dispositivos solo mantienen un nivel alto de rendimiento durante un tiempo limitado antes del límite térmico. Actualizada el 26/02/2026; leído directamente el 27/11/2026."
+    },
     {
       "label": "Android Developers: Game Mode API",
       "url": "https://developer.android.com/games/gamemode/gamemode-api",
@@ -36,7 +41,7 @@
       "supports": "Game Turbo incluye optimizaciones de conectividad WLAN, respuesta táctil, sonido, gestión de recursos y configuración térmica. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     }
   ],
-  "related": ["34-redmi-sin-game-turbo", "36-juego-pierde-fps", "07-roblox-lag"],
+  "related": ["34-redmi-sin-game-turbo", "39-juegos-mejor-iphone", "07-roblox-lag"],
   "featured": false
 }
 ---
@@ -91,7 +96,7 @@ Ninguno de los dos publica cuánto cambian los FPS o la temperatura en un juego 
 ## Lo que el modo juego no puede hacer
 
 - No aumenta la potencia máxima del procesador ni la RAM física.
-- No evita el calentamiento. Si eliges «Rendimiento», el teléfono puede calentarse antes y acabar bajando frecuencias igualmente. Lo explicamos en [por qué un juego pierde FPS después de varios minutos](/rendimiento/juego-pierde-fps-despues-de-minutos).
+- No evita el calentamiento. Android explica que un teléfono solo mantiene su máximo rendimiento durante un tiempo limitado antes de reducir la potencia por temperatura. Si eliges «Rendimiento», el calor puede llegar antes.
 - No mejora la conexión: el lag por red tiene otras causas. Lo tratamos en [cómo reducir el lag de Roblox](/juegos/roblox/reducir-lag-celular).
 
 ## Qué te recomendamos

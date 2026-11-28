@@ -29,11 +29,6 @@
       "label": "Xiaomi: ¿el Xiaomi 15 admite extensión de memoria?",
       "url": "https://www.mi.com/global/support/faq/details/KA-541717/",
       "supports": "Xiaomi describe la función como RAM adicional creada con espacio de almacenamiento."
-    },
-    {
-      "label": "SamMobile: One UI 4.1 permite elegir la RAM virtual",
-      "url": "https://sammobile.com/news/one-ui-4-1-choose-how-much-virtual-ram-you-want",
-      "supports": "Historia de la función: elección de tamaño con One UI 4.1."
     }
   ],
   "related": ["36-juego-pierde-fps", "40-elegir-telefono-jugar", "04-free-fire-requisitos"],

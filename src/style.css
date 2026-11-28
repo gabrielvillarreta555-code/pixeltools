@@ -97,3 +97,5 @@
 .flow-chart span{color:var(--muted);font-size:.9rem}
 /* Con Rendimiento y Tecnología el menú móvil tiene 7 entradas: filas de 3, 2 y 2 en vez de dejar una sola. */
 @media(max-width:700px){.main-nav:has(a[href="/tecnologia/"]){grid-template-columns:repeat(6,minmax(0,1fr))}.main-nav:has(a[href="/tecnologia/"]) a{grid-column:span 2}.main-nav:has(a[href="/tecnologia/"]) a:nth-last-child(-n+4){grid-column:span 3}}
+.hub-more{margin-top:18px;font-size:.85rem;font-weight:700}
+.hub-more a{color:var(--accent)}

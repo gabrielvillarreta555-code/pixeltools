@@ -1,6 +1,6 @@
 # VX-ED-004 · Fuentes pendientes de verificación
 
-27 de noviembre de 2026 (actualizado el 28/11/2026 con la ronda 1, §6). Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
+27 de noviembre de 2026 (actualizado el 28/11/2026 con la ronda 1, §6, y el estado de publicación, §7). Listado para verificar las fuentes de los diez borradores (31–40) en colaboración con el equipo. Versión para hoja de cálculo: [verificacion.csv](verificacion.csv).
 
 ## 0. Cómo registrar una verificación
 
@@ -184,3 +184,76 @@ Los enlaces se registran sin el parámetro `utm_source` que añade ChatGPT.
 | 36 | Corregido (97 %) | F21 y F22 |
 
 Los cuatro siguen con `status: draft`: no se ha publicado nada.
+
+## 7. Estado de publicación y ronda 2 (28/11/2026)
+
+### Cambios de esta entrega
+
+- **33, 34 y 39 pasan a `status: published` en la rama.** Esto los incluye en el build de la rama; **no los publica en producción**. Fusionar la rama equivale a publicarlos.
+- **39 reescrito solo con fuentes leídas directamente** (Google: Vulkan, distribución y compresión de texturas; Apple: Metal). Se retiraron F28, F29 y F30 y se resolvieron S07 y S08.
+- **33 y 34 ya no enlazan al 36** mientras siga en borrador: el dato se cita directamente de la Thermal API (verificada).
+- **Correcciones:**
+  - 31: retirada la mención a la V12, y con ella F02 y F03.
+  - 35: retirada F20.
+  - 36: retirado el consejo del brillo (S04).
+  - 37: retirada F24 y reformulado S05.
+  - 40: S09 apoyado en Game Mode (verificada) y añadida F21 a sus fuentes.
+  - 32: precio observado de 6,99 USD indicado sin país de la tienda, como pidió dirección.
+- **Títulos y descripciones SEO** acortados en 32, 34, 37, 39 y 40.
+- **Portada:** nuevo bloque «Rendimiento y tecnología» que solo aparece si esas secciones tienen artículos publicados.
+
+### Antes de fusionar (requisito para 33 y 34)
+
+Los artículos 33 y 34 se apoyan en consultas asistidas. Antes de autorizar la fusión, una persona debe confirmar con cita literal:
+
+| ID | URL | Afirmación | Artículo |
+|---|---|---|---|
+| F13 | https://www.samsung.com/au/support/apps-services/use-game-booster/ | Game Booster equilibra rendimiento, temperatura y batería según los patrones de juego (actualizada el 20/10/2026) | 33 |
+| F14 | https://www.mi.com/global/support/article/KA-03436/ | Game Turbo: WLAN, respuesta táctil, sonido, gestión de recursos, configuración térmica | 33, 34 |
+| F15 | https://www.mi.com/global/support/faq/details/KA-515623/ | Ruta Seguridad → Game Turbo → icono de ajustes | 34 |
+| F16 | https://www.mi.com/global/support/faq/details/KA-492711/ | Game Turbo documentado en la REDMI Pad SE 8.7 | 34 |
+| N01 | https://www.mi.com/global/support/article/KA-710923/ | «The REDMI 12 doesn't support Game Turbo.» (comprobar que la cita es exacta) | 34 |
+| N02 | https://www.mi.com/global/support/article/KA-710924/ | «The REDMI 12C doesn't support Game Turbo.» (comprobar que la cita es exacta) | 34 |
+| N03 | https://www.mi.com/global/support/faq/details/KA-529999/ | El Redmi Note 14 es compatible con Game Turbo | 34 |
+| — | https://www.mi.com/global/support/faq/details/KA-515623/ | El Xiaomi 14T Pro es compatible (se deduce de la propia FAQ de activación) | 34 |
+
+### Ronda 2: fuentes que investigar desde ChatGPT
+
+Por orden de impacto. Usar el protocolo del apartado 0: cita literal, fecha visible y resultado.
+
+| Prioridad | Artículo que desbloquea | ID | URL | Afirmación |
+|---|---|---|---|---|
+| 1 | **35** RAM virtual | F18 | https://www.samsung.com/ca/support/mobile-devices/use-ram-plus-on-your-samsung-galaxy/ | RAM Plus no añade RAM física, la memoria virtual es más lenta y reserva almacenamiento |
+| 1 | **35** | F19 | https://www.mi.com/global/support/faq/details/KA-541717/ | Xiaomi describe la extensión de memoria como RAM adicional creada con almacenamiento, «sin ralentizarse» |
+| 2 | **36** Pérdida de FPS | F21 | https://ffsupport.garena.com/hc/en-us/articles/4412913797146-How-to-Avoid-Device-Overheating | Bajar gráficos, no jugar cargando, evitar el sol directo, no sobrecargar el dispositivo (también en 40) |
+| 2 | **36**, 37 | F22 | https://www.notebookcheck.net/Xiaomi-12-Pro-OnePlus-10-Pro-and-their-Snapdragon-8-Gen-1-SoCs-fail-to-impress-in-performance-tests.596914.0.html | El OnePlus 10 Pro pierde cerca del 37 % en la prueba de estrés |
+| 3 | **31** AnTuTu | F05 | https://www.tomsguide.com/news/oneplus-9-just-got-delisted-from-geekbench-and-oneplus-responds | Geekbench retiró los OnePlus 9 en 2021 (limitación de apps, no de benchmarks) |
+| 3 | **31**, 37 | F06 | https://www.androidauthority.com/geekbench-delists-samsung-flagships-3129230/ | Geekbench retiró Galaxy S10–S22 en 2022 por GOS; unas 10 000 apps, incluidos juegos |
+| 4 | **37** Mismo procesador | F23 | https://www.androidauthority.com/samsung-galaxy-s26-ultra-benchmarks-3652232/ | Tres modelos con el Snapdragon 8 Elite Gen 5 se igualan tras unos 4 minutos; calentamiento distinto |
+| 5 | **38** Cámara de vapor | F25 | https://www.apple.com/ca/newsroom/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/ | Agua desionizada, soldadura láser al chasis; «hasta un 40 %» más de rendimiento sostenido |
+| 5 | **38** | F26 | https://spectrum.ieee.org/iphone-17-pro-vapor-chamber | Evaporación y condensación; el grosor limita la ventaja; Samsung y Google ya usaban cámaras de vapor. Confirmar también la estructura porosa (S06) |
+| 5 | **38** | F27 | https://patents.google.com/patent/US9310139 | Sistema pasivo cerrado de dos fases con calor latente (alternativa a la URL de USPTO) |
+| 6 | **32** GTA San Andreas | F09 | https://gamespot.com/articles/gta-3-vice-city-and-san-andreas-now-available-free-through-netflix/1100-6519956/ | La trilogía Definitive llegó a Netflix en diciembre de 2023 sin coste adicional |
+| 6 | **32** | F11 | https://apps.apple.com/us/app/id6450280702 | Ficha propia de la edición de Netflix; desarrollador Netflix, Inc. |
+| 6 | **32** | F12 | https://propakistani.pk/2026/09/11/someone-just-put-2-gta-games-on-play-store-for-free/ | Copia gratuita con anuncios en Play Store (septiembre de 2026) |
+| 6 | **32** | F10 | https://gameranx.com/updates/id/558698/article/grand-theft-auto-san-andreas-set-to-leave-netflix-on-mobile/ | Cita literal de la salida prevista el 12/12/2025 |
+| 6 | **32** (opcional) | N05 | https://play.google.com/store/apps/details?id=com.rockstargames.gtasa | Repetir la consulta indicando el país de la tienda, para registrar el precio con mercado |
+| 7 | **40** Elegir teléfono | F31 | https://ffsoporte.garena.com/hc/es-419/articles/360035195832-Requerimientos-t%C3%A9cnicos-Free-Fire-Free-Fire-MAX | Requisitos separados para Free Fire y MAX, con mínimos y recomendados |
+| 7 | **40** | F32 | https://supercell.com/en/games/clashroyale/blog/news/end-of-support-ios-12-ios-13-android-5-and-android-6/ | Retirada del soporte para iOS 12 y 13 y Android 5 y 6 |
+
+El artículo 40 enlaza además a 31, 35 y 37: solo puede publicarse cuando estos lo estén, o retirando esos enlaces.
+
+### Resumen por artículo
+
+| Art. | Estado en la rama | Qué falta |
+|---|---|---|
+| 33 Modo juego | **Publicado en la rama** | Revisión humana de F13 y F14 antes de fusionar |
+| 34 Redmi y Game Turbo | **Publicado en la rama** | Revisión humana de F14–F16 y N01–N03 antes de fusionar |
+| 39 iPhone y Android | **Publicado en la rama** | Nada: todas sus fuentes se leyeron directamente |
+| 35 RAM virtual | Borrador | F18, F19 |
+| 36 Pérdida de FPS | Borrador | F21, F22 |
+| 31 AnTuTu | Borrador | F05, F06 |
+| 37 Mismo procesador | Borrador | F06, F22, F23 |
+| 38 Cámara de vapor | Borrador | F25, F26, F27 (y S06) |
+| 32 GTA San Andreas | Borrador | F09, F10, F11, F12 (y país del precio, opcional) |
+| 40 Elegir teléfono | Borrador | F21, F31, F32, y la publicación de 31, 35 y 37 |

@@ -4,12 +4,12 @@
   "section": "rendimiento",
   "games": ["Free Fire", "Roblox", "Minecraft", "Fortnite"],
   "slug": "redmi-sin-modo-juego-game-turbo",
-  "title": "¿Por qué mi Redmi no tiene modo juego? Compatibilidad de Game Turbo",
+  "title": "¿Por qué mi Redmi no tiene Game Turbo (modo juego)?",
   "description": "Xiaomi confirma que algunos Redmi, como el REDMI 12 y el 12C, no admiten Game Turbo. Cómo comprobar tu modelo y dónde está la función si es compatible.",
   "answer": "Puede que tu modelo no lo admita: Xiaomi indica oficialmente que el REDMI 12 y el REDMI 12C no son compatibles con Game Turbo. En los modelos compatibles, la función no está en Ajustes sino en la app Seguridad. Busca la página de soporte de tu modelo exacto en mi.com antes de dar por hecho que hay un fallo.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "guia",
   "scope": "Basado en páginas de soporte de Xiaomi revisadas el 27/11/2026 mediante consulta asistida (ChatGPT), pendientes de revisión humana. Solo citamos modelos con página oficial enlazada; los menús cambian entre MIUI, HyperOS, modelos y regiones. No hemos probado los pasos en un Redmi.",
   "cover": "sin-portada",
@@ -51,12 +51,17 @@
       "supports": "Medio no oficial, 22/04/2025: en HyperOS, Game Turbo se actualiza junto con la app Seguridad. Consulta asistida (ChatGPT) del 27/11/2026."
     },
     {
+      "label": "Android Developers: Thermal API",
+      "url": "https://developer.android.com/games/optimize/adpf/thermal",
+      "supports": "Para evitar el límite térmico, un juego puede reducir FPS o calidad hasta un nivel sostenible. Leído directamente el 27/11/2026."
+    },
+    {
       "label": "Android Developers: Game Dashboard",
       "url": "https://developer.android.com/games/gamedashboard/aboutdashboard",
       "supports": "Fuera de los Pixel, el fabricante puede quitar o sustituir el panel de juego de Android. Leído directamente el 27/11/2026."
     }
   ],
-  "related": ["33-modo-juego-android", "36-juego-pierde-fps", "05-free-fire-fallos"],
+  "related": ["33-modo-juego-android", "05-free-fire-fallos", "07-roblox-lag"],
   "featured": false
 }
 ---
@@ -103,7 +108,7 @@ Según Xiaomi, Game Turbo ajusta la **conectividad WLAN**, la **respuesta tácti
 ## Sin Game Turbo también puedes jugar mejor
 
 - Activa **No molestar** antes de la partida.
-- Baja la **calidad gráfica** o el **límite de FPS** dentro del juego. La documentación de Android para desarrolladores recomienda precisamente reducir FPS o calidad cuando el teléfono se calienta, para mantener un nivel sostenible. Lo explicamos en [por qué un juego pierde FPS después de varios minutos](/rendimiento/juego-pierde-fps-despues-de-minutos).
+- Baja la **calidad gráfica** o el **límite de FPS** dentro del juego. La documentación de Android para desarrolladores recomienda precisamente reducir FPS o calidad cuando el teléfono se acerca a su límite térmico, para mantener un nivel sostenible.
 - Cierra apps que descargan o sincronizan en segundo plano.
 
 Si quieres saber qué puede y qué no puede hacer un modo juego, lo explicamos en [qué hace realmente el modo juego de Android](/rendimiento/modo-juego-android-como-funciona).

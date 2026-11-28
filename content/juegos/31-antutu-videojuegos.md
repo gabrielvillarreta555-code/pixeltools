@@ -22,16 +22,6 @@
       "supports": "La V10 evalúa CPU, GPU, MEM y UX; usa escenas creadas con Unreal Engine y la API Vulkan; reconoce que la latencia de memoria puede afectar a la fluidez de los juegos; las puntuaciones de V9 y V10 no son directamente comparables y la V10 suele dar más puntos al mismo teléfono. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
-      "label": "Notebookcheck: beta pública de AnTuTu V12",
-      "url": "https://notebookcheck.net/AnTuTu-V12-public-beta-arrives-with-major-changes-to-how-phones-are-benchmarked.1389282.0.html",
-      "supports": "La V12 cambia CPU, GPU, memoria y UX, y sus resultados no se comparan directamente con versiones anteriores."
-    },
-    {
-      "label": "Gigazine: AnTuTu y sus cuatro bloques",
-      "url": "https://gigazine.net/gsc_news/en/20251109-antutu-benchmark-for-android",
-      "supports": "La puntuación total es la suma de CPU, GPU, MEM y UX; MEM mide latencia de RAM y velocidad de almacenamiento."
-    },
-    {
       "label": "Android Developers: modo de rendimiento fijo",
       "url": "https://developer.android.com/games/optimize/adpf/fixed-performance-mode",
       "supports": "Android cambia las frecuencias de CPU y GPU según la carga; sin frecuencias fijas las mediciones no son fiables. Leído directamente el 27/11/2026."
@@ -76,7 +66,7 @@ Por eso dos teléfonos con la misma puntuación total pueden tener reparto disti
 
 **1. Es una medición corta.** Una pasada de benchmark dura poco. Una partida de Fortnite o Free Fire dura muchos minutos y el teléfono se calienta. La documentación de Android explica que las frecuencias de CPU y GPU cambian según la carga y la temperatura; por eso Google recomienda fijarlas para medir con fiabilidad. Un pico de potencia no informa de cuánto se mantiene.
 
-**2. Cada versión es una escala distinta.** El propio desarrollador advierte que las puntuaciones de la V9 y la V10 no son directamente comparables: la V10 suele dar más puntos al mismo teléfono por los cambios en sus pruebas. La prensa especializada informa de cambios parecidos en la V12. Comparar un «1,5 millones» de una versión con un «1,2 millones» de otra no tiene sentido.
+**2. Cada versión es una escala distinta.** El propio desarrollador advierte que las puntuaciones de la V9 y la V10 no son directamente comparables: la V10 suele dar más puntos al mismo teléfono por los cambios en sus pruebas. Comparar un «1,5 millones» de una versión con un «1,2 millones» de otra no tiene sentido.
 
 **3. Los fabricantes saben cuándo se mide.** En 2021 y 2022 Geekbench retiró de su tabla modelos de OnePlus y de Samsung porque el sistema limitaba aplicaciones comunes, incluidos juegos en el caso de Samsung, pero dejaba las apps de benchmark a máxima potencia. Una puntuación de laboratorio puede no reflejar lo que recibe tu juego.
 

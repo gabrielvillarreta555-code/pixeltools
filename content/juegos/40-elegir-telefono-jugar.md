@@ -5,7 +5,7 @@
   "games": ["Free Fire", "Fortnite", "Roblox", "Minecraft", "Clash Royale"],
   "slug": "como-elegir-telefono-para-jugar",
   "title": "Cómo elegir un teléfono para jugar antes de comprarlo",
-  "description": "Diez comprobaciones antes de pagar: requisitos oficiales, RAM física, Vulkan, rendimiento sostenido, almacenamiento y actualizaciones. Sin recomendaciones patrocinadas.",
+  "description": "Diez comprobaciones antes de pagar: requisitos oficiales, RAM física, Vulkan, rendimiento sostenido, almacenamiento libre y años de actualizaciones.",
   "answer": "Empieza por los juegos, no por el teléfono: anota a qué quieres jugar y comprueba sus requisitos oficiales. Después compara la RAM física, la compatibilidad con Vulkan, las pruebas independientes de rendimiento sostenido, el almacenamiento libre que te quedará y cuántos años de actualizaciones promete el fabricante. Una puntuación alta en un benchmark o «el mismo procesador que el modelo caro» no bastan para decidir.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
@@ -32,6 +32,11 @@
       "supports": "No todos los dispositivos Android activos admiten Vulkan ni las mismas versiones."
     },
     {
+      "label": "Android Developers: Game Mode API",
+      "url": "https://developer.android.com/games/gamemode/gamemode-api",
+      "supports": "Para alargar la batería, Android sugiere a los juegos elegir una tasa de refresco menor (por ejemplo, 30 o 60 Hz). Leído directamente el 27/11/2026."
+    },
+    {
       "label": "Android Developers: Thermal API",
       "url": "https://developer.android.com/games/optimize/adpf/thermal",
       "supports": "El rendimiento máximo solo se mantiene durante un tiempo limitado; depende del diseño térmico."
@@ -40,6 +45,11 @@
       "label": "Garena: requisitos de Free Fire y Free Fire MAX",
       "url": "https://ffsoporte.garena.com/hc/es-419/articles/360035195832-Requerimientos-t%C3%A9cnicos-Free-Fire-Free-Fire-MAX",
       "supports": "Ejemplo de requisitos oficiales separados por edición, con mínimos y recomendados."
+    },
+    {
+      "label": "Garena Free Fire: cómo evitar el sobrecalentamiento",
+      "url": "https://ffsupport.garena.com/hc/en-us/articles/4412913797146-How-to-Avoid-Device-Overheating",
+      "supports": "Garena recomienda no jugar mientras el dispositivo se carga."
     },
     {
       "label": "Supercell: fin de soporte de iOS 12, iOS 13, Android 5 y Android 6 en Clash Royale",
@@ -86,7 +96,7 @@ Los juegos suben sus requisitos de sistema con el tiempo: Supercell, por ejemplo
 
 ### 8. Pantalla: la tasa de refresco solo sirve si el juego la usa
 
-Una pantalla de 120 Hz solo aporta si el juego ofrece más de 60 FPS y el teléfono puede mantenerlos. Comprueba los límites de FPS de tus juegos antes de pagar por ello.
+Una pantalla de 120 Hz solo muestra más fotogramas si el juego los produce. Comprueba los límites de FPS de tus juegos antes de pagar por ello. La documentación de Android incluso sugiere a los juegos bajar la tasa de refresco a 30 o 60 Hz para ahorrar batería.
 
 ### 9. Considera el calor y la batería juntos
 
