@@ -6,11 +6,11 @@ Plataforma independiente de videojuegos y tecnología de Blue Lab Studios: notic
 
 Vite + TypeScript compilan el pequeño módulo de mejora progresiva y los estilos. Markdown con frontmatter JSON se transforma en HTML completo durante build. No se ha migrado a Astro, no hay CMS, base de datos, cuentas ni servicios de pago. Tras retirar las aplicaciones de imágenes ya no hay componentes React en uso; React, Router, Tailwind, ONNX, Tesseract y PDF-lib se retiran junto a sus consumidores.
 
-- `content/juegos/`: 30 artículos; todas las rutas publicadas se conservan (las pruebas lo comprueban contra `fa39de5` y `3aee488`).
+- `content/juegos/`: 51 artículos (30 originales, 20 de Tecnología y Rendimiento publicables y 1 borrador); todas las rutas publicadas se conservan (las pruebas lo comprueban contra `fa39de5` y `3aee488`).
 - `scripts/editorial/themes.mjs`: seis temas, paletas, arte, tipografías, tarjetas, fondos y política de entornos.
 - `scripts/editorial/content.mjs`: validación de contenido, secciones transversales, precios y declaración de pruebas, y Markdown seguro.
 - `scripts/editorial/template.mjs`: layout editorial, tarjetas, universos y artículo.
-- `scripts/generate-editorial.mjs`: 47 rutas HTML, sitemap, robots, índice y páginas retiradas. Las secciones `/rendimiento/` y `/tecnologia/` solo se generan si tienen artículos.
+- `scripts/generate-editorial.mjs`: rutas HTML (68 en vista previa, 60 en producción con los artículos retenidos excluidos), sitemap, robots, índice y páginas retiradas. Las secciones `/rendimiento/` y `/tecnologia/` solo se generan si tienen artículos.
 - `src/`: estilos y actualización del antiguo service worker.
 - `public/media/`: dos obras oficiales de Clash Royale (Supercell Fan Kit), en WebP de 480/960/1600 px.
 - `public/editorial/search.js`: búsqueda local; no registra ni transmite consultas.
@@ -18,6 +18,7 @@ Vite + TypeScript compilan el pequeño módulo de mejora progresiva y los estilo
 - `tests/`, `e2e/`: contenido, seguridad, SEO, red, navegadores y capturas.
 - `docs/vx-003/`: fuentes, atribuciones, permisos, inventario y capturas de VX-003.
 - `docs/vx-str-001/`: informe estratégico, resolución, plan de entregas y capturas.
+- `docs/vx-ed-004/`, `docs/vx-ed-005/`: investigación, verificación de fuentes, informe consolidado y capturas.
 
 ## Ejecutar y probar
 
@@ -67,6 +68,7 @@ Campos de VX-STR-001:
 - `games`: videojuegos relacionados. Obligatorio sin `game` y en toda pieza de `tecnologia`.
 - `kind`: además de los anteriores, `comparativa` y `compra` (requieren `section`).
 - `handsOn`: obligatorio en `comparativa`, `compra` y `tecnologia`. `false` muestra «No hemos probado estos dispositivos»; `true` exige `methodology`. Nunca declarar pruebas no realizadas.
+- `humanReview`: `pending` o `done`. Un artículo con alguna fuente cuya descripción contenga «Consulta asistida» se excluye del build indexable (y se retiran los enlaces hacia él) hasta que tenga `"humanReview": "done"`. Las fuentes de los artículos nuevos declaran «Leído directamente el …» o «Consulta asistida …».
 - `prices`: obligatorio en `compra`. Cada entrada declara `item`, `amount`, `currency` (ISO 4217), `market` (ISO 3166-1 alfa-2), `retailer`, `url` y `observedAt`. El build rechaza precios posteriores a `reviewedAt` o con más de 90 días.
 
 `status: published` significa incluido en el build de la rama; **no implica publicación en producción**. `draft` queda fuera del sitio, índice y sitemap. La aprobación del CEO debe preceder a cualquier merge/despliegue. No actualizar fechas de revisión sin volver a contrastar fuentes. En particular, revisar las noticias de noviembre antes de una publicación posterior.

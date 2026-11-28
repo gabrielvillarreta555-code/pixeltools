@@ -39,6 +39,12 @@ Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que s
 - Recomendaciones de compra pendientes hasta tener precios verificables. Experimentos físicos y herramientas nuevas, pospuestos.
 - Vista previa de borradores con `INCLUDE_DRAFTS=1`; diagramas con bloques `flujo`.
 
+**VX-ED-005 · rama `vx-ed-004`** (sin fusionar). Detalle en `docs/vx-ed-005/INFORME.md`:
+
+- 51 artículos en total: 30 originales, 20 de Tecnología y Rendimiento publicables (31–37 y 39–51) y 1 borrador (38).
+- **Producción protegida:** los artículos con fuentes de consulta asistida (31–37 y 40) se excluyen automáticamente del build indexable hasta su revisión humana (`"humanReview": "done"`). Fusionar hoy publicaría 42 artículos (los 30 originales, el 39 y del 41 al 51).
+- Guías de compra por presupuesto: pendientes, porque no hay precios observables desde el entorno.
+
 ## Políticas vigentes
 
 - Imágenes: únicamente fotografías reales, recursos oficiales o materiales con derechos de uso adecuados y documentados. Sin imágenes generadas por IA.

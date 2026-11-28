@@ -1,6 +1,6 @@
 # Vélix Gaming & Tecnología — guía de continuidad
 
-Leer primero `docs/VELIX_ESTADO.md`, `docs/vx-str-001/RESOLUCION.md` y `docs/vx-str-001/INFORME.md`.
+Leer primero `docs/VELIX_ESTADO.md`, `docs/vx-ed-005/INFORME.md` y `docs/vx-str-001/RESOLUCION.md`.
 
 Dirección vigente (VX-STR-001, aprobada el 27/11/2026): plataforma de videojuegos y tecnología que ayuda a jugar mejor y a elegir qué comprar. La tecnología siempre se relaciona con videojuegos; no convertir Vélix en un medio de tecnología generalista.
 
@@ -20,6 +20,7 @@ No fusionar PR ni desplegar producción sin aprobación del CEO (incluido el PR 
 - Precios: siempre con producto, importe, moneda ISO, mercado ISO, tienda, enlace y fecha de observación (`prices`). El build rechaza precios de más de 90 días.
 - Comparativas, guías de compra y artículos de tecnología declaran `handsOn`. No afirmar que se ha probado un dispositivo si no es cierto; una prueba propia requiere `methodology`.
 - El verificador de requisitos solo usa datos leídos directamente en las fuentes oficiales, con cita, URL y fecha.
+- Cada fuente declara cómo se consultó: «Leído directamente el …» o «Consulta asistida (…)». Las consultas asistidas (p. ej., mediante ChatGPT) no equivalen a revisión humana: el artículo queda retenido en producción hasta marcar `"humanReview": "done"` tras confirmar las citas.
 - Mantener separación entre noticia e interpretación, fechas reales y fuentes en cada artículo.
 
 ## Política de imágenes

@@ -309,3 +309,12 @@ El artículo 40 enlaza además a 31, 35 y 37: solo puede publicarse cuando estos
 | 40 | F32 | https://supercell.com/en/games/clashroyale/blog/news/end-of-support-ios-12-ios-13-android-5-and-android-6/ | Retirada del soporte para iOS 12 y 13 y Android 5 y 6 |
 
 Opcional para el 32: repetir la consulta de la ficha de Google Play indicando el país de la tienda, si se quiere citar el precio actual.
+
+## 9. VX-ED-005 · consultas asistidas incorporadas el 28/11/2026
+
+| ID | Resultado | Detalle | Cambio aplicado |
+|---|---|---|---|
+| F25 | Confirmado con matiz | Publicado el 09/09/2025: agua desionizada en la cámara de vapor; Apple atribuye hasta un 40 % de rendimiento sostenido al **conjunto** del A19 Pro y la cámara de vapor | 38: atribución corregida. El artículo sigue en borrador por F26 y F27 |
+| F32 | Confirmado con matiz | Publicado el 01/10/2024: fin del soporte para Android 5 y 6; inconsistencia interna sobre iOS 13 | 40: solo se citan Android 5 y 6 |
+
+Retiradas en VX-ED-005 por no ser esenciales y seguir sin verificar: F05 y F06 (31), F09, F11 y F12 (32), F31 (40, sustituida por un enlace al artículo 04). El estado consolidado y la lista de revisiones humanas están en `docs/vx-ed-005/INFORME.md`, apartado 5.
