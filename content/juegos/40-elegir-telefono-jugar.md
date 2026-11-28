@@ -9,10 +9,10 @@
   "answer": "Empieza por los juegos, no por el teléfono: anota a qué quieres jugar y comprueba sus requisitos oficiales. Después compara la RAM física, la compatibilidad con Vulkan, las pruebas independientes de rendimiento sostenido, el almacenamiento libre que te quedará y cuántos años de actualizaciones promete el fabricante. Una puntuación alta en un benchmark o «el mismo procesador que el modelo caro» no bastan para decidir.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "guia",
   "handsOn": false,
-  "scope": "Guía de criterios, sin modelos ni precios: todavía no hemos observado precios por mercado y fecha. No hemos probado dispositivos. Las fuentes de Android se leyeron directamente el 27/11/2026; las demás remiten a otros artículos de Vélix y a sus fuentes.",
+  "scope": "Guía de criterios, sin modelos ni precios: todavía no hemos observado precios por mercado y fecha. No hemos probado dispositivos. La documentación de Android se leyó directamente el 27/11/2026; las páginas de Garena y Supercell se revisaron mediante consulta asistida (ChatGPT), pendiente de revisión humana.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -42,19 +42,14 @@
       "supports": "El rendimiento máximo solo se mantiene durante un tiempo limitado; depende del diseño térmico. Leído directamente el 27/11/2026."
     },
     {
-      "label": "Garena: requisitos de Free Fire y Free Fire MAX",
-      "url": "https://ffsoporte.garena.com/hc/es-419/articles/360035195832-Requerimientos-t%C3%A9cnicos-Free-Fire-Free-Fire-MAX",
-      "supports": "Ejemplo de requisitos oficiales separados por edición, con mínimos y recomendados."
-    },
-    {
       "label": "Garena Free Fire (Singapur): cómo evitar el sobrecalentamiento",
       "url": "https://ffsupportsg.garena.com/hc/en-us/articles/4411731947674-How-to-Avoid-Device-Overheating",
       "supports": "Artículo del 23/11/2021: evitar jugar mientras el dispositivo se carga. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
-      "label": "Supercell: fin de soporte de iOS 12, iOS 13, Android 5 y Android 6 en Clash Royale",
+      "label": "Supercell: fin del soporte de Clash Royale para versiones antiguas de Android",
       "url": "https://supercell.com/en/games/clashroyale/blog/news/end-of-support-ios-12-ios-13-android-5-and-android-6/",
-      "supports": "Ejemplo de un juego que retira el soporte a versiones antiguas del sistema."
+      "supports": "Publicado el 01/10/2024: confirma la retirada del soporte para Android 5 y 6. El comunicado es inconsistente respecto a iOS 13, por lo que no se usa para requisitos de iOS. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     }
   ],
   "related": ["37-mismo-procesador", "35-ram-virtual-juegos", "04-free-fire-requisitos"],
@@ -66,7 +61,7 @@
 
 ### 1. Haz la lista de juegos
 
-Un teléfono para Clash Royale y uno para Fortnite no necesitan lo mismo. Anota los dos o tres juegos que más usarás y busca sus **requisitos oficiales** en el centro de ayuda de cada desarrollador. Para Free Fire, por ejemplo, Garena publica requisitos separados para Free Fire y Free Fire MAX, con mínimos y recomendados. Lo explicamos en [¿Mi celular puede ejecutar Free Fire o Free Fire MAX?](/juegos/free-fire/requisitos-celular-free-fire-max).
+Un teléfono para Clash Royale y uno para Fortnite no necesitan lo mismo. Anota los dos o tres juegos que más usarás y busca sus **requisitos oficiales** en el centro de ayuda de cada desarrollador. Para Free Fire, lo explicamos en [¿Mi celular puede ejecutar Free Fire o Free Fire MAX?](/juegos/free-fire/requisitos-celular-free-fire-max).
 
 Cumplir el mínimo indica que el juego puede instalarse y abrirse; no garantiza fluidez.
 
@@ -92,7 +87,7 @@ El sistema y las apps preinstaladas ocupan espacio, y los juegos crecen con cada
 
 ### 7. Pregunta por las actualizaciones
 
-Los juegos suben sus requisitos de sistema con el tiempo: Supercell, por ejemplo, retiró el soporte de Clash Royale para versiones antiguas de iOS y Android. Revisa cuántos años de actualizaciones de Android y de seguridad publica el fabricante para ese modelo concreto.
+Los juegos suben sus requisitos de sistema con el tiempo: Supercell, por ejemplo, anunció en octubre de 2024 el fin del soporte de Clash Royale para Android 5 y 6. Revisa cuántos años de actualizaciones de Android y de seguridad publica el fabricante para ese modelo concreto.
 
 ### 8. Pantalla: la tasa de refresco solo sirve si el juego la usa
 
@@ -100,7 +95,7 @@ Una pantalla de 120 Hz solo muestra más fotogramas si el juego los produce. Com
 
 ### 9. Considera el calor y la batería juntos
 
-Jugar mientras se carga aumenta la temperatura, y Garena recomienda evitarlo. Un teléfono con buena autonomía te permite jugar sin conectarlo. Busca pruebas independientes de batería **en juego**, no solo en navegación.
+Garena recomienda no jugar mientras el teléfono se carga. Un teléfono con buena autonomía te permite jugar sin conectarlo. Busca pruebas independientes de batería **en juego**, no solo en navegación.
 
 ### 10. Compara precios con fecha y mercado
 

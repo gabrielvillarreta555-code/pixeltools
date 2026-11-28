@@ -9,10 +9,10 @@
   "answer": "Solo en parte. AnTuTu suma pruebas cortas de CPU, GPU, memoria y experiencia de uso; sirve para ordenar teléfonos por potencia máxima, no para predecir los FPS de un juego concreto. Los juegos se ejecutan durante mucho más tiempo, dependen del calor acumulado, del controlador gráfico y de cómo cada estudio adapta su juego. Las versiones del test tampoco son comparables entre sí.",
   "reviewedAt": "2026-11-27",
   "publishedAt": "2026-11-27",
-  "status": "draft",
+  "status": "published",
   "kind": "analisis",
   "handsOn": false,
-  "scope": "Análisis documental. No hemos ejecutado AnTuTu ni juegos en teléfonos para este artículo. La nota oficial de AnTuTu y la página de UL se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT), pendiente de revisión humana; el resto de fuentes de terceros se conoce por extractos de buscador y requiere lectura directa antes de publicar.",
+  "scope": "Análisis documental. No hemos ejecutado AnTuTu ni juegos en teléfonos para este artículo. La documentación de Android se leyó directamente el 27/11/2026; la nota oficial de AnTuTu y la página de UL se revisaron mediante consulta asistida (ChatGPT), pendiente de revisión humana.",
   "cover": "sin-portada",
   "coverAlt": "Sin imagen: portada de texto",
   "sources": [
@@ -20,6 +20,11 @@
       "label": "AnTuTu: nota de la versión V10 (25/05/2023)",
       "url": "https://www.antutu.com/en/doc/129591.htm",
       "supports": "La V10 evalúa CPU, GPU, MEM y UX; usa escenas creadas con Unreal Engine y la API Vulkan; reconoce que la latencia de memoria puede afectar a la fluidez de los juegos; las puntuaciones de V9 y V10 no son directamente comparables y la V10 suele dar más puntos al mismo teléfono. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
+    },
+    {
+      "label": "Android Developers: Game Mode API",
+      "url": "https://developer.android.com/games/gamemode/gamemode-api",
+      "supports": "El usuario puede elegir un modo por juego y el fabricante puede aplicar intervenciones sin consultar al estudio. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: modo de rendimiento fijo",
@@ -30,16 +35,6 @@
       "label": "UL Benchmarks: pantalla de resultados de las pruebas de estrés",
       "url": "https://support.benchmarks.ul.com/support/solutions/articles/44002134931-stress-test-result-screen",
       "supports": "Define la estabilidad como el FPS medio del peor ciclo dividido entre el del mejor, multiplicado por 100. El umbral de aprobado del 97 % que publica corresponde a la prueba de estrés de PC descrita en esa página. Consulta asistida (ChatGPT) del 27/11/2026."
-    },
-    {
-      "label": "Tom's Guide: Geekbench retira al OnePlus 9 de su tabla",
-      "url": "https://www.tomsguide.com/news/oneplus-9-just-got-delisted-from-geekbench-and-oneplus-responds",
-      "supports": "Caso de 2021: el sistema limitaba apps populares pero no las de benchmark."
-    },
-    {
-      "label": "Android Authority: Geekbench retira modelos Galaxy por GOS",
-      "url": "https://www.androidauthority.com/geekbench-delists-samsung-flagships-3129230/",
-      "supports": "Caso de 2022: el Game Optimizing Service de Samsung exceptuaba las apps de benchmark de su limitación."
     }
   ],
   "related": ["36-juego-pierde-fps", "37-mismo-procesador", "40-elegir-telefono-jugar"],
@@ -68,7 +63,16 @@ Por eso dos teléfonos con la misma puntuación total pueden tener reparto disti
 
 **2. Cada versión es una escala distinta.** El propio desarrollador advierte que las puntuaciones de la V9 y la V10 no son directamente comparables: la V10 suele dar más puntos al mismo teléfono por los cambios en sus pruebas. Comparar un «1,5 millones» de una versión con un «1,2 millones» de otra no tiene sentido.
 
-**3. Los fabricantes saben cuándo se mide.** En 2021 y 2022 Geekbench retiró de su tabla modelos de OnePlus y de Samsung porque el sistema limitaba aplicaciones comunes, incluidos juegos en el caso de Samsung, pero dejaba las apps de benchmark a máxima potencia. Una puntuación de laboratorio puede no reflejar lo que recibe tu juego.
+**3. El sistema no trata igual a todas las apps.** La documentación de Android permite que el fabricante aplique ajustes propios a cada juego (las «intervenciones» de Game Mode) sin consultar al estudio, y que el usuario elija un modo de rendimiento o de batería por juego. Un benchmark y un juego pueden ejecutarse, en el mismo teléfono, con perfiles distintos. Una puntuación de laboratorio no garantiza lo que recibe tu juego.
+
+```flujo
+# De la puntuación a la partida: lo que cambia por el camino
+Benchmark | Pruebas de duración limitada de CPU, GPU, memoria e interfaz.
+Versión | La escala cambia entre versiones: V9 y V10 no se comparan.
+Perfil del sistema | El fabricante y el modo de juego pueden ajustar cada app.
+Calor | En sesiones largas, el teléfono reduce la potencia para protegerse.
+Juego | Sus ajustes gráficos y su API gráfica también cuentan.
+```
 
 ## Qué mirar si lo que quieres es jugar
 

@@ -19,7 +19,7 @@
     {
       "label": "Apple Newsroom: presentación del iPhone 17 Pro y 17 Pro Max",
       "url": "https://www.apple.com/ca/newsroom/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/",
-      "supports": "Agua desionizada sellada en una cámara de vapor soldada por láser al chasis de aluminio; Apple afirma hasta un 40 % más de rendimiento sostenido que la generación anterior."
+      "supports": "Publicado el 09/09/2025: la cámara de vapor del iPhone 17 Pro contiene agua desionizada. Apple atribuye al conjunto del A19 Pro y la cámara de vapor hasta un 40 % más de rendimiento sostenido que la generación anterior. Consulta asistida (ChatGPT) del 27/11/2026, pendiente de revisión humana."
     },
     {
       "label": "IEEE Spectrum: la cámara de vapor del iPhone 17 Pro",
@@ -64,7 +64,7 @@ Es un sistema **pasivo**: no consume batería ni tiene piezas móviles. Por eso 
 
 ## Qué dice Apple del iPhone 17 Pro
 
-Apple anunció que el iPhone 17 Pro sella agua desionizada en una cámara de vapor soldada por láser al chasis de aluminio, y afirma hasta un **40 % más de rendimiento sostenido** que la generación anterior. Es una cifra del fabricante. No la hemos verificado y no describe un juego concreto.
+Apple anunció en septiembre de 2025 que la cámara de vapor del iPhone 17 Pro contiene agua desionizada, y atribuye al **conjunto** del nuevo chip A19 Pro y la cámara de vapor hasta un **40 % más de rendimiento sostenido** que la generación anterior. Ese porcentaje no corresponde solo a la refrigeración: incluye el cambio de procesador. Es una cifra del fabricante, no un resultado independiente.
 
 Samsung, Google y otros fabricantes ya usaban cámaras de vapor en algunos modelos de gama alta, según IEEE Spectrum.
 
