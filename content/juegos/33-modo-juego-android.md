@@ -23,12 +23,12 @@
     {
       "label": "Android Developers: Game Mode API",
       "url": "https://developer.android.com/games/gamemode/gamemode-api",
-      "supports": "Modos STANDARD, PERFORMANCE, BATTERY y UNSUPPORTED; disponibilidad en algunos Android 12 y en Android 13+; intervenciones de fabricantes; ahorro aproximado del 25 % de energía en la app de ejemplo. Actualizada el 08/10/2026."
+      "supports": "Modos STANDARD, PERFORMANCE, BATTERY y UNSUPPORTED; disponibilidad en algunos Android 12 y en Android 13+; intervenciones de fabricantes; ahorro aproximado del 25 % de energía en la app de ejemplo. Actualizada el 08/10/2026. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: Game Dashboard",
       "url": "https://developer.android.com/games/gamedashboard/aboutdashboard",
-      "supports": "Superposición con contador de FPS, capturas, No molestar y Game Mode; presente en todos los Pixel con Android 12 o superior; otros fabricantes pueden quitarlo o sustituirlo. Actualizada el 26/02/2026."
+      "supports": "Superposición con contador de FPS, capturas, No molestar y Game Mode; presente en todos los Pixel con Android 12 o superior; otros fabricantes pueden quitarlo o sustituirlo. Actualizada el 26/02/2026. Leído directamente el 27/11/2026."
     },
     {
       "label": "Samsung: uso de la app Game Booster",

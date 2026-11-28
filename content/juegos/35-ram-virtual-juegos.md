@@ -18,7 +18,7 @@
     {
       "label": "Android Developers: gestión de memoria",
       "url": "https://developer.android.com/topic/performance/memory-management",
-      "supports": "Tres tipos de memoria (RAM, zRAM y almacenamiento); zRAM es una partición comprimida dentro de la RAM; Android no usa el almacenamiento como swap para evitar desgaste; funcionamiento de kswapd y del low-memory killer. Actualizada el 21/09/2026."
+      "supports": "Tres tipos de memoria (RAM, zRAM y almacenamiento); zRAM es una partición comprimida dentro de la RAM; Android no usa el almacenamiento como swap para evitar desgaste; funcionamiento de kswapd y del low-memory killer. Actualizada el 21/09/2026. Leído directamente el 27/11/2026."
     },
     {
       "label": "Samsung: RAM Plus en Galaxy",

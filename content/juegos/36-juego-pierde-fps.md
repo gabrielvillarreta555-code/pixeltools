@@ -18,12 +18,12 @@
     {
       "label": "Android Developers: Thermal API (ADPF)",
       "url": "https://developer.android.com/games/optimize/adpf/thermal",
-      "supports": "Los dispositivos solo mantienen el máximo rendimiento durante un tiempo limitado antes del límite térmico; el resultado depende del clima, el uso reciente y el diseño térmico. Actualizada el 26/02/2026."
+      "supports": "Los dispositivos solo mantienen el máximo rendimiento durante un tiempo limitado antes del límite térmico; el resultado depende del clima, el uso reciente y el diseño térmico. Actualizada el 26/02/2026. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: ADPF",
       "url": "https://developer.android.com/games/optimize/adpf",
-      "supports": "Los SoC móviles tienen comportamiento más dinámico que consolas y PC: estado térmico, frecuencias variables y distintos tipos de núcleo."
+      "supports": "Los SoC móviles tienen comportamiento más dinámico que consolas y PC: estado térmico, frecuencias variables y distintos tipos de núcleo. Leído directamente el 27/11/2026."
     },
     {
       "label": "Garena Free Fire (Singapur): cómo evitar el sobrecalentamiento",

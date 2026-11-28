@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { parseArticle, loadArticles, markdown, labelTables } from '../scripts/editorial/content.mjs';
+import { parseArticle, loadArticles, markdown, labelTables, needsHumanReview } from '../scripts/editorial/content.mjs';
 import { themes, retired, siteConfig } from '../scripts/editorial/themes.mjs';
 import { jsonLd, articleBody, card } from '../scripts/editorial/template.mjs';
 import { searchItems } from '../public/editorial/search.js';
@@ -102,6 +102,23 @@ describe('borradores y diagramas VX-ED-004',()=>{
   expect(html.match(/<li>/g)).toHaveLength(2);expect(html).not.toContain('<b>');
   expect(()=>markdown.render('```flujo\nsin título\nA | b\n```')).toThrow(/Diagrama/);
   expect(()=>markdown.render('```flujo\n# T\nsolo un paso | x\n```')).toThrow(/Diagrama/);
+ });
+});
+describe('protección contra publicación accidental VX-ED-005',()=>{
+ it('retiene en producción los artículos con consultas asistidas sin revisión humana',async()=>{
+  const preview=await loadArticles();const prod=await loadArticles(undefined,{production:true});
+  const held=preview.filter(needsHumanReview);
+  expect(held.length).toBeGreaterThan(0);
+  for(const a of held){expect(prod.some(b=>b.id===a.id)).toBe(false);for(const b of prod){expect(b.related).not.toContain(a.id);expect(b.html).not.toContain(`href="${a.path}"`);}}
+  expect(prod.length).toBe(preview.length-held.length);
+ });
+ it('una revisión humana completada libera el artículo',()=>{
+  const a={humanReview:'done',sources:[{supports:'Consulta asistida (ChatGPT)'}]};const b={sources:[{supports:'Consulta asistida (ChatGPT)'}]};const c={sources:[{supports:'Leído directamente'}]};
+  expect(needsHumanReview(a)).toBe(false);expect(needsHumanReview(b)).toBe(true);expect(needsHumanReview(c)).toBe(false);
+ });
+ it('no admite borradores en un build de producción',async()=>{await expect(loadArticles(undefined,{production:true,includeDrafts:true})).rejects.toThrow();});
+ it('cada fuente de los artículos nuevos publicados declara cómo se consultó',async()=>{
+  for(const a of (await loadArticles()).filter(a=>Number(a.id.slice(0,2))>30))for(const s of a.sources)expect(s.supports,`${a.id}: ${s.url}`).toMatch(/leído directamente|consulta asistida/i);
  });
 });
 describe('retirada y protección por host',()=>{

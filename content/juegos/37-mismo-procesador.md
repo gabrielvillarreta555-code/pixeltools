@@ -29,7 +29,7 @@
     {
       "label": "Android Developers: Thermal API",
       "url": "https://developer.android.com/games/optimize/adpf/thermal",
-      "supports": "El rendimiento sostenible depende del diseño térmico del dispositivo."
+      "supports": "El rendimiento sostenible depende del diseño térmico del dispositivo. Leído directamente el 27/11/2026."
     },
     {
       "label": "Notebookcheck (con pruebas de TechTablets): Snapdragon 8 Gen 1 en Xiaomi 12 Pro y OnePlus 10 Pro",

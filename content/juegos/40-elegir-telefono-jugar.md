@@ -19,17 +19,17 @@
     {
       "label": "Android Developers: gestión de memoria",
       "url": "https://developer.android.com/topic/performance/memory-management",
-      "supports": "RAM, zRAM y almacenamiento son memorias distintas; la RAM física es la más rápida."
+      "supports": "RAM, zRAM y almacenamiento son memorias distintas; la RAM física es la más rápida. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: Vulkan para juegos",
       "url": "https://developer.android.com/games/develop/vulkan/overview",
-      "supports": "Vulkan es la API gráfica principal de Android y la que usan por defecto Unity y Unreal en dispositivos compatibles."
+      "supports": "Vulkan es la API gráfica principal de Android y la que usan por defecto Unity y Unreal en dispositivos compatibles. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: paneles de distribución",
       "url": "https://developer.android.com/about/dashboards",
-      "supports": "No todos los dispositivos Android activos admiten Vulkan ni las mismas versiones."
+      "supports": "No todos los dispositivos Android activos admiten Vulkan ni las mismas versiones. Leído directamente el 27/11/2026."
     },
     {
       "label": "Android Developers: Game Mode API",
@@ -39,7 +39,7 @@
     {
       "label": "Android Developers: Thermal API",
       "url": "https://developer.android.com/games/optimize/adpf/thermal",
-      "supports": "El rendimiento máximo solo se mantiene durante un tiempo limitado; depende del diseño térmico."
+      "supports": "El rendimiento máximo solo se mantiene durante un tiempo limitado; depende del diseño térmico. Leído directamente el 27/11/2026."
     },
     {
       "label": "Garena: requisitos de Free Fire y Free Fire MAX",

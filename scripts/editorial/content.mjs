@@ -107,12 +107,26 @@ export function parseArticle(source, name = 'article', { today = new Date().toIS
   return { ...data, body, html: labelTables(markdown.render(body)), path: data.game ? `/juegos/${data.game}/${data.slug}` : `/${data.section}/${data.slug}` };
 }
 
+// Un artículo con fuentes de consulta asistida (p. ej., mediante ChatGPT) necesita revisión humana
+// antes de llegar a producción. Se marca como revisado con "humanReview": "done".
+export const ASSISTED = /Consulta asistida/i;
+export const needsHumanReview = a => a.humanReview !== 'done' && a.sources.some(s => ASSISTED.test(s.supports));
+const stripLinks = (html, paths) => html.replace(/<a href="([^"]+)">([\s\S]*?)<\/a>/g, (link, href, text) => paths.has(href) ? text : link);
+
 // includeDrafts solo se usa en vistas previas no indexables para revisar borradores.
-export async function loadArticles(directory = new URL('../../content/juegos/', import.meta.url), { includeDrafts = false } = {}) {
+// production excluye los artículos pendientes de revisión humana y retira los enlaces hacia ellos.
+export async function loadArticles(directory = new URL('../../content/juegos/', import.meta.url), { includeDrafts = false, production = false } = {}) {
   const names = (await readdir(directory)).filter(n => n.endsWith('.md')).sort();
   const all = await Promise.all(names.map(async name => parseArticle(await readFile(new URL(name, directory), 'utf8'), name)));
   for (const key of ['id', 'path', 'title', 'description']) if (new Set(all.map(a => a[key])).size !== all.length) throw new Error(`Contenido duplicado: ${key}`);
-  const articles = all.filter(a => a.status === 'published' || (includeDrafts && a.status === 'draft')).sort((a,b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
+  for (const a of all) if (a.humanReview !== undefined && !['done', 'pending'].includes(a.humanReview)) throw new Error(`${a.id}: humanReview inválido`);
+  if (production && includeDrafts) throw new Error('Los borradores no pueden entrar en un build de producción');
+  let articles = all.filter(a => a.status === 'published' || (includeDrafts && a.status === 'draft')).sort((a,b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
   for (const a of articles) for (const id of a.related) if (!articles.some(other => other.id === id)) throw new Error(`${a.id}: relacionado no publicado ${id}`);
+  if (production) {
+    const held = new Set(articles.filter(needsHumanReview).map(a => a.path));
+    const heldIds = new Set(articles.filter(needsHumanReview).map(a => a.id));
+    articles = articles.filter(a => !held.has(a.path)).map(a => ({ ...a, related: a.related.filter(id => !heldIds.has(id)), html: stripLinks(a.html, held) }));
+  }
   return articles;
 }

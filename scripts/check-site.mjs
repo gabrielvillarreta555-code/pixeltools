@@ -1,17 +1,20 @@
 import assert from 'node:assert/strict';
 import { readFile,access,readdir,stat } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
-import { loadArticles,escapeHtml } from './editorial/content.mjs';
+import { loadArticles,escapeHtml,needsHumanReview } from './editorial/content.mjs';
 import { officialMedia } from './editorial/official-media.mjs';
 import { themes,retired } from './editorial/themes.mjs';
 const routes=JSON.parse(await readFile('dist/editorial/routes.json','utf8'));
-const drafts=process.env.INCLUDE_DRAFTS==='1';const articles=await loadArticles(undefined,{includeDrafts:drafts}),robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
+const drafts=process.env.INCLUDE_DRAFTS==='1';const robots=await readFile('dist/robots.txt','utf8'),prod=robots.includes('Allow: /');
+const articles=await loadArticles(undefined,{includeDrafts:drafts,production:prod});
 const file=p=>'dist'+(p==='/'?'/index.html':p.endsWith('/')?p+'index.html':p+'.html');
 const titles=new Set(),descriptions=new Set();
 // Rutas: portada, /juegos/, 6 universos, 4 listados, 4 páginas legales, secciones con contenido y artículos.
 const liveHubs=['rendimiento','tecnologia'].filter(h=>articles.some(a=>a.section===h));
 assert.equal(routes.length,16+liveHubs.length+articles.length);
-if(!drafts){assert.equal(articles.length,36);assert.equal(routes.length,54);}
+// Los 30 artículos originales (01–30) siguen publicados en cualquier modo.
+for(const n of Array.from({length:30},(_,i)=>String(i+1).padStart(2,'0')))assert.ok(articles.some(a=>a.id.startsWith(n+'-')),`artículo original ${n} ausente`);
+if(prod){const held=(await loadArticles()).filter(needsHumanReview);for(const a of held){assert.ok(!routes.some(r=>r.path===a.path),`pendiente de revisión humana en producción: ${a.path}`);for(const r of routes)assert.ok(!(await readFile(file(r.path),'utf8')).includes(`href="${a.path}"`),`enlace a artículo retenido en ${r.path}`);}}
 if(prod)assert.ok(!drafts&&!articles.some(a=>a.status!=='published'),'borradores en producción');
 assert.equal(new Set(articles.map(a=>a.body)).size,articles.length);
 const allowedMedia = Object.keys(officialMedia).flatMap(cover => [480,960,1600].map(size => `${cover}-${size}.webp`));
