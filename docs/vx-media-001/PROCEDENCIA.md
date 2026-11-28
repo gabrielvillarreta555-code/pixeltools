@@ -23,3 +23,15 @@ Lote 1, recibido el 28/11/2026 en la conversación de trabajo y aportado por dir
 | R10 | `506430fb-image.png` | `62a1b8fe0cb6e621…` | Teléfono en horizontal con un juego de carreras y un mando de Xbox | **Integrada**: portada del 47 (IMG-51) | El mando está junto al teléfono, no acoplado. Encaje bueno |
 
 **Resumen:** 10 recibidas, 4 integradas y 6 no asignadas. Las no asignadas no se han copiado al proyecto; sus originales siguen disponibles en la conversación.
+
+## Lote 2 · VX-MEDIA-002 (28/11/2026)
+
+Cinco imágenes generadas con IA, recibidas e integradas por decisión expresa del CEO («úsalas»). Huellas SHA-256 completas en `scripts/editorial/official-media.mjs`.
+
+| Archivo | Destino | Observación registrada antes de integrar |
+|---|---|---|
+| `fb16d5da-image.png` | 42 · GPU (IMG-18) | Muestra el logotipo de MediaTek y texto ilegible en la batería |
+| `e32ca09b-image.png` | 41 · 120 Hz y 30 FPS (IMG-17) | Enfrenta «30 FPS» y «120 Hz» como alternativas, cuando el artículo explica que son medidas distintas |
+| `5ce23939-image.png` | 01 · Error 280 (IMG-16) | Muestra una actualización del sistema; el artículo trata la actualización de la app |
+| `6e7b62e0-image.png` | 27 · Copia de un mundo de Minecraft (IMG-15) | Recrea un Creeper y el bloque de hierba de Mojang; muestra una copia en la nube desde el teléfono, no en un PC con Java |
+| `df95b403-image.png` | 43 · Vulkan y OpenGL ES (IMG-19) | Puede sugerir que Vulkan «se ve mejor»; encajaría también en el 51 (escalado) |

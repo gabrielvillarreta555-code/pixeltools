@@ -22,8 +22,8 @@
   ],
   "kind": "guia",
   "publishedAt": "2026-11-16",
-  "cover": "roblox",
-  "coverAlt": "Ilustración conceptual original del universo temático de roblox",
+  "cover": "art-01-roblox-error-280",
+  "coverAlt": "Mano sosteniendo un teléfono con la pantalla de actualización de software y un mando al fondo",
   "featured": false
 }
 ---

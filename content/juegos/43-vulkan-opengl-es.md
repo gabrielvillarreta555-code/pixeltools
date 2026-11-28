@@ -13,8 +13,8 @@
   "kind": "comparativa",
   "handsOn": false,
   "scope": "Comparativa basada en documentación oficial de Android leída directamente el 28/11/2026. No hemos medido el rendimiento de juegos con cada API.",
-  "cover": "sin-portada",
-  "coverAlt": "Sin imagen: portada de texto",
+  "cover": "art-43-vulkan-opengl",
+  "coverAlt": "Dos teléfonos en horizontal con la misma escena de juego: a la izquierda se ve borrosa y a la derecha nítida",
   "sources": [
     {
       "label": "Android Developers: Vulkan para juegos",

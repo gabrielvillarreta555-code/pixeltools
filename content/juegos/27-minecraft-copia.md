@@ -16,8 +16,8 @@
   "publishedAt": "2026-11-25",
   "reviewedAt": "2026-11-25",
   "byline": "Redacción Vélix",
-  "cover": "sin-portada",
-  "coverAlt": "Sin portada",
+  "cover": "art-27-minecraft-copia-mundo",
+  "coverAlt": "Teléfono con una copia de seguridad de un mundo en curso junto a un portátil con un paisaje de bloques",
   "featured": false,
   "sources": [
     {

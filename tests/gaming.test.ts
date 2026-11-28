@@ -129,7 +129,7 @@ describe('imágenes VX-MEDIA-001',()=>{
   expect(ai.length).toBeGreaterThan(0);
   for(const [id,m] of ai){
    expect(m.caption).toBe(AI_CAPTION);expect(m.caption).toMatch(/generada con IA/);expect(m.policy).toBeUndefined();
-   expect(m.provenance.sha256).toMatch(/^[0-9a-f]{64}$/);expect(m.provenance.lot).toBe('VX-MEDIA-001');expect(m.alt.length).toBeGreaterThan(30);
+   expect(m.provenance.sha256).toMatch(/^[0-9a-f]{64}$/);expect(m.provenance.lot).toMatch(/^VX-MEDIA-\d{3}$/);expect(m.alt.length).toBeGreaterThan(30);
    for(const w of [480,960,1600])expect(existsSync(`public/media/${id}-${w}.webp`)).toBe(true);
   }
   for(const m of Object.values(officialMedia))expect(['official','ia']).toContain(m.kind);
