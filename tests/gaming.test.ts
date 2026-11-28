@@ -1,15 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { parseArticle, loadArticles, markdown } from '../scripts/editorial/content.mjs';
+import { parseArticle, loadArticles, markdown, labelTables, needsHumanReview } from '../scripts/editorial/content.mjs';
 import { themes, retired, siteConfig } from '../scripts/editorial/themes.mjs';
-import { jsonLd } from '../scripts/editorial/template.mjs';
+import { jsonLd, articleBody, card } from '../scripts/editorial/template.mjs';
+import { officialMedia, AI_CAPTION } from '../scripts/editorial/official-media.mjs';
+import { existsSync } from 'node:fs';
 import { searchItems } from '../public/editorial/search.js';
 import { onRequest } from '../functions/_middleware';
 const source=readFileSync('content/juegos/01-roblox-280.md','utf8');
 describe('publicación editorial',()=>{
  it('conserva las diez URLs originales y distribuye las lecturas destacadas entre los seis juegos',async()=>{
-  const all=await loadArticles(); expect(all).toHaveLength(30);
+  const all=await loadArticles(); expect(all).toHaveLength(50);
   for(const file of execFileSync('git',['ls-tree','-r','--name-only','fa39de5','content/juegos'],{encoding:'utf8'}).trim().split('\n')){
    const old=JSON.parse(execFileSync('git',['show',`fa39de5:${file}`],{encoding:'utf8'}).split('---')[1]);
    expect(all.some(a=>a.path===`/juegos/${old.game}/${old.slug}`)).toBe(true);
@@ -38,6 +40,107 @@ describe('publicación editorial',()=>{
   expect(siteConfig({CF_PAGES:'1',CF_PAGES_BRANCH:'main'}).indexable).toBe(true);
   expect(siteConfig({}).indexable).toBe(false);
   expect(()=>siteConfig({CF_PAGES_URL:'javascript:alert(1)'})).toThrow();
+ });
+});
+describe('secciones transversales VX-STR-001',()=>{
+ const [,front,body]=source.split(/^---\n|\n---\n/m);
+ const base=JSON.parse(front);
+ const make=(changes:Record<string,unknown>,drop:string[]=[])=>{const data={...base,...changes};for(const k of drop)delete data[k];return `---\n${JSON.stringify(data,null,2)}\n---\n${body}`;};
+ const price={item:'Teléfono de ejemplo 128 GB',amount:199,currency:'USD',market:'PA',retailer:'Tienda',url:'https://example.com/p',observedAt:'2026-11-10'};
+ const tech={section:'tecnologia',games:['Fortnite'],kind:'comparativa',handsOn:false,reviewedAt:'2026-11-16',publishedAt:'2026-11-16'};
+ const today={today:'2026-11-27'};
+ it('conserva todas las URLs publicadas en main al añadir secciones',async()=>{
+  const paths=(await loadArticles()).map(a=>a.path);
+  for(const file of execFileSync('git',['ls-tree','-r','--name-only','3aee488','content/juegos'],{encoding:'utf8'}).trim().split('\n')){
+   const old=JSON.parse(execFileSync('git',['show',`3aee488:${file}`],{encoding:'utf8'}).split('---')[1]);
+   expect(paths).toContain(`/juegos/${old.game}/${old.slug}`);
+  }
+ });
+ it('ubica una pieza sin juego en su sección y exige nombrar videojuegos',()=>{
+  expect(parseArticle(make(tech,['game']),'t',today).path).toBe(`/tecnologia/${base.slug}`);
+  expect(()=>parseArticle(make({...tech,games:[]},['game']),'t',today)).toThrow(/videojuego/);
+  expect(()=>parseArticle(make({section:'rendimiento'},['game']),'t',today)).toThrow(/videojuego/);
+  expect(()=>parseArticle(make({},['game']),'t',today)).toThrow(/game o section/);
+  expect(()=>parseArticle(make({section:'hardware'}),'t',today)).toThrow(/sección/);
+  expect(parseArticle(make({section:'rendimiento'}),'t',today).path).toBe(`/juegos/roblox/${base.slug}`);
+ });
+ it('obliga a declarar si hubo prueba propia',()=>{
+  expect(()=>parseArticle(make({...tech,handsOn:undefined},['game']),'t',today)).toThrow(/handsOn/);
+  expect(()=>parseArticle(make({...tech,handsOn:true},['game']),'t',today)).toThrow(/methodology/);
+  expect(()=>parseArticle(make({kind:'comparativa'}),'t',today)).toThrow(/sección/);
+ });
+ it.each([
+  ['sin mercado',{...price,market:undefined}],['mercado no ISO',{...price,market:'Panamá'}],['moneda no ISO',{...price,currency:'$'}],
+  ['importe no positivo',{...price,amount:0}],['tienda sin HTTPS',{...price,url:'http://example.com'}],['fecha inválida',{...price,observedAt:'2026-02-30'}],
+  ['posterior a la revisión',{...price,observedAt:'2026-11-20'}],['caducado',{...price,observedAt:'2026-08-01'}],
+ ])('rechaza precios %s',(_,p)=>expect(()=>parseArticle(make({...tech,kind:'compra',prices:[p]},['game']),'t',today)).toThrow(/precio/i));
+ it('una guía de compra sin precios no se publica',()=>expect(()=>parseArticle(make({...tech,kind:'compra'},['game']),'t',today)).toThrow(/precios/));
+ it('muestra la declaración, los juegos y los precios con mercado y fecha',()=>{
+  const a=parseArticle(make({...tech,kind:'compra',prices:[price]},['game']),'t',today);
+  const html=articleBody(a,[a]);
+  expect(html).toContain('No hemos probado estos dispositivos');expect(html).toContain('Fortnite');
+  expect(html).toContain('href="/tecnologia/"');expect(html).toContain('Precios observados');
+  expect(html).toMatch(/199[,.]00\s?US\$|US\$\s?199/);expect(html).toContain('data-label="Mercado">PA</td>');expect(html).toContain('datetime="2026-11-10"');
+  expect(html).not.toContain('undefined');expect(card(a)).toContain('Tecnología');
+ });
+});
+describe('borradores y diagramas VX-ED-004',()=>{
+ it('los borradores quedan fuera salvo que se pidan explícitamente',async()=>{
+  const published=await loadArticles();const all=await loadArticles(undefined,{includeDrafts:true});
+  expect(published.every(a=>a.status==='published')).toBe(true);
+  expect(all.length).toBeGreaterThan(published.length);
+  for(const a of all.filter(a=>a.status==='draft')){expect(a.section).toBeDefined();expect(a.games?.length).toBeGreaterThan(0);}
+ });
+ it('los borradores de tecnología declaran que no hubo prueba propia',async()=>{
+  for(const a of (await loadArticles(undefined,{includeDrafts:true})).filter(a=>a.section==='tecnologia'))expect(a.handsOn).toBe(false);
+ });
+ it('etiqueta las celdas de las tablas para mostrarlas como fichas en móvil',()=>{
+  const html=labelTables(markdown.render('| Modelo | Juego <b> |\n|---|---|\n| A | **sí** |'));
+  expect(html).toContain('<table class="stack">');expect(html).toContain('<td data-label="Modelo">A</td>');expect(html).toContain('data-label="Juego &lt;b&gt;"');expect(html).not.toContain('<b>');
+ });
+ it('renderiza un diagrama de pasos accesible y escapa su contenido',()=>{
+  const html=markdown.render('```flujo\n# Ciclo <térmico>\nCalor | El chip <b>sube</b>\nLímite | Baja la frecuencia\n```');
+  expect(html).toContain('<figure class="flow-chart"><figcaption>Ciclo &lt;térmico&gt;</figcaption><ol>');
+  expect(html.match(/<li>/g)).toHaveLength(2);expect(html).not.toContain('<b>');
+  expect(()=>markdown.render('```flujo\nsin título\nA | b\n```')).toThrow(/Diagrama/);
+  expect(()=>markdown.render('```flujo\n# T\nsolo un paso | x\n```')).toThrow(/Diagrama/);
+ });
+});
+describe('protección contra publicación accidental VX-ED-005',()=>{
+ it('retiene en producción los artículos con consultas asistidas sin revisión humana',async()=>{
+  const preview=await loadArticles();const prod=await loadArticles(undefined,{production:true});
+  const held=preview.filter(needsHumanReview);
+  expect(held.length).toBeGreaterThan(0);
+  for(const a of held){expect(prod.some(b=>b.id===a.id)).toBe(false);for(const b of prod){expect(b.related).not.toContain(a.id);expect(b.html).not.toContain(`href="${a.path}"`);}}
+  expect(prod.length).toBe(preview.length-held.length);
+ });
+ it('una revisión humana completada libera el artículo',()=>{
+  const a={humanReview:'done',sources:[{supports:'Consulta asistida (ChatGPT)'}]};const b={sources:[{supports:'Consulta asistida (ChatGPT)'}]};const c={sources:[{supports:'Leído directamente'}]};
+  expect(needsHumanReview(a)).toBe(false);expect(needsHumanReview(b)).toBe(true);expect(needsHumanReview(c)).toBe(false);
+ });
+ it('no admite borradores en un build de producción',async()=>{await expect(loadArticles(undefined,{production:true,includeDrafts:true})).rejects.toThrow();});
+ it('cada fuente de los artículos nuevos publicados declara cómo se consultó',async()=>{
+  for(const a of (await loadArticles()).filter(a=>Number(a.id.slice(0,2))>30))for(const s of a.sources)expect(s.supports,`${a.id}: ${s.url}`).toMatch(/leído directamente|consulta asistida/i);
+ });
+});
+describe('imágenes VX-MEDIA-001',()=>{
+ it('cada imagen IA declara procedencia, se identifica en su pie y existe en sus tres tamaños',()=>{
+  const ai=Object.entries(officialMedia).filter(([,m])=>m.kind==='ia');
+  expect(ai.length).toBeGreaterThan(0);
+  for(const [id,m] of ai){
+   expect(m.caption).toBe(AI_CAPTION);expect(m.caption).toMatch(/generada con IA/);expect(m.policy).toBeUndefined();
+   expect(m.provenance.sha256).toMatch(/^[0-9a-f]{64}$/);expect(m.provenance.lot).toMatch(/^VX-MEDIA-\d{3}$/);expect(m.alt.length).toBeGreaterThan(30);
+   for(const w of [480,960,1600])expect(existsSync(`public/media/${id}-${w}.webp`)).toBe(true);
+  }
+  for(const m of Object.values(officialMedia))expect(['official','ia']).toContain(m.kind);
+ });
+ it('una portada no se repite entre artículos',async()=>{
+  const covers=(await loadArticles(undefined,{includeDrafts:true})).map(a=>a.cover).filter(c=>Object.hasOwn(officialMedia,c));
+  expect(new Set(covers).size).toBe(covers.length);
+ });
+ it('el pie de una imagen IA no menciona a Supercell ni su política',async()=>{
+  const a=(await loadArticles()).find(a=>a.cover==='art-44-tamano-juegos')!;const html=articleBody(a,[a]);
+  expect(html).toContain('generada con IA');expect(html).not.toContain('Fan Content Policy');
  });
 });
 describe('retirada y protección por host',()=>{

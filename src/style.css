@@ -71,3 +71,41 @@
 .elixir-chart meter::-moz-meter-bar {
  background: var(--accent);
 }
+
+/* VX-STR-001 · secciones transversales, declaración de pruebas y precios.
+   Reutilizan los tokens existentes; no introducen una estética nueva. */
+.hub-note{border-left:4px solid var(--accent);background:var(--surface);padding:14px 18px;font-size:.85rem;margin-top:18px}
+.disclosure{border:1px solid var(--line);border-left:4px solid var(--accent);padding:16px 20px;margin:0 0 28px;font-size:.9rem}
+.disclosure p{margin:0}
+.disclosure p+p{margin-top:8px}
+.related-games{color:var(--muted)}
+.prices{margin-top:45px}
+.table-scroll{overflow-x:auto;margin-top:16px}
+.prices table{width:100%;border-collapse:collapse;font-size:.85rem}
+.prices th,.prices td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.prices th{color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:700px){.main-nav .nav-home{display:none}}
+@media(max-width:700px){.prices thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prices tr{display:block;border-bottom:1px solid var(--line);padding:10px 0}.prices td{display:flex;justify-content:space-between;gap:16px;border:0;padding:4px 0;white-space:normal;text-align:right}.prices td::before{content:attr(data-label);color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;text-align:left}}
+/* VX-ED-004: borradores en vista previa y diagramas de pasos sin JS. */
+.draft-banner{border:1px dashed var(--accent);padding:12px 16px;font-size:.85rem;margin:0 0 24px}
+.flow-chart{margin:32px 0;border:1px solid var(--line);padding:20px}
+.flow-chart figcaption{font-weight:700;margin-bottom:14px}
+.flow-chart ol{list-style:none;margin:0;padding:0;counter-reset:flow}
+.flow-chart li{counter-increment:flow;display:grid;grid-template-columns:2.2rem 1fr;gap:4px 12px;padding:10px 0;position:relative}
+.flow-chart li::before{content:counter(flow);grid-row:span 2;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:800;display:grid;place-items:center}
+.flow-chart li+li::after{content:'';position:absolute;left:calc(1rem - 1px);top:-10px;height:20px;border-left:2px solid var(--accent)}
+.flow-chart span{color:var(--muted);font-size:.9rem}
+/* Con Rendimiento y Tecnología el menú móvil tiene 7 entradas: filas de 3, 2 y 2 en vez de dejar una sola. */
+@media(max-width:700px){.main-nav:has(a[href="/tecnologia/"]){grid-template-columns:repeat(6,minmax(0,1fr))}.main-nav:has(a[href="/tecnologia/"]) a{grid-column:span 2}.main-nav:has(a[href="/tecnologia/"]) a:nth-last-child(-n+4){grid-column:span 3}}
+.hub-more{margin-top:18px;font-size:.85rem;font-weight:700}
+.hub-more a{color:var(--accent)}
+/* Tablas dentro de los artículos: mismos tokens que la tabla de precios; desplazamiento interno si no caben. */
+.prose table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-size:.88rem;line-height:1.55;margin:24px 0}
+.prose th,.prose td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+.prose th{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+@media(max-width:700px){.prose th,.prose td{padding:8px}}
+.legal,.fan-notice{overflow-wrap:break-word}
+@media(max-width:700px){.prose table.stack{display:block;overflow:visible}.prose table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prose table.stack tbody,.prose table.stack tr{display:block}.prose table.stack tr{border-bottom:1px solid var(--line);padding:10px 0}.prose table.stack td{display:block;border:0;padding:5px 0}.prose table.stack td::before{content:attr(data-label);display:block;margin-bottom:1px;color:var(--muted);font-size:.7rem;line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:700}.prose table.stack td[data-label=""]{display:block;padding-left:0}.prose table.stack td[data-label=""]::before{content:none}}
+/* VX-MEDIA-001: con imagen, la tarjeta compacta del lateral no debe desbordar a 320 px. */
+.reading-aside .story-link{grid-template-columns:min(120px,34%) minmax(0,1fr)}
+.reading-aside .story-copy{min-width:0;overflow-wrap:break-word}

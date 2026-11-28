@@ -16,8 +16,8 @@
   "publishedAt": "2026-11-25",
   "reviewedAt": "2026-11-25",
   "byline": "Redacción Vélix",
-  "cover": "sin-portada",
-  "coverAlt": "Sin portada",
+  "cover": "art-27-minecraft-copia-mundo",
+  "coverAlt": "Portátil con el explorador de archivos abierto en una carpeta de copias de seguridad de Minecraft y un disco externo conectado",
   "featured": false,
   "sources": [
     {
