@@ -12,8 +12,8 @@
   "status": "published",
   "kind": "guia",
   "scope": "Basado en documentación oficial de Google Play para desarrolladores, leída directamente el 28/11/2026. Cada juego decide cómo reparte sus descargas; no citamos tamaños de juegos concretos.",
-  "cover": "sin-portada",
-  "coverAlt": "Sin imagen: portada de texto",
+  "cover": "art-44-tamano-juegos",
+  "coverAlt": "Teléfono sobre un escritorio con la pantalla de almacenamiento: 114 GB usados de 128 GB",
   "sources": [
     {
       "label": "Android Developers: Play Asset Delivery",

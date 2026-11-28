@@ -17,8 +17,8 @@
   "publishedAt": "2026-11-25",
   "reviewedAt": "2026-11-25",
   "byline": "Redacción Vélix",
-  "cover": "sin-portada",
-  "coverAlt": "Sin portada",
+  "cover": "art-28-fortnite-emparejamiento",
+  "coverAlt": "Router wifi con cuatro antenas y luces de estado encendidas sobre un escritorio de madera",
   "featured": false,
   "sources": [
     {

@@ -45,9 +45,11 @@ Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que s
 - **Producción protegida:** los artículos con fuentes de consulta asistida (31–37 y 40) se excluyen automáticamente del build indexable hasta su revisión humana (`"humanReview": "done"`). Fusionar hoy publicaría 42 artículos (los 30 originales, el 39 y del 41 al 51).
 - Guías de compra por presupuesto: pendientes, porque no hay precios observables desde el entorno.
 
+**VX-MEDIA-001** (rama `vx-ed-004`): primer lote de 10 imágenes IA recibido. 4 integradas (portadas de 28, 36, 44 y 47) y 6 no asignadas por no corresponder con ningún artículo o por la estética. Ver `docs/vx-media-001/PROCEDENCIA.md`.
+
 ## Políticas vigentes
 
-- Imágenes: únicamente fotografías reales, recursos oficiales o materiales con derechos de uso adecuados y documentados. Sin imágenes generadas por IA.
+- Imágenes: fotografías reales, recursos oficiales con permisos documentados e ilustraciones generadas con IA (autorizadas en VX-MEDIA-001, 28/11/2026), identificadas en su pie y registradas con su procedencia.
 - Datos: especificaciones oficiales y fuentes independientes verificables. Sin especificaciones, precios, FPS, rendimiento ni volúmenes de búsqueda inventados. Cumplir requisitos ≠ rendimiento garantizado.
 - Precios: siempre con mercado y fecha. No afirmar pruebas de dispositivos no realizadas.
 - Comparadores interactivos y recomendadores automatizados: pospuestos. Los artículos de comparación y compra sí están permitidos.

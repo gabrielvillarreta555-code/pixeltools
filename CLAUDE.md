@@ -25,7 +25,12 @@ No fusionar PR ni desplegar producción sin aprobación del CEO (incluido el PR 
 
 ## Política de imágenes
 
-Únicamente fotografías reales, recursos oficiales o materiales con derechos de uso adecuados y documentados (`scripts/editorial/official-media.mjs`, `docs/vx-003/PERMISOS_IMAGENES.md`, `THIRD_PARTY_NOTICES.md`). **No usar imágenes generadas por IA.** Ante la duda, publicar sin imagen (portada de texto).
+Se admiten fotografías reales, recursos oficiales con permisos documentados e **ilustraciones generadas con IA** (autorizadas por el CEO en VX-MEDIA-001, 28/11/2026). Todas se registran en `scripts/editorial/official-media.mjs`, con el detalle en `docs/vx-media-001/PROCEDENCIA.md`, `docs/vx-003/PERMISOS_IMAGENES.md` y `THIRD_PARTY_NOTICES.md`.
+
+- Las imágenes IA llevan `kind: 'ia'`, procedencia interna (lote, archivo original, SHA-256, fecha) y el pie visible `AI_CAPTION`. Nunca se presentan como fotografía de una prueba propia, captura auténtica ni material oficial de fabricantes o estudios.
+- Estética natural, profesional y realista, sin iluminación RGB exagerada ni efectos artificiales.
+- Evitar recrear personajes, logotipos o portadas de juegos y marcas de terceros. No asignar una imagen a un artículo cuyo contenido no represente.
+- Ante la duda, publicar sin imagen (portada de texto).
 
 ## Desarrollo
 

@@ -12,8 +12,8 @@
   "status": "published",
   "kind": "guia",
   "scope": "La documentación de Android se leyó directamente el 27/11/2026. La página de Garena y la de Notebookcheck se revisaron el 27/11/2026 mediante consulta asistida (ChatGPT), pendiente de revisión humana. No hemos medido temperaturas ni FPS para este artículo.",
-  "cover": "sin-portada",
-  "coverAlt": "Sin imagen: portada de texto",
+  "cover": "art-36-perdida-fps",
+  "coverAlt": "Teléfono en una base de carga con el indicador de batería al 67 % junto a un portátil",
   "sources": [
     {
       "label": "Android Developers: Thermal API (ADPF)",

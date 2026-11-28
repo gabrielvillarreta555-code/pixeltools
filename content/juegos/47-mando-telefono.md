@@ -13,8 +13,8 @@
   "kind": "guia",
   "handsOn": false,
   "scope": "Basado en documentación oficial de Android y Apple para desarrolladores, leída directamente el 28/11/2026. No hemos probado mandos concretos con juegos concretos; la compatibilidad de cada juego la decide su estudio.",
-  "cover": "sin-portada",
-  "coverAlt": "Sin imagen: portada de texto",
+  "cover": "art-47-mando-telefono",
+  "coverAlt": "Teléfono en horizontal con un juego de carreras en pantalla junto a un mando de consola blanco",
   "sources": [
     {
       "label": "Android Developers: compatibilidad con mandos de juego",

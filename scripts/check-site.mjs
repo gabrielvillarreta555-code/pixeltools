@@ -35,7 +35,9 @@ for(const route of routes){
  if(a){assert.ok(html.includes(escapeHtml(a.answer))&&html.includes(a.html));const ld=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);assert.ok(['Article','NewsArticle'].includes(ld['@graph'][0]['@type']));assert.equal(ld['@graph'][0].headline,a.title);const expectedImage = '/media/'+a.cover+'-1600.webp';
  if(Object.hasOwn(officialMedia,a.cover)) {
   assert.ok(ld['@graph'][0].image[0].endsWith(expectedImage));
-  assert.match(html,/This material is unofficial and is not endorsed by Supercell/);
+  if(officialMedia[a.cover].owner==='Supercell')assert.match(html,/This material is unofficial and is not endorsed by Supercell/);
+  else assert.doesNotMatch(html,/This material is unofficial and is not endorsed by Supercell/);
+  if(officialMedia[a.cover].kind==='ia')assert.ok(html.includes('generada con IA'),`${route.path}: falta la identificación de imagen IA`);
  } else {
   assert.equal(ld['@graph'][0].image, undefined);
   assert.doesNotMatch(html, /property="og:image"/);

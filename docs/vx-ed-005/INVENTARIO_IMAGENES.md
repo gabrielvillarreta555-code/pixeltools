@@ -93,3 +93,42 @@ El resto de portadas de artículo (incluidos los 8 retenidos y el borrador 38), 
 | IMG-60 | 36 · Pérdida de FPS | Margen térmico con y sin control — Figuras oficiales 1 y 2 de la Thermal API | Figura de developer.android.com (CC BY 2.5, con atribución) | ✅ CC BY 2.5 | `fig-36-thermal-headroom-1200.webp` |
 | IMG-61 | 48 · Mucha RAM y lento | Prioridad del low-memory killer — Figura oficial de categorías del LMK (memory management) | Figura de developer.android.com (CC BY 2.5, con atribución) | ✅ CC BY 2.5 | `fig-48-lmk-1200.webp` |
 | IMG-62 | 35 · RAM virtual | Tres tipos de memoria en Android — Figura oficial «Types of memory» (RAM, zRAM, almacenamiento) | Figura de developer.android.com (CC BY 2.5, con atribución) | ✅ CC BY 2.5 | `fig-35-tipos-memoria-1200.webp` |
+
+---
+
+## Estado tras VX-MEDIA-001 (28/11/2026)
+
+El CEO autorizó en VX-MEDIA-001 las **ilustraciones generadas con IA**. Muchas imágenes marcadas «Propia» o «Requiere autorización» pueden resolverse ahora con una ilustración IA, siempre que no recree personajes, logotipos ni portadas de terceros y se identifique en su pie. Registro del lote: `docs/vx-media-001/PROCEDENCIA.md`.
+
+| Estado | Imágenes |
+|---|---|
+| **Recibidas** | 10 (lote VX-MEDIA-001) |
+| **Integradas** | 4: IMG-35 (art. 28), IMG-43 (art. 36, retenido), IMG-48 (art. 44) e IMG-51 (art. 47) |
+| **Recibidas sin asignar** | 6: dos GPU de sobremesa, módulos de RAM de PC, portátil con SSD, PC con RGB intenso y PS5 con portadas de juegos de terceros. Ver motivos en la procedencia |
+| **A reemplazar** | IMG-09 (art. 15, repite la cabecera de Clash Royale); IMG-35 (logotipo de TP-Link visible, sustituir por una versión sin marca); IMG-43 (añadir un juego en pantalla) |
+| **Pendientes** | 56 de las 62 del inventario, más la sustitución de IMG-09 |
+
+## Siguiente lote: 10 imágenes por prioridad
+
+Prioridad: primero las que aparecen en la portada de producción y después las que completan las secciones Rendimiento y Tecnología, donde hoy conviven tarjetas con imagen y sin ella.
+
+| Orden | Código | Artículo | Título exacto de la imagen | Qué debe mostrar |
+|---|---|---|---|---|
+| 1 | IMG-17 | 41 · 120 Hz y 30 FPS | Frecuencia de pantalla y FPS | Teléfono con el ajuste de frecuencia de pantalla (60/90/120 Hz) abierto |
+| 2 | IMG-18 | 42 · GPU del teléfono | El chip gráfico de un teléfono | Placa de un teléfono abierto, con el procesador visible y sin marcas legibles |
+| 3 | IMG-19 | 43 · Vulkan y OpenGL ES | Dos generaciones de gráficos en Android | Dos teléfonos Android de distinta generación, lado a lado, con las pantallas encendidas |
+| 4 | IMG-16 | 01 · Error 280 de Roblox | Aviso de versión en el teléfono | Teléfono con un aviso genérico de «actualización necesaria», sin logotipo ni interfaz de Roblox |
+| 5 | IMG-15 | 27 · Copia de un mundo de Minecraft | Copia de seguridad de un mundo | Portátil con una carpeta de copia de seguridad y un disco externo, sin arte de Minecraft |
+| 6 | IMG-14 | 23 · Roblox Studio y audio | Audio espacial en un editor 3D | Portátil con un editor 3D genérico y ondas de audio, sin logotipos |
+| 7 | IMG-49 | 45 · Google Play «no compatible» | Juego no compatible con el dispositivo | Teléfono con una tienda de aplicaciones genérica mostrando un aviso de incompatibilidad, sin logotipos de Google |
+| 8 | IMG-52 | 48 · Mucha RAM y lento | La memoria del teléfono en ajustes | Teléfono con una pantalla de memoria o RAM, con composición distinta de IMG-48 |
+| 9 | IMG-53 | 49 · iPhone caliente al jugar | Partida larga en un teléfono | Smartphone en horizontal sostenido durante una partida, luz cálida natural, sin logotipo de Apple |
+| 10 | IMG-54 | 50 · Ver los FPS | Contador de FPS en pantalla | Teléfono con un contador de FPS superpuesto en la esquina de un juego genérico |
+
+Lotes siguientes: IMG-55 (51), IMG-46 (39), IMG-50 (46, con luz natural en lugar de RGB), IMG-38 (31), IMG-40 a IMG-44 (33–37) y las cabeceras de universo (IMG-01 a IMG-05) como ambientaciones sin personajes ni logotipos.
+
+**Especificación del lote:**
+- Formato 16:9, al menos 1.672 × 941 px (idealmente 2.400 × 1.350), en PNG.
+- Luz natural, sin RGB exagerado ni efectos.
+- Sin logotipos, marcas legibles, personajes, portadas ni interfaces reconocibles de terceros, y sin personas identificables.
+- Continuidad de estilo con el lote 1 (escritorio de madera, planta, tonos cálidos), variando el encuadre para que ninguna imagen repita la composición de otra.

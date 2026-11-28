@@ -4,6 +4,8 @@ import { execFileSync } from 'node:child_process';
 import { parseArticle, loadArticles, markdown, labelTables, needsHumanReview } from '../scripts/editorial/content.mjs';
 import { themes, retired, siteConfig } from '../scripts/editorial/themes.mjs';
 import { jsonLd, articleBody, card } from '../scripts/editorial/template.mjs';
+import { officialMedia, AI_CAPTION } from '../scripts/editorial/official-media.mjs';
+import { existsSync } from 'node:fs';
 import { searchItems } from '../public/editorial/search.js';
 import { onRequest } from '../functions/_middleware';
 const source=readFileSync('content/juegos/01-roblox-280.md','utf8');
@@ -119,6 +121,26 @@ describe('protección contra publicación accidental VX-ED-005',()=>{
  it('no admite borradores en un build de producción',async()=>{await expect(loadArticles(undefined,{production:true,includeDrafts:true})).rejects.toThrow();});
  it('cada fuente de los artículos nuevos publicados declara cómo se consultó',async()=>{
   for(const a of (await loadArticles()).filter(a=>Number(a.id.slice(0,2))>30))for(const s of a.sources)expect(s.supports,`${a.id}: ${s.url}`).toMatch(/leído directamente|consulta asistida/i);
+ });
+});
+describe('imágenes VX-MEDIA-001',()=>{
+ it('cada imagen IA declara procedencia, se identifica en su pie y existe en sus tres tamaños',()=>{
+  const ai=Object.entries(officialMedia).filter(([,m])=>m.kind==='ia');
+  expect(ai.length).toBeGreaterThan(0);
+  for(const [id,m] of ai){
+   expect(m.caption).toBe(AI_CAPTION);expect(m.caption).toMatch(/generada con IA/);expect(m.policy).toBeUndefined();
+   expect(m.provenance.sha256).toMatch(/^[0-9a-f]{64}$/);expect(m.provenance.lot).toBe('VX-MEDIA-001');expect(m.alt.length).toBeGreaterThan(30);
+   for(const w of [480,960,1600])expect(existsSync(`public/media/${id}-${w}.webp`)).toBe(true);
+  }
+  for(const m of Object.values(officialMedia))expect(['official','ia']).toContain(m.kind);
+ });
+ it('una portada no se repite entre artículos',async()=>{
+  const covers=(await loadArticles(undefined,{includeDrafts:true})).map(a=>a.cover).filter(c=>Object.hasOwn(officialMedia,c));
+  expect(new Set(covers).size).toBe(covers.length);
+ });
+ it('el pie de una imagen IA no menciona a Supercell ni su política',async()=>{
+  const a=(await loadArticles()).find(a=>a.cover==='art-44-tamano-juegos')!;const html=articleBody(a,[a]);
+  expect(html).toContain('generada con IA');expect(html).not.toContain('Fan Content Policy');
  });
 });
 describe('retirada y protección por host',()=>{

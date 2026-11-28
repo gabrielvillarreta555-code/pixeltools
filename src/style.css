@@ -106,3 +106,6 @@
 @media(max-width:700px){.prose th,.prose td{padding:8px}}
 .legal,.fan-notice{overflow-wrap:break-word}
 @media(max-width:700px){.prose table.stack{display:block;overflow:visible}.prose table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.prose table.stack tbody,.prose table.stack tr{display:block}.prose table.stack tr{border-bottom:1px solid var(--line);padding:10px 0}.prose table.stack td{display:block;border:0;padding:5px 0}.prose table.stack td::before{content:attr(data-label);display:block;margin-bottom:1px;color:var(--muted);font-size:.7rem;line-height:1.35;text-transform:uppercase;letter-spacing:.04em;font-weight:700}.prose table.stack td[data-label=""]{display:block;padding-left:0}.prose table.stack td[data-label=""]::before{content:none}}
+/* VX-MEDIA-001: con imagen, la tarjeta compacta del lateral no debe desbordar a 320 px. */
+.reading-aside .story-link{grid-template-columns:min(120px,34%) minmax(0,1fr)}
+.reading-aside .story-copy{min-width:0;overflow-wrap:break-word}
