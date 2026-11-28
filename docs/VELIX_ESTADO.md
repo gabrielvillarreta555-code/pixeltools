@@ -49,7 +49,7 @@ Siguiente entrega, E2: fichas de requisitos y verificador. Bloqueada hasta que s
 
 ## Políticas vigentes
 
-- Imágenes: fotografías reales, recursos oficiales con permisos documentados e ilustraciones generadas con IA (autorizadas en VX-MEDIA-001, 28/11/2026), identificadas en su pie y registradas con su procedencia.
+- Imágenes (política VX-MEDIA-002, 28/11/2026): fotografías reales, recursos oficiales e ilustraciones IA, que pueden incluir personajes, marcas y logotipos pertinentes. Siempre identificadas en su pie y registradas con su procedencia; nunca presentadas como capturas oficiales, filtraciones, pruebas ni fotografías auténticas.
 - Datos: especificaciones oficiales y fuentes independientes verificables. Sin especificaciones, precios, FPS, rendimiento ni volúmenes de búsqueda inventados. Cumplir requisitos ≠ rendimiento garantizado.
 - Precios: siempre con mercado y fecha. No afirmar pruebas de dispositivos no realizadas.
 - Comparadores interactivos y recomendadores automatizados: pospuestos. Los artículos de comparación y compra sí están permitidos.

@@ -25,12 +25,15 @@ No fusionar PR ni desplegar producción sin aprobación del CEO (incluido el PR 
 
 ## Política de imágenes
 
-Se admiten fotografías reales, recursos oficiales con permisos documentados e **ilustraciones generadas con IA** (autorizadas por el CEO en VX-MEDIA-001, 28/11/2026). Todas se registran en `scripts/editorial/official-media.mjs`, con el detalle en `docs/vx-media-001/PROCEDENCIA.md`, `docs/vx-003/PERMISOS_IMAGENES.md` y `THIRD_PARTY_NOTICES.md`.
+Política vigente: VX-MEDIA-002, aprobada por el CEO el 28/11/2026 (`docs/vx-media-002-politica/POLITICA.md`).
 
-- Las imágenes IA llevan `kind: 'ia'`, procedencia interna (lote, archivo original, SHA-256, fecha) y el pie visible `AI_CAPTION`. Nunca se presentan como fotografía de una prueba propia, captura auténtica ni material oficial de fabricantes o estudios.
-- Estética natural, profesional y realista, sin iluminación RGB exagerada ni efectos artificiales.
-- Evitar recrear personajes, logotipos o portadas de juegos y marcas de terceros. No asignar una imagen a un artículo cuyo contenido no represente.
-- Ante la duda, publicar sin imagen (portada de texto).
+Se admiten fotografías reales, recursos oficiales con permiso e ilustraciones generadas con IA. Todas se registran en `scripts/editorial/official-media.mjs`, con su procedencia en `docs/vx-media-001/PROCEDENCIA.md`.
+
+- **Videojuegos:** ilustraciones IA inspiradas en los juegos que cubre Vélix (GTA VI, Minecraft, Free Fire, Clash Royale, Fortnite y Roblox). Pueden mostrar escenarios, personajes, objetos y elementos reconocibles, respetando los derechos aplicables. No se rechaza una imagen solo por contener una marca, un personaje o un logotipo.
+- **Tecnología:** estilo fotográfico profesional y realista, con luz natural, colores equilibrados y componentes técnicamente coherentes. Sin RGB exagerado y sin composiciones repetitivas. Se pueden mostrar marcas y dispositivos comerciales cuando sean pertinentes para el artículo.
+- **Criterios de aceptación:** calidad visual, coherencia con el artículo, precisión técnica, relevancia editorial y cumplimiento de los derechos aplicables.
+- **Identificación:** las imágenes IA llevan `kind: 'ia'`, su procedencia (lote, archivo original, SHA-256 y fecha) y el pie visible `AI_CAPTION`. Nunca se presentan como capturas oficiales, filtraciones, pruebas de rendimiento ni fotografías auténticas.
+- No crear restricciones editoriales adicionales sin justificación ni autorización del CEO.
 
 ## Desarrollo
 
